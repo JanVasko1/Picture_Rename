@@ -1,0 +1,1 @@
+python C:\_Moje_Dokumenty\VASKO_TechDesign\Projects\Picture_Rename\Rename_Files.py
