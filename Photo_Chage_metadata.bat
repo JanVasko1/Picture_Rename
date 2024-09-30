@@ -1,1 +1,1 @@
-python C:\_Moje_Dokumenty\VASKO_TechDesign\Projects\Picture_Rename\Chage_metadata.py
+python D:\Picture_Rename\Chage_metadata.py
