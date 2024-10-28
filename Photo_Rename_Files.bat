@@ -1,1 +1,0 @@
-python D:\Picture_Rename\Rename_Files.py

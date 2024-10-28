@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from tqdm import tqdm
 import logging
 import windows_metadata
-from Libs import Defaults
+import Defaults
 
 logging.basicConfig(level=logging.ERROR)
 

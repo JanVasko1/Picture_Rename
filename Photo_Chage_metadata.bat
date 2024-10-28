@@ -1,1 +1,0 @@
-python D:\Picture_Rename\Chage_metadata.py

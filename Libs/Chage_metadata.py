@@ -1,10 +1,10 @@
 import os
 from datetime import datetime
 from tqdm import tqdm
-import windows_metadata
 from PIL import Image
 from PIL.ExifTags import TAGS
-from Libs import Defaults
+import Defaults
+import subprocess
 
 Date_dt_Format = "%Y:%m:%d %H:%M:%S"
 Exif_ID = 34665
@@ -16,6 +16,7 @@ def Change_Property_picture(File_Name_dt: datetime, File_Name: str, file_path: s
     DateTime_import = File_Name_dt.strftime(Date_dt_Format)
 
     # Extract EXIF data
+    #! Dodělat --> když fotka neobsahuje EXIF, tak se nezpracuje vůbec --> inicializovat danou strukturu (příklady --> fortky bývalek)
     exif1 = image.getexif()
 
     # Update Dates information --> change define key/values pairs
@@ -42,39 +43,35 @@ def Change_Property_picture(File_Name_dt: datetime, File_Name: str, file_path: s
     modification_time = File_Name_dt.timestamp()
     os.utime(f"{file_path}\\{File_Name}{postfix}", (creation_time, modification_time))
 
-def Change_Property_video(File_Name_dt: datetime, File_Name: str, file_path: str, Property_format:str):
-    Date_Formated = File_Name_dt.strftime(Property_format)
-    with open(file=file_path, mode="a+b") as file:
-        
-        attributes = windows_metadata.windows_metadata.WindowsAttributes(file_path)
-        
-        # Date taken 
-        try:
-            attributes["Date taken"] = Date_Formated
-        except:
-            # Create Property
-            pass
-        
-        # Media created
-        try:
-            attributes["Media created"] = Date_Formated
-        except:
-            # Create Property
-            pass
-            
-        # Date created 
-        try:
-            attributes["Date created"] = Date_Formated
-        except:
-            # Create Property
-            pass
-            
-        # Date modified
-        try:
-            attributes["Date modified"] = Date_Formated
-        except:
-            # Create Property 
-            pass
+def Change_Property_video(File_Name_dt: datetime, File_Name: str, file_path: str, postfix: str, Property_format:str):
+    input_video = f"{file_path}\\{File_Name}{postfix}"
+    output_video = f"{file_path}\\{File_Name}A{postfix}"
+    Date_Formated = File_Name_dt.strftime("%Y-%m-%dT%H:%M:%S")
+
+    #! Dodělat --> Zkontrolovat: tenhle zápis přemaže všechna jiná metadata (pokud existujou, jako je GPS ...), musím je zkopírovat a přenést
+
+    # Chaneg MetaData
+    metadata_dict = {
+        "creation_time": Date_Formated,
+        "date": Date_Formated}
+    
+    metadata_args = []
+    for key, value in metadata_dict.items():
+        metadata_args.extend(['-metadata', f'{key}={value}'])
+    
+    command = ['ffmpeg','-loglevel', 'quiet', '-i', input_video, '-c', 'copy', *metadata_args, output_video]
+    subprocess.run(command, check=True)
+
+    # Save
+    creation_time = File_Name_dt.timestamp()
+    modification_time = File_Name_dt.timestamp()
+    os.utime(path=output_video, times=(creation_time, modification_time))
+
+    # Delete Input file
+    os.remove(input_video)
+
+    # Rename Output File
+    os.rename(src=output_video, dst=input_video)
 
 
 def File_Name_Format_Check(File_Name, Name_format):
@@ -101,7 +98,7 @@ Supported_photo_formats = Defaults.Supported_photo_formats()
 Supported_video_formats = Defaults.Supported_video_formats()
 # List of files in folder
 while True:
-    Selected_path = input("Give me file path to pictures: ")
+    Selected_path = input("Give me file path to media files: ")
     Nested_Folder = input("Do you want also check nested Folders? [Y/N]: ")
     Nested_Folder = Nested_Folder.upper()
 
@@ -122,7 +119,7 @@ while True:
     Log_file = open("Logs\\Change_Metadata_Log.csv", "a", encoding="UTF-8")
 
     # Get Date for each file
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.now().strftime(Property_format)
     Data_df_TQDM = tqdm(total=int(File_Count),desc=f"{now}>> File name change from Date Taken")
     for actual_path in Nested_Path:
         Actual_Folder_list = actual_path.split("\\")
@@ -157,13 +154,13 @@ while True:
                 try:
                     File_Name_dt, Corret_Name = File_Name_Format_Check(File_Name=File_Name, Name_format=Name_format)
                     if Corret_Name == True:
-                        Change_Property_video(File_Name_dt=File_Name_dt, File_Name=File_Name, file_path=file_path, Property_format=Property_format)
+                        Change_Property_video(File_Name_dt=File_Name_dt, File_Name=File_Name, file_path=actual_path, postfix=postfix, Property_format=Property_format)
                         Data_df_TQDM.update(1) 
                     else:
                         Log_file.write(f"""Video;{Actual_Folder};{filename};File name is not in proper format\n""")
                         Data_df_TQDM.update(1) 
                         continue
-                except:
+                except Exception as error:
                     Log_file.write(f"""Video;{Actual_Folder};{filename};{error}\n""")
                     Data_df_TQDM.update(1) 
                     continue
