@@ -77,6 +77,8 @@ def Create_geojson(GEO_df: DataFrame) -> None:
 
     geojson = {"type": "FeatureCollection", "features": []}
 
+    now = datetime.now()
+    Data_df_TQDM = tqdm(total=int(GEO_df.shape[0]),desc=f"{now}>> Generating .geojson")
     for _, row in GEO_df.iterrows():
         feature = {
             "type": "Feature", 
@@ -95,6 +97,9 @@ def Create_geojson(GEO_df: DataFrame) -> None:
             }
         }
         geojson["features"].append(feature)
+        Data_df_TQDM.update(1)  
+    
+    Data_df_TQDM.close()
 
     with open(f"Exports\\{Export_File_Name}.geojson", "w") as fp:
         json.dump(geojson, fp)   
