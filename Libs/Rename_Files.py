@@ -48,7 +48,7 @@ print("""
 #--------------------------------------------------------------#
 # This program will take an metadata from pictures and viedeos # 
 # from field "Date Taken" / "Media Created" and apply it as    #
-# file name in format: %Y%m%d_%H%M%S"                          #
+# file name in format: "YYYYMMDD_hhmmss"                       #
 # - program worsk also with nested folders                     #
 # - folders name cannot contain dots .                         #
 #--------------------------------------------------------------#""")

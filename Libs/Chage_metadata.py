@@ -84,7 +84,7 @@ def File_Name_Format_Check(File_Name, Name_format):
 print("""
 #--------------------------------------------------------------#
 # This program will apply media file name from format          #
-# "%Y%m%d_%H%M%S" and apply it into these metadata:            #
+# "YYYYMMDD_hhmmss" and apply it into these metadata:          #
 # 1) Date taken                                                #
 # 2) Media created                                             #
 # 3) Date created                                              #
