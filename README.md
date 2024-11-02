@@ -59,10 +59,5 @@ This program was build to create .geojson from media files (Photos and Videos)
 > Video file types --> Under Developemnt
 
 > [!TIP]
-> ![Kepler example](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Exports/Kepler_example.html
+> ![Kepler example](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/MyTimeLine.gif
  "Kepler example")
-
-<video autoplay loop style="width:50%; height: auto; position:absolute; z-index: -1;">
-  <source src="https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/MyTimeLine.mp4" type="video/mp4" />
-  <img src="http://syddev.com/jquery.videoBG/assets/tunnel_animation.jpg">
-</video>
