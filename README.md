@@ -26,6 +26,8 @@ This program was build to harmonize media names into one format `YYYYMMDD_hhmmss
 > ![Media Rename](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Icons/Photo_rename.png?raw=true
  "Media Rename")
 
+- red --> manual steps
+- green --> automatic steps
 
 # <span style="color:blue;">Photo Meta Data Change</span>
 This program was build to update media MetaData `Date Taken`(Photos) and `Media Create`(Video) from filename in format `YYYYMMDD_hhmmss`, because of Windows sorting and Photo galerry app sorting.
@@ -36,9 +38,26 @@ This program was build to update media MetaData `Date Taken`(Photos) and `Media 
 > ![Media Dates Change](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Icons/Photo_MetaData_Change.png?raw=true
  "Media Dates Change")
 
-# <span style="color:blue;">Photo Create GEOJSON</span>
-This program was build to create .geojson from media files (Photos and Videos)
+- red --> manual steps
+- green --> automatic steps
 
 > [!CAUTION]
 > Video file types --> Under Developemnt
 
+# <span style="color:blue;">Photo Create GEOJSON</span>
+This program was build to create .geojson from media files (Photos and Videos) 
+- Also works with `Nested Folders`
+
+> [!TIP]
+> ![GEOJSON creation process](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Icons/Photo_Geojson.png?raw=true
+ "GEOJSON creation process")
+
+- red --> manual steps
+- green --> automatic steps
+
+> [!CAUTION]
+> Video file types --> Under Developemnt
+
+> [!TIP]
+> ![Kepler example](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Icons/Photo_Geojson.png?raw=true
+ "Kepler example")
