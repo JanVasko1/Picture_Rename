@@ -1,5 +1,5 @@
 # Photo Rename / change metadata
-This program was developed to make TimeSheet administration easier and harmonize it over all fo Konica Minolta employee.
+These tiny programes were developed because of media library handlig. To make it easier and to update data in batches (even for whole media library).
 
 # Setup
 ### <span style="color:blue;">Installation</span>
@@ -11,7 +11,7 @@ This program was developed to make TimeSheet administration easier and harmonize
     3. `Photo_Generate_GEO_json.bat` to reflect correct path to your python installation
 
 ### <span style="color:blue;">Process</span></span>
-![Process](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Icons/Whole_process.png?raw=true
+![Process](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/Whole_process.png?raw=true
  "Overal process")
 
 - red --> manual steps
@@ -58,6 +58,5 @@ This program was build to create .geojson from media files (Photos and Videos)
 > [!CAUTION]
 > Video file types --> Under Developemnt
 
-> [!TIP]
-> ![Kepler example](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/MyTimeLine.gif
+![Kepler example](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/MyTimeLine.gif
  "Kepler example")
