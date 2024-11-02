@@ -23,7 +23,7 @@ This program was build to harmonize media names into one format `YYYYMMDD_hhmmss
 - list of allowed postfix is in [`Defaults.py`](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Defaults.py)
 
 > [!TIP]
-> ![Media Rename](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Icons/Photo_rename.png?raw=true
+> ![Media Rename](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/Photo_rename.png?raw=true
  "Media Rename")
 
 - red --> manual steps
@@ -35,7 +35,7 @@ This program was build to update media MetaData `Date Taken`(Photos) and `Media 
 - list of allowed postfix is in [`Defaults.py`](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Defaults.py)
 
 > [!TIP]
-> ![Media Dates Change](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Icons/Photo_MetaData_Change.png?raw=true
+> ![Media Dates Change](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/Photo_MetaData_Change.png?raw=true
  "Media Dates Change")
 
 - red --> manual steps
@@ -49,7 +49,7 @@ This program was build to create .geojson from media files (Photos and Videos)
 - Also works with `Nested Folders`
 
 > [!TIP]
-> ![GEOJSON creation process](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Icons/Photo_Geojson.png?raw=true
+> ![GEOJSON creation process](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/Photo_Geojson.png?raw=true
  "GEOJSON creation process")
 
 - red --> manual steps
@@ -63,6 +63,6 @@ This program was build to create .geojson from media files (Photos and Videos)
  "Kepler example")
 
 <video autoplay loop style="width:50%; height: auto; position:absolute; z-index: -1;">
-  <source src="http://syddev.com/jquery.videoBG/assets/tunnel_animation.mp4" type="video/mp4" />
+  <source src="https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/MyTimeLine.mp4" type="video/mp4" />
   <img src="http://syddev.com/jquery.videoBG/assets/tunnel_animation.jpg">
 </video>
