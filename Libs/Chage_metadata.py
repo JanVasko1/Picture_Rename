@@ -5,10 +5,32 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 import Defaults
 import subprocess
+import piexif
 
 Date_dt_Format = "%Y:%m:%d %H:%M:%S"
 Exif_ID = 34665
 GPS_ID = 34853
+
+def Init_Picture_Exif(File_Name: str, file_path: str, postfix: str, DateTime_import:str) -> None:
+    # Read the image data using PIL
+    image = Image.open(f"{file_path}\\{File_Name}{postfix}")
+
+    exif_dict = {
+        "0th": {
+            piexif.ImageIFD.DateTime: DateTime_import ,
+            piexif.ImageIFD.PreviewDateTime: DateTime_import
+        },
+        "Exif": {
+            piexif.ExifIFD.DateTimeOriginal: DateTime_import,
+            piexif.ExifIFD.DateTimeDigitized: DateTime_import
+        }
+    }
+
+    # Convert the dictionary to bytes
+    exif_bytes = piexif.dump(exif_dict)
+
+    image.save(fp=f"{file_path}\\{File_Name}{postfix}", exif=exif_bytes)
+    image.close()
 
 def Change_Property_picture(File_Name_dt: datetime, File_Name: str, file_path: str, postfix: str) -> None:
     # Read the image data using PIL
@@ -16,8 +38,23 @@ def Change_Property_picture(File_Name_dt: datetime, File_Name: str, file_path: s
     DateTime_import = File_Name_dt.strftime(Date_dt_Format)
 
     # Extract EXIF data
-    #! Dodělat --> když fotka neobsahuje EXIF, tak se nezpracuje vůbec --> inicializovat danou strukturu (příklady --> fortky bývalek)
     exif1 = image.getexif()
+    try:
+        Date_Taken = exif1.get_ifd(tag=Exif_ID)[36867]
+    except:
+        Date_Taken = ""
+
+    # Create exif information to be thne updated
+    if Date_Taken == "":
+        image.close()
+        Init_Picture_Exif(File_Name=File_Name, file_path=file_path, postfix=postfix, DateTime_import=DateTime_import)
+        image = Image.open(f"{file_path}\\{File_Name}{postfix}")
+        DateTime_import = File_Name_dt.strftime(Date_dt_Format)
+
+        # Extract EXIF data
+        exif1 = image.getexif()
+    else:
+        pass
 
     # Update Dates information --> change define key/values pairs
     exif1.get_ifd(tag=Exif_ID)[306] = DateTime_import
@@ -91,11 +128,20 @@ print("""
 # 4) Date modified                                             #
 #--------------------------------------------------------------#""")
 
+# Update woring path
+cwd = os.getcwd()
+try:
+    cwd = cwd.replace("\\Libs", "")
+except:
+    pass
+os.chdir(cwd)
+
 # Defaults
 Name_format = "%Y%m%d_%H%M%S"
 Property_format = "%Y-%m-%d %H:%M:%S"
 Supported_photo_formats = Defaults.Supported_photo_formats()
 Supported_video_formats = Defaults.Supported_video_formats()
+
 # List of files in folder
 while True:
     Selected_path = input("Give me file path to media files: ")
@@ -113,10 +159,10 @@ while True:
         File_Count = File_Count[0]
 
     # Create Log file
-    Log_file = open("Logs\\Change_Metadata_Log.csv", "w", encoding="UTF-8")
+    Log_file = open("Libs\\Logs\\Change_Metadata_Log.csv", "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
     Log_file.close()
-    Log_file = open("Logs\\Change_Metadata_Log.csv", "a", encoding="UTF-8")
+    Log_file = open("Libs\\Logs\\Change_Metadata_Log.csv", "a", encoding="UTF-8")
 
     # Get Date for each file
     now = datetime.now().strftime(Property_format)
@@ -173,7 +219,7 @@ while True:
     Data_df_TQDM.close()
     Log_file.close()
 
-    Log_file = open("Logs\\Change_Metadata_Log.csv", "r", encoding="UTF-8")
+    Log_file = open("Libs\\Logs\\Change_Metadata_Log.csv", "r", encoding="UTF-8")
     file_contents = Log_file.read()
     print(file_contents)
     Log_file.close()
