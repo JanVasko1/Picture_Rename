@@ -3,17 +3,29 @@ import logging
 import windows_metadata
 from pandas import DataFrame
 from datetime import datetime
-from tqdm import tqdm
-import Defaults
 import lat_lon_parser
 import json
-
 
 from PIL import Image
 from PIL.ExifTags import TAGS
 
+import Libs.Defaults_Lists as Defaults_Lists
+from customtkinter import CTkProgressBar, CTk
+
 logging.basicConfig(level=logging.ERROR)
 
+# -------------------------------------------------------------------------------------------------------------------------------------------------- Set Defaults -------------------------------------------------------------------------------------------------------------------------------------------------- #
+Settings = Defaults_Lists.Load_Settings()
+
+GEO_df = DataFrame(columns=["Date", "Latitude", "Longitude", "Album" ,"Album2", "Name"])
+PIL_DateTime_Format = Settings["GEOJson"]["PIL_DateTime_Format"]
+Exif_ID = Settings["MetaData"]["Exif_ID"]
+GPS_ID = Settings["MetaData"]["GPS_ID"]
+Date_Taken_ID = Settings["MetaData"]["Date_Taken_ID"]
+Supported_photo_formats = Defaults_Lists.Supported_photo_formats()
+Supported_video_formats = Defaults_Lists.Supported_video_formats()
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def convert_to_degrees(value: tuple) -> float:
     d = float(value[0])
     m = float(value[1])
@@ -21,32 +33,32 @@ def convert_to_degrees(value: tuple) -> float:
     return d + (m / 60.0) + (s / 3600.0)
 
 def Format_DateTime_All(Original_Date_Time_str: str, DateTime_Format: str) -> datetime:
-    Orifinal_Date_Time_dt = datetime.strptime(Original_Date_Time_str, DateTime_Format)
-    return Orifinal_Date_Time_dt
+    Original_Date_Time_dt = datetime.strptime(Original_Date_Time_str, DateTime_Format)
+    return Original_Date_Time_dt
 
-def Get_Pictrue_Main_Att(file_path: str, Actual_Folder: str, filename: str) -> list|bool:
+def Get_Picture_Main_Att(file_path: str, Actual_Folder: str, filename: str, Log_file) -> list|bool:
     try:
         # Open the image file
         image = Image.open(file_path)
         exif1 = image.getexif()
-        GPS_Coordinance = exif1.get_ifd(tag=34853)
-        Date_Taken = exif1.get_ifd(tag=34665)[36867]
+        GPS_Coordinate = exif1.get_ifd(tag=GPS_ID)
+        Date_Taken = exif1.get_ifd(tag=Exif_ID)[Date_Taken_ID]
         image.close()
 
         # Convert latitude and longitude to degrees
-        Latitude = lat_lon_parser.to_dec_deg(d=GPS_Coordinance[2][0], m=GPS_Coordinance[2][1], s=GPS_Coordinance[2][2])
-        Longitude = lat_lon_parser.to_dec_deg(d=GPS_Coordinance[4][0], m=GPS_Coordinance[4][1], s=GPS_Coordinance[4][2])
+        Latitude = lat_lon_parser.to_dec_deg(d=GPS_Coordinate[2][0], m=GPS_Coordinate[2][1], s=GPS_Coordinate[2][2])
+        Longitude = lat_lon_parser.to_dec_deg(d=GPS_Coordinate[4][0], m=GPS_Coordinate[4][1], s=GPS_Coordinate[4][2])
 
-        # Latitude Update -> to be on below Equador
-        if GPS_Coordinance[1] == "N":
+        # Latitude Update -> to be on below Ecuador
+        if GPS_Coordinate[1] == "N":
             pass
-        elif GPS_Coordinance[1] == "S":
+        elif GPS_Coordinate[1] == "S":
             Latitude *= -1
 
-        # Longitude Update -> to be on Wester Hemisphear
-        if GPS_Coordinance[3] == "W":
+        # Longitude Update -> to be on Wester Hemisphere
+        if GPS_Coordinate[3] == "W":
             Longitude *= -1
-        elif GPS_Coordinance[3] == "E":
+        elif GPS_Coordinate[3] == "E":
             pass
 
         # Format the GPS coordinates -> list
@@ -58,15 +70,15 @@ def Get_Pictrue_Main_Att(file_path: str, Actual_Folder: str, filename: str) -> l
         return False
 
 def Get_Video_GEO(file_path, Actual_Folder, filename) -> list|bool:
-    #! Dodělat 
-    return False
+    # TODO --> Finish
+    return True
 
-def Get_DateTime_properties(file_path, atribute, Actual_Folder, filename):
+def Get_DateTime_properties(file_path, attribute, Actual_Folder, filename, Log_file):
     try:
         attributes = windows_metadata.windows_metadata.WindowsAttributes(file_path)
-        return attributes[atribute]
+        return attributes[attribute]
     except Exception as error:
-        Log_file.write(f"""Property Error;{Actual_Folder};{filename};Missing {atribute} in file.\n""")
+        Log_file.write(f"""Property Error;{Actual_Folder};{filename};Missing {attribute} in file.\n""")
         return False
 
 def Add_to_Dataframe(GEO_df: DataFrame, GEO_attributes: list, Date: datetime, Album: str, Album2: str, Name: str) -> None:
@@ -77,8 +89,6 @@ def Create_geojson(GEO_df: DataFrame) -> None:
 
     geojson = {"type": "FeatureCollection", "features": []}
 
-    now = datetime.now()
-    Data_df_TQDM = tqdm(total=int(GEO_df.shape[0]),desc=f"{now}>> Generating .geojson")
     for _, row in GEO_df.iterrows():
         feature = {
             "type": "Feature", 
@@ -97,60 +107,35 @@ def Create_geojson(GEO_df: DataFrame) -> None:
             }
         }
         geojson["features"].append(feature)
-        Data_df_TQDM.update(1)  
-    
-    Data_df_TQDM.close()
 
     with open(f"Exports\\{Export_File_Name}.geojson", "w") as fp:
         json.dump(geojson, fp)   
 
-# Defaults
-GEO_df = DataFrame(columns=["Date", "Latitude", "Longitude", "Album" ,"Album2", "Name"])
-PIL_DateTime_Format = "%Y:%m:%d %H:%M:%S"
-Supported_photo_formats = Defaults.Supported_photo_formats()
-Supported_video_formats = Defaults.Supported_video_formats()
+def Progress_Bar_step(window: CTk, Progress_Bar: CTkProgressBar) -> None:
+    Progress_Bar.step()
+    window.update_idletasks()
 
-print("""
-#--------------------------------------------------------------#
-# This program will take an metadata from pictures and viedeos # 
-# from field "Date Taken" GPS Coordinance create .geojson file.#
-# - program worsk also with nested folders                     #
-# - folders name cannot contain dots .                         #
-#--------------------------------------------------------------#""")
+def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> None:
+    Progress_Bar.set(value=value)
+    window.update_idletasks()
 
-# List of files in folder
-while True:
-    Selected_path = input("Give me file path to pictures: ")
-    Nested_Folder = input("Do you want also check nested Folders? [Y/N]")
-    Nested_Folder = Nested_Folder.upper()
-
-    # Create Path list 
-    if Nested_Folder == "Y":
-        # Read actual folder and folders inside
-        Nested_Path = [x[0] for x in os.walk(Selected_path)]
-        File_Count = sum([len(files) for r, d, files in os.walk(Selected_path)])
-    else:
-        Nested_Path = [Selected_path]
-        File_Count = [len(files) for r, d, files in os.walk(Selected_path)]
-        File_Count = File_Count[0]
-
+# -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
+def GEO_Json(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
     # Create Log file
-    Log_file = open("Logs\\GEO_JSON_Log.csv", "w", encoding="UTF-8")
+    Log_file = open("Libs\\Logs\\GEO_JSON_Log.csv", "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
     Log_file.close()
-    Log_file = open("Logs\\GEO_JSON_Log.csv", "a", encoding="UTF-8")
+    Log_file = open("Libs\\Logs\\GEO_JSON_Log.csv", "a", encoding="UTF-8")
     
     # Get Date for each file
-    now = datetime.now()
-    Data_df_TQDM = tqdm(total=int(File_Count),desc=f"{now}>> Getting GEO data from media.")
     for actual_path in Nested_Path:
         Actual_Folder_list = actual_path.split("\\")
         Actual_Folder = Actual_Folder_list[-1]
         Higher_Actual_Folder = Actual_Folder_list[-2]
 
         for filename in os.listdir(actual_path):
-            Nanem_split = os.path.splitext(filename)
-            postfix = Nanem_split[1]
+            Name_split = os.path.splitext(filename)
+            postfix = Name_split[1]
             file_path = os.path.join(actual_path, filename)
 
             if postfix == "":
@@ -158,44 +143,39 @@ while True:
 
             elif postfix in Supported_photo_formats:
                 try:
-                    GEO_Attributes, Date_Taken = Get_Pictrue_Main_Att(file_path=file_path, Actual_Folder=Actual_Folder, filename=filename)
+                    GEO_Attributes, Date_Taken = Get_Picture_Main_Att(file_path=file_path, Actual_Folder=Actual_Folder, filename=filename, Log_file=Log_file)
                     if GEO_Attributes != False:
-                        Formated_Date_Time =  Format_DateTime_All(Original_Date_Time_str=Date_Taken, DateTime_Format=PIL_DateTime_Format)
-                        Add_to_Dataframe(GEO_df=GEO_df, GEO_attributes=GEO_Attributes, Date=Formated_Date_Time, Album=Higher_Actual_Folder, Album2=Actual_Folder, Name=filename)
-                    Data_df_TQDM.update(1) 
+                        Formatted_Date_Time =  Format_DateTime_All(Original_Date_Time_str=Date_Taken, DateTime_Format=PIL_DateTime_Format)
+                        Add_to_Dataframe(GEO_df=GEO_df, GEO_attributes=GEO_Attributes, Date=Formatted_Date_Time, Album=Higher_Actual_Folder, Album2=Actual_Folder, Name=filename)
+                    Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
 
                 except Exception as error:
                     Log_file.write(f"""Picture;{Actual_Folder};{filename};{error}\n""")
-                    Data_df_TQDM.update(1) 
+                    Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                     continue
 
             elif postfix in Supported_video_formats:
                 try:
                     GEO_Attributes = Get_Video_GEO(file_path=file_path, Actual_Folder=Actual_Folder, filename=filename)
                     if GEO_Attributes != False:
-                        DateTime_Attributes = Get_DateTime_properties(file_path=file_path, atribute="Media created", Actual_Folder=Actual_Folder, filename=filename)
-                        Formated_Date_Time =  Format_DateTime_All(Original_Date_Time_str=DateTime_Attributes, DateTime_Format=PIL_DateTime_Format)
-                        Add_to_Dataframe(GEO_df=GEO_df, GEO_attributes=GEO_Attributes, Date=Formated_Date_Time, Album=Higher_Actual_Folder, Album2=Actual_Folder, Name=filename)
+                        DateTime_Attributes = Get_DateTime_properties(file_path=file_path, attribute="Media created", Actual_Folder=Actual_Folder, filename=filename, Log_file=Log_file)
+                        Formatted_Date_Time =  Format_DateTime_All(Original_Date_Time_str=DateTime_Attributes, DateTime_Format=PIL_DateTime_Format)
+                        Add_to_Dataframe(GEO_df=GEO_df, GEO_attributes=GEO_Attributes, Date=Formatted_Date_Time, Album=Higher_Actual_Folder, Album2=Actual_Folder, Name=filename)
 
-                    Data_df_TQDM.update(1) 
+                    Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
 
                 except:
                     Log_file.write(f"""Video;{Actual_Folder};{filename};{error}\n""")
-                    Data_df_TQDM.update(1) 
+                    Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                     continue
 
             else:
-                Log_file.write(f"""Postfix;{Actual_Folder};{filename};Not suported file type\n""")
-                Data_df_TQDM.update(1) 
+                Log_file.write(f"""Postfix;{Actual_Folder};{filename};Not supported file type\n""")
+                Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                 continue
-
-    Data_df_TQDM.close()
 
     # Create GEOJson file
     Create_geojson(GEO_df=GEO_df)
 
     Log_file.close()
-    Log_file = open("Logs\\GEO_JSON_Log.csv", "r", encoding="UTF-8")
-    file_contents = Log_file.read()
-    print(file_contents)
-    Log_file.close()
+    Progress_Bar_set(window=window, Progress_Bar=Progress_Bar, value=1) 

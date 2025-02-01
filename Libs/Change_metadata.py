@@ -1,16 +1,32 @@
 import os
+import logging
 from datetime import datetime
-from tqdm import tqdm
 from PIL import Image
 from PIL.ExifTags import TAGS
-import Defaults
 import subprocess
 import piexif
 
-Date_dt_Format = "%Y:%m:%d %H:%M:%S"
-Exif_ID = 34665
-GPS_ID = 34853
+import Libs.Defaults_Lists as Defaults_Lists
+from customtkinter import CTkProgressBar, CTk
 
+logging.basicConfig(level=logging.ERROR)
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------- Set Defaults -------------------------------------------------------------------------------------------------------------------------------------------------- #
+Settings = Defaults_Lists.Load_Settings()
+Date_dt_Format = Settings["MetaData"]["Date_dt_Format"]
+Exif_ID = Settings["MetaData"]["Exif_ID"]
+GPS_ID = Settings["MetaData"]["GPS_ID"]
+DateTime_ID = Settings["MetaData"]["DateTime_ID"]
+Date_Taken_ID = Settings["MetaData"]["Date_Taken_ID"]
+DateTimeDigitized_ID = Settings["MetaData"]["DateTimeDigitized_ID"]
+PreviewDateTime_ID = Settings["MetaData"]["PreviewDateTime_ID"]
+Name_format = Settings["General"]["File_Format"]
+Property_format = Settings["MetaData"]["Property_format"]
+
+Supported_photo_formats = Defaults_Lists.Supported_photo_formats()
+Supported_video_formats = Defaults_Lists.Supported_video_formats()
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def Init_Picture_Exif(File_Name: str, file_path: str, postfix: str, DateTime_import:str) -> None:
     # Read the image data using PIL
     image = Image.open(f"{file_path}\\{File_Name}{postfix}")
@@ -44,7 +60,7 @@ def Change_Property_picture(File_Name_dt: datetime, File_Name: str, file_path: s
     except:
         Date_Taken = ""
 
-    # Create exif information to be thne updated
+    # Create exif information to be then updated
     if Date_Taken == "":
         image.close()
         Init_Picture_Exif(File_Name=File_Name, file_path=file_path, postfix=postfix, DateTime_import=DateTime_import)
@@ -57,12 +73,12 @@ def Change_Property_picture(File_Name_dt: datetime, File_Name: str, file_path: s
         pass
 
     # Update Dates information --> change define key/values pairs
-    exif1.get_ifd(tag=Exif_ID)[306] = DateTime_import
-    exif1.get_ifd(tag=Exif_ID)[36867] = DateTime_import
-    exif1.get_ifd(tag=Exif_ID)[36868] = DateTime_import
-    exif1.get_ifd(tag=Exif_ID)[50971] = DateTime_import
+    exif1.get_ifd(tag=Exif_ID)[DateTime_ID] = DateTime_import
+    exif1.get_ifd(tag=Exif_ID)[Date_Taken_ID] = DateTime_import
+    exif1.get_ifd(tag=Exif_ID)[DateTimeDigitized_ID] = DateTime_import
+    exif1.get_ifd(tag=Exif_ID)[PreviewDateTime_ID] = DateTime_import
 
-    # Udpate GPS information --> change delete not used keys/values was wrong for CANON EOS-550
+    # Update GPS information --> change delete not used keys/values was wrong for CANON EOS-550
     gpsinfo = exif1.get_ifd(tag=GPS_ID)
     GPS_Keep_Keys = [1, 2, 3, 4 ]
     GPS_Delete_Keys = []
@@ -83,14 +99,14 @@ def Change_Property_picture(File_Name_dt: datetime, File_Name: str, file_path: s
 def Change_Property_video(File_Name_dt: datetime, File_Name: str, file_path: str, postfix: str, Property_format:str):
     input_video = f"{file_path}\\{File_Name}{postfix}"
     output_video = f"{file_path}\\{File_Name}A{postfix}"
-    Date_Formated = File_Name_dt.strftime("%Y-%m-%dT%H:%M:%S")
+    Date_Formatted = File_Name_dt.strftime("%Y-%m-%dT%H:%M:%S")
 
-    #! Dodělat --> Zkontrolovat: tenhle zápis přemaže všechna jiná metadata (pokud existujou, jako je GPS ...), musím je zkopírovat a přenést
+    # TODO --> Zkontrolovat: tenhle zápis přemaže všechna jiná metadata (pokud existujou, jako je GPS ...), musím je zkopírovat a přenést
 
-    # Chaneg MetaData
+    # Change MetaData
     metadata_dict = {
-        "creation_time": Date_Formated,
-        "date": Date_Formated}
+        "creation_time": Date_Formatted,
+        "date": Date_Formatted}
     
     metadata_args = []
     for key, value in metadata_dict.items():
@@ -117,47 +133,17 @@ def File_Name_Format_Check(File_Name, Name_format):
         return File_Name_dt, True
     except:
         return False
+    
+def Progress_Bar_step(window: CTk, Progress_Bar: CTkProgressBar) -> None:
+    Progress_Bar.step()
+    window.update_idletasks()
 
-print("""
-#--------------------------------------------------------------#
-# This program will apply media file name from format          #
-# "YYYYMMDD_hhmmss" and apply it into these metadata:          #
-# 1) Date taken                                                #
-# 2) Media created                                             #
-# 3) Date created                                              #
-# 4) Date modified                                             #
-#--------------------------------------------------------------#""")
+def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> None:
+    Progress_Bar.set(value=value)
+    window.update_idletasks()
 
-# Update woring path
-cwd = os.getcwd()
-try:
-    cwd = cwd.replace("\\Libs", "")
-except:
-    pass
-os.chdir(cwd)
-
-# Defaults
-Name_format = "%Y%m%d_%H%M%S"
-Property_format = "%Y-%m-%d %H:%M:%S"
-Supported_photo_formats = Defaults.Supported_photo_formats()
-Supported_video_formats = Defaults.Supported_video_formats()
-
-# List of files in folder
-while True:
-    Selected_path = input("Give me file path to media files: ")
-    Nested_Folder = input("Do you want also check nested Folders? [Y/N]: ")
-    Nested_Folder = Nested_Folder.upper()
-
-    # Create Path list 
-    if Nested_Folder == "Y":
-        # Read actual folder and folders inside
-        Nested_Path = [x[0] for x in os.walk(Selected_path)]
-        File_Count = sum([len(files) for r, d, files in os.walk(Selected_path)])
-    else:
-        Nested_Path = [Selected_path]
-        File_Count = [len(files) for r, d, files in os.walk(Selected_path)]
-        File_Count = File_Count[0]
-
+# -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
+def Change_Metadata(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
     # Create Log file
     Log_file = open("Libs\\Logs\\Change_Metadata_Log.csv", "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
@@ -165,16 +151,14 @@ while True:
     Log_file = open("Libs\\Logs\\Change_Metadata_Log.csv", "a", encoding="UTF-8")
 
     # Get Date for each file
-    now = datetime.now().strftime(Property_format)
-    Data_df_TQDM = tqdm(total=int(File_Count),desc=f"{now}>> File name change from Date Taken")
     for actual_path in Nested_Path:
         Actual_Folder_list = actual_path.split("\\")
         Actual_Folder = Actual_Folder_list[-1]
 
         for filename in os.listdir(actual_path):
-            Nanem_split = os.path.splitext(filename)
-            File_Name = Nanem_split[0]
-            postfix = Nanem_split[1]
+            Name_split = os.path.splitext(filename)
+            File_Name = Name_split[0]
+            postfix = Name_split[1]
             file_path = os.path.join(actual_path, filename)
 
             if postfix == "":
@@ -182,46 +166,39 @@ while True:
 
             elif postfix in Supported_photo_formats:
                 try:
-                    File_Name_dt, Corret_Name = File_Name_Format_Check(File_Name=File_Name, Name_format=Name_format)
-                    if Corret_Name == True:
+                    File_Name_dt, Correct_Name = File_Name_Format_Check(File_Name=File_Name, Name_format=Name_format)
+                    if Correct_Name == True:
                         Change_Property_picture(File_Name_dt=File_Name_dt, File_Name=File_Name, file_path=actual_path, postfix=postfix)
-                        Data_df_TQDM.update(1) 
+                        Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                     else:
                         Log_file.write(f"""Picture;{Actual_Folder};{filename};File name is not in proper format\n""")
-                        Data_df_TQDM.update(1) 
+                        Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                         continue
                     
                 except Exception as error:
                     Log_file.write(f"""Picture;{Actual_Folder};{filename};{error}\n""")
-                    Data_df_TQDM.update(1) 
+                    Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                     continue
 
             elif postfix in Supported_video_formats:
                 try:
-                    File_Name_dt, Corret_Name = File_Name_Format_Check(File_Name=File_Name, Name_format=Name_format)
-                    if Corret_Name == True:
+                    File_Name_dt, Correct_Name = File_Name_Format_Check(File_Name=File_Name, Name_format=Name_format)
+                    if Correct_Name == True:
                         Change_Property_video(File_Name_dt=File_Name_dt, File_Name=File_Name, file_path=actual_path, postfix=postfix, Property_format=Property_format)
-                        Data_df_TQDM.update(1) 
+                        Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                     else:
                         Log_file.write(f"""Video;{Actual_Folder};{filename};File name is not in proper format\n""")
-                        Data_df_TQDM.update(1) 
+                        Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                         continue
                 except Exception as error:
                     Log_file.write(f"""Video;{Actual_Folder};{filename};{error}\n""")
-                    Data_df_TQDM.update(1) 
+                    Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                     continue
 
             else:
-                Log_file.write(f"""Postfix;{Actual_Folder};{filename};Not suported file type\n""")
-                Data_df_TQDM.update(1) 
+                Log_file.write(f"""Postfix;{Actual_Folder};{filename};Not supported file type\n""")
+                Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                 continue
 
-    Data_df_TQDM.close()
     Log_file.close()
-
-    Log_file = open("Libs\\Logs\\Change_Metadata_Log.csv", "r", encoding="UTF-8")
-    file_contents = Log_file.read()
-    print(file_contents)
-    Log_file.close()
-
-    
+    Progress_Bar_set(window=window, Progress_Bar=Progress_Bar, value=1) 

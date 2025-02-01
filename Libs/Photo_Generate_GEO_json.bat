@@ -1,1 +1,0 @@
-python D:\Picture_Rename\Libs\Generate_GEO_json.py
