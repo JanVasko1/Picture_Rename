@@ -3,9 +3,9 @@ import time
 import os
 import markdown
 
-from tkinter import ttk
 import customtkinter
 from customtkinter import CTk, CTkFrame
+from CTkMessagebox import CTkMessagebox
 
 import Libs.GUI.Widgets.Pages as Pages
 import Libs.GUI.Widgets.Settings as Settings_Widgets
@@ -179,9 +179,12 @@ def Page_Metadata(Frame: CTk|CTkFrame):
         from Libs.Change_metadata import Change_Metadata
         Nested_Folder = Metadata_Widget.children["!ctkframe2"].children["!ctkframe"].children["!ctkframe3"].children["!ctkcheckbox"].get()
         Selected_path = Metadata_Widget.children["!ctkframe2"].children["!ctkframe2"].children["!ctkframe3"].children["!ctkentry"].get()
-        Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
-        Progress_Bar.configure(determinate_speed=50/File_Count)
-        Change_Metadata(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
+        if Selected_path == "":
+            CTkMessagebox(title="Error", message="No path selected.", icon="cancel", fade_in_duration=1)
+        else:
+            Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
+            Progress_Bar.configure(determinate_speed=50/File_Count)
+            Change_Metadata(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
 
     # Progress Bar
     Progress_Bar = Elements.Get_ProgressBar(Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")
@@ -205,9 +208,12 @@ def Page_Rename(Frame: CTk|CTkFrame):
         from Libs.Rename_Files import Rename_File
         Nested_Folder = Rename_Widget.children["!ctkframe2"].children["!ctkframe"].children["!ctkframe3"].children["!ctkcheckbox"].get()
         Selected_path = Rename_Widget.children["!ctkframe2"].children["!ctkframe2"].children["!ctkframe3"].children["!ctkentry"].get()
-        Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
-        Progress_Bar.configure(determinate_speed=50/File_Count)
-        Rename_File(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
+        if Selected_path == "":
+            CTkMessagebox(title="Error", message="No path selected.", icon="cancel", fade_in_duration=1)
+        else:
+            Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
+            Progress_Bar.configure(determinate_speed=50/File_Count)
+            Rename_File(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
 
     # Progress Bar
     Progress_Bar = Elements.Get_ProgressBar(Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")
@@ -231,10 +237,12 @@ def Page_Geo_Json(Frame: CTk|CTkFrame):
         from Libs.Generate_GEO_json import GEO_Json
         Nested_Folder = GeoJson_Widget.children["!ctkframe2"].children["!ctkframe"].children["!ctkframe3"].children["!ctkcheckbox"].get()
         Selected_path = GeoJson_Widget.children["!ctkframe2"].children["!ctkframe2"].children["!ctkframe3"].children["!ctkentry"].get()
-        Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
-        Progress_Bar.configure(determinate_speed=50/File_Count)
-        GEO_Json(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
-
+        if Selected_path == "":
+            CTkMessagebox(title="Error", message="No path selected.", icon="cancel", fade_in_duration=1)
+        else:
+            Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
+            Progress_Bar.configure(determinate_speed=50/File_Count)
+            GEO_Json(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
 
     # Progress Bar
     Progress_Bar = Elements.Get_ProgressBar(Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")

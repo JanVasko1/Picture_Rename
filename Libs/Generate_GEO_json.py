@@ -7,7 +7,6 @@ import lat_lon_parser
 import json
 
 from PIL import Image
-from PIL.ExifTags import TAGS
 
 import Libs.Defaults_Lists as Defaults_Lists
 from customtkinter import CTkProgressBar, CTk
