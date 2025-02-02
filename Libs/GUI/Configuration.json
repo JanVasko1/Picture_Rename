@@ -552,6 +552,31 @@
                     }
                 },
                 "Scrollable_Frames": {
+                    "Single_size": {
+                        "Accent_Color_help": [
+                            "#00A9FF",
+                            "#00A9FF"
+                        ],
+                        "width": 450,
+                        "corner_radius": 10,
+                        "border_width": 1,
+                        "border_color": [
+                            "#2C2C2C",
+                            "#FFFFFF"
+                        ],
+                        "bg_color": "transparent",
+                        "fg_color": "transparent",
+                        "orientation": "vertical",
+                        "scrollbar_fg_color": "transparent",
+                        "scrollbar_button_color": [
+                            "#2C2C2C",
+                            "#FFFFFF"
+                        ],
+                        "scrollbar_button_hover_color": [
+                            "#33BAff",
+                            "#33BAff"
+                        ]
+                    },
                     "Double_size": {
                         "Accent_Color_help": [
                             "#00A9FF",

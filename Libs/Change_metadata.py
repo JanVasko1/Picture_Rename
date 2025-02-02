@@ -22,8 +22,8 @@ PreviewDateTime_ID = Settings["MetaData"]["PreviewDateTime_ID"]
 Name_format = Settings["General"]["File_Format"]
 Property_format = Settings["MetaData"]["Property_format"]
 
-Supported_photo_formats = Defaults_Lists.Supported_photo_formats()
-Supported_video_formats = Defaults_Lists.Supported_video_formats()
+Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
+Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def Init_Picture_Exif(File_Name: str, file_path: str, postfix: str, DateTime_import:str) -> None:

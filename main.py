@@ -312,13 +312,19 @@ def Page_Settings(Frame: CTk|CTkFrame):
     TabView.pack_propagate(flag=False)
     Tab_Gen = TabView.add("General")
     Tab_Gen.pack_propagate(flag=False)
+    Tab_Formats = TabView.add("Photo formats")
+    Tab_Formats.pack_propagate(flag=False)
     TabView.set("General")
 
     Tab_Gen_ToolTip_But = TabView.children["!ctksegmentedbutton"].children["!ctkbutton"]
+    Tab_Formats_ToolTip_But = TabView.children["!ctksegmentedbutton"].children["!ctkbutton2"]
     Elements.Get_ToolTip(widget=Tab_Gen_ToolTip_But, message="Application General Setup.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(widget=Tab_Formats_ToolTip_But, message="Supported Photo formats postfixes.", ToolTip_Size="Normal")
 
     Theme_Widget = Settings_Widgets.Settings_General_Theme(Frame=Tab_Gen, window=window)
     Color_Palette_Widget = Settings_Widgets.Settings_General_Color(Frame=Tab_Gen)
+
+    Photo_Postfix_Widget = Settings_Widgets.Settings_Supported_Photo(Frame=Tab_Formats)
 
     # Build look of Widget
     Frame_Settings_Work_Detail_Area.pack(side="top", fill="none", expand=True, padx=0, pady=0)
@@ -326,6 +332,7 @@ def Page_Settings(Frame: CTk|CTkFrame):
     Theme_Widget.grid(row=0, column=0, padx=5, pady=5, sticky="nw")
     Color_Palette_Widget.grid(row=1, column=0, padx=5, pady=5, sticky="nw")
 
+    Photo_Postfix_Widget.grid(row=0, column=0, padx=5, pady=5, sticky="nw")
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Program -------------------------------------------------------------------------------------------------------------------------------------------------- #
 class Win(customtkinter.CTk):

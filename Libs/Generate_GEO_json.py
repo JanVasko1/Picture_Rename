@@ -21,8 +21,8 @@ PIL_DateTime_Format = Settings["GEOJson"]["PIL_DateTime_Format"]
 Exif_ID = Settings["MetaData"]["Exif_ID"]
 GPS_ID = Settings["MetaData"]["GPS_ID"]
 Date_Taken_ID = Settings["MetaData"]["Date_Taken_ID"]
-Supported_photo_formats = Defaults_Lists.Supported_photo_formats()
-Supported_video_formats = Defaults_Lists.Supported_video_formats()
+Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
+Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def convert_to_degrees(value: tuple) -> float:

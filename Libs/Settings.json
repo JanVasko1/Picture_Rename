@@ -1,6 +1,23 @@
 {
     "General": {
-        "File_Format": "%Y%m%d_%H%M%S"
+        "File_Format": "%Y%m%d_%H%M%S",
+        "Supported_postfix": {
+            "Photos": [
+                ".JPEG",
+                ".JPG",
+                ".jpeg",
+                ".jpg"
+            ],
+            "Videos": [
+                ".mp4",
+                ".MP4",
+                ".mov",
+                ".MOV",
+                ".avi",
+                ".AVI",
+                ".3gp"
+            ]
+        }
     },
     "MetaData": {
         "Property_format": "%Y-%m-%d %H:%M:%S",

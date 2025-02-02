@@ -12,8 +12,8 @@ logging.basicConfig(level=logging.ERROR)
 Settings = Defaults_Lists.Load_Settings()
 Export_format = Settings["General"]["File_Format"]
 Attr_format = Settings["Rename"]["Attr_format"]
-Supported_photo_formats = Defaults_Lists.Supported_photo_formats()
-Supported_video_formats = Defaults_Lists.Supported_video_formats()
+Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
+Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def Format_DateTime_All(Original_Date_Time_str, Read_format, Export_format):
