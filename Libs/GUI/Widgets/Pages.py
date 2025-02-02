@@ -91,6 +91,11 @@ def GEOJson(Frame: CTk|CTkFrame) -> CTkFrame:
     Nested_Folders_Frame_Var.configure(variable=Rename_Nested_Folder_Variable, text="")
 
     # Field - Search Text
+    GEOJson_Export_Name = Elements_Groups.Get_Widget_Input_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="File Name", Field_Type="Input_Normal") 
+    GEOJson_Export_Name_Var = GEOJson_Export_Name.children["!ctkframe3"].children["!ctkentry"]
+    GEOJson_Export_Name_Var.configure(placeholder_text="Folder path.")
+
+    # Field - Search Text
     GEOJson_Path = Elements_Groups.Get_Widget_Input_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Path", Field_Type="Input_Normal") 
     GEOJson_Path_Var = GEOJson_Path.children["!ctkframe3"].children["!ctkentry"]
     GEOJson_Path_Var.configure(placeholder_text="Folder path.")

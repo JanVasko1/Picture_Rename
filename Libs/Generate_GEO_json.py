@@ -83,9 +83,7 @@ def Get_DateTime_properties(file_path, attribute, Actual_Folder, filename, Log_f
 def Add_to_Dataframe(GEO_df: DataFrame, GEO_attributes: list, Date: datetime, Album: str, Album2: str, Name: str) -> None:
     GEO_df.loc[len(GEO_df.index)] = [Date, GEO_attributes[0], GEO_attributes[1], str(Album), str(Album2), str(Name)] 
 
-def Create_geojson(GEO_df: DataFrame) -> None:
-    Export_File_Name = input("\nGive me file name: ")
-
+def Create_geojson(GEO_df: DataFrame, Export_File_Name: str) -> None:
     geojson = {"type": "FeatureCollection", "features": []}
 
     for _, row in GEO_df.iterrows():
@@ -119,7 +117,7 @@ def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> N
     window.update_idletasks()
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def GEO_Json(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
+def GEO_Json(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar, Export_File_Name: str) -> None:
     # Create Log file
     Log_file = open("Libs\\Logs\\GEO_JSON_Log.csv", "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
@@ -174,7 +172,7 @@ def GEO_Json(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> No
                 continue
 
     # Create GEOJson file
-    Create_geojson(GEO_df=GEO_df)
+    Create_geojson(GEO_df=GEO_df, Export_File_Name=Export_File_Name)
 
     Log_file.close()
     Progress_Bar_set(window=window, Progress_Bar=Progress_Bar, value=1) 

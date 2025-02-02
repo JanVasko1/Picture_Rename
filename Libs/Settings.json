@@ -9,13 +9,14 @@
                 ".jpg"
             ],
             "Videos": [
-                ".mp4",
-                ".MP4",
-                ".mov",
-                ".MOV",
-                ".avi",
+                ".3GP",
+                ".3gp",
                 ".AVI",
-                ".3gp"
+                ".MOV",
+                ".MP4",
+                ".avi",
+                ".mov",
+                ".mp4"
             ]
         }
     },

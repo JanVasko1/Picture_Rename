@@ -165,7 +165,7 @@ def Get_Side_Bar(Side_Bar_Frame: CTk|CTkFrame, Side_Bar_Frame_Height: int) -> CT
     Side_Bar_Icon_top_pady, Side_Bar_Icon_Bottom_pady = Define_Icons_Top_Bottom_indent(Frame_Height=Side_Bar_Frame_Height, Icon_count=Icon_count, Icon_Button_Height=Icon_Button_Height, Icon_Default_pady=Icon_Default_pady, Logo_height=Logo_Height, Logo_pady=Logo_pady)
 
     # Build look of Widget
-    Active_Window.grid(row=1, column=0, padx=(10, 2), pady=Icon_Default_pady, sticky="e")
+    Active_Window.grid(row=0, column=0, padx=(10, 2), pady=(Side_Bar_Icon_top_pady, Icon_Default_pady), sticky="e")
     Icon_Frame_MetaData.grid(row=0, column=1, padx=(0, 0), pady=(Side_Bar_Icon_top_pady, Icon_Default_pady), sticky="w")
     Icon_Frame_Rename_File.grid(row=1, column=1, padx=(0, 10), pady=Icon_Default_pady, sticky="w")
     Icon_Frame_GeoJson.grid(row=2, column=1, padx=(0, 10), pady=Icon_Default_pady, sticky="w")
@@ -205,7 +205,7 @@ def Page_Metadata(Frame: CTk|CTkFrame):
 # ------------------------------------------------------------------------------------------------------------------------------------ Rename Page ------------------------------------------------------------------------------------------------------------------------------------ #
 def Page_Rename(Frame: CTk|CTkFrame):
     def Prepare_Process_Rename(Rename_Widget: CTkFrame) -> None:
-        from Libs.Rename_Files import Rename_File
+        from Libs.Rename_Files import Rename_Files
         Nested_Folder = Rename_Widget.children["!ctkframe2"].children["!ctkframe"].children["!ctkframe3"].children["!ctkcheckbox"].get()
         Selected_path = Rename_Widget.children["!ctkframe2"].children["!ctkframe2"].children["!ctkframe3"].children["!ctkentry"].get()
         if Selected_path == "":
@@ -213,7 +213,7 @@ def Page_Rename(Frame: CTk|CTkFrame):
         else:
             Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
             Progress_Bar.configure(determinate_speed=50/File_Count)
-            Rename_File(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
+            Rename_Files(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
 
     # Progress Bar
     Progress_Bar = Elements.Get_ProgressBar(Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")
@@ -236,13 +236,14 @@ def Page_Geo_Json(Frame: CTk|CTkFrame):
     def Prepare_Process_GeoJson(GeoJson_Widget: CTkFrame) -> None:
         from Libs.Generate_GEO_json import GEO_Json
         Nested_Folder = GeoJson_Widget.children["!ctkframe2"].children["!ctkframe"].children["!ctkframe3"].children["!ctkcheckbox"].get()
-        Selected_path = GeoJson_Widget.children["!ctkframe2"].children["!ctkframe2"].children["!ctkframe3"].children["!ctkentry"].get()
+        Export_File_Name = GeoJson_Widget.children["!ctkframe2"].children["!ctkframe2"].children["!ctkframe3"].children["!ctkentry"].get()
+        Selected_path = GeoJson_Widget.children["!ctkframe2"].children["!ctkframe3"].children["!ctkframe3"].children["!ctkentry"].get()
         if Selected_path == "":
             CTkMessagebox(title="Error", message="No path selected.", icon="cancel", fade_in_duration=1)
         else:
             Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
             Progress_Bar.configure(determinate_speed=50/File_Count)
-            GEO_Json(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
+            GEO_Json(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar, Export_File_Name=Export_File_Name)
 
     # Progress Bar
     Progress_Bar = Elements.Get_ProgressBar(Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")
@@ -254,7 +255,7 @@ def Page_Geo_Json(Frame: CTk|CTkFrame):
     Frame_GEOJSON_Work_Detail_Area.grid_propagate(flag=False)
 
     GeoJson_Widget = Pages.GEOJson(Frame=Frame_GEOJSON_Work_Detail_Area)
-    GeoJson_Process_var = GeoJson_Widget.children["!ctkframe2"].children["!ctkframe3"].children["!ctkframe"].children["!ctkbutton"]
+    GeoJson_Process_var = GeoJson_Widget.children["!ctkframe2"].children["!ctkframe4"].children["!ctkframe"].children["!ctkbutton"]
     GeoJson_Process_var.configure(command = lambda: Prepare_Process_GeoJson(GeoJson_Widget=GeoJson_Widget))
 
     Frame_GEOJSON_Work_Detail_Area.pack(side="top", fill="none", expand=True, padx=0, pady=0)
@@ -312,19 +313,25 @@ def Page_Settings(Frame: CTk|CTkFrame):
     TabView.pack_propagate(flag=False)
     Tab_Gen = TabView.add("General")
     Tab_Gen.pack_propagate(flag=False)
-    Tab_Formats = TabView.add("Photo formats")
-    Tab_Formats.pack_propagate(flag=False)
+    Tab_Photos = TabView.add("Photo formats")
+    Tab_Photos.pack_propagate(flag=False)
+    Tab_Videos = TabView.add("Video formats")
+    Tab_Videos.pack_propagate(flag=False)
     TabView.set("General")
 
     Tab_Gen_ToolTip_But = TabView.children["!ctksegmentedbutton"].children["!ctkbutton"]
-    Tab_Formats_ToolTip_But = TabView.children["!ctksegmentedbutton"].children["!ctkbutton2"]
+    Tab_Photos_ToolTip_But = TabView.children["!ctksegmentedbutton"].children["!ctkbutton2"]
+    Tab_Videos_ToolTip_But = TabView.children["!ctksegmentedbutton"].children["!ctkbutton2"]
     Elements.Get_ToolTip(widget=Tab_Gen_ToolTip_But, message="Application General Setup.", ToolTip_Size="Normal")
-    Elements.Get_ToolTip(widget=Tab_Formats_ToolTip_But, message="Supported Photo formats postfixes.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(widget=Tab_Photos_ToolTip_But, message="Supported Photo formats postfixes.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(widget=Tab_Videos_ToolTip_But, message="Supported Photo formats postfixes.", ToolTip_Size="Normal")
 
     Theme_Widget = Settings_Widgets.Settings_General_Theme(Frame=Tab_Gen, window=window)
     Color_Palette_Widget = Settings_Widgets.Settings_General_Color(Frame=Tab_Gen)
 
-    Photo_Postfix_Widget = Settings_Widgets.Settings_Supported_Photo(Frame=Tab_Formats)
+    Photo_Postfix_Widget = Settings_Widgets.Settings_Supported_Photo(Frame=Tab_Photos)
+
+    Video_Postfix_Widget = Settings_Widgets.Settings_Supported_Video(Frame=Tab_Videos)
 
     # Build look of Widget
     Frame_Settings_Work_Detail_Area.pack(side="top", fill="none", expand=True, padx=0, pady=0)
@@ -333,6 +340,8 @@ def Page_Settings(Frame: CTk|CTkFrame):
     Color_Palette_Widget.grid(row=1, column=0, padx=5, pady=5, sticky="nw")
 
     Photo_Postfix_Widget.grid(row=0, column=0, padx=5, pady=5, sticky="nw")
+
+    Video_Postfix_Widget.grid(row=0, column=0, padx=5, pady=5, sticky="nw")
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Program -------------------------------------------------------------------------------------------------------------------------------------------------- #
 class Win(customtkinter.CTk):

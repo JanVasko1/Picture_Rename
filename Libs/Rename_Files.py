@@ -23,7 +23,7 @@ def Format_DateTime_All(Original_Date_Time_str, Read_format, Export_format):
     Formatted_Date_Time = Original_Date_Time_dt.strftime(Export_format)
     return Formatted_Date_Time
 
-def Rename_File(actual_path, Formatted_Date_Time, postfix, Export_format):
+def Rename_File(file_path, actual_path, Formatted_Date_Time, postfix, Export_format):
     add_second = 0  # Because of Take_Date duplicity and this parameter prevents that done for each file separately
     try:
         os.rename(file_path, os.path.join(actual_path, f"{Formatted_Date_Time}{postfix}"))
@@ -56,7 +56,7 @@ def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> N
     window.update_idletasks()
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def Rename_File(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
+def Rename_Files(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
     # Create Log file
     Log_file = open("Libs\\Logs\\Rename_Files_Log.csv", "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
@@ -83,7 +83,7 @@ def Rename_File(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) ->
                         Formatted_Date_Time =  Format_DateTime_All(Original_Date_Time_str=Original_Date_Time_str, Read_format=Attr_format, Export_format=Export_format)
                     
                         # Rename File
-                        Rename_File(actual_path=actual_path, Formatted_Date_Time=Formatted_Date_Time, postfix=postfix, Export_format=Export_format)
+                        Rename_File(file_path=file_path, actual_path=actual_path, Formatted_Date_Time=Formatted_Date_Time, postfix=postfix, Export_format=Export_format)
                     Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
 
                 except Exception as error:
@@ -98,7 +98,7 @@ def Rename_File(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) ->
                         Formatted_Date_Time =  Format_DateTime_All(Original_Date_Time_str=Original_Date_Time_str, Read_format=Attr_format, Export_format=Export_format)
 
                         # Rename File
-                        Rename_File(actual_path=actual_path, Formatted_Date_Time=Formatted_Date_Time, postfix=postfix, Export_format=Export_format)
+                        Rename_File(file_path=file_path, actual_path=actual_path, Formatted_Date_Time=Formatted_Date_Time, postfix=postfix, Export_format=Export_format)
                     Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
 
                 except:

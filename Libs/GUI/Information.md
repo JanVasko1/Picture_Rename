@@ -13,8 +13,7 @@ These tiny programs were developed because of media library handling. To make it
     3. `Photo_Generate_GEO_json.bat` to reflect correct path to your python installation
 
 ### <span style="color:blue;">Process</span></span>
-![Process](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/Whole_process.png?raw=true
- "Overall process")
+![Process](Libs\\Readme\\Whole_process.png)
 
 - red --> manual steps
 - green --> automatic steps
@@ -25,8 +24,7 @@ This program was build to harmonize media names into one format `YYYYMMDD_hhmmss
 - list of allowed postfix is in [`Defaults.py`](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Defaults.py)
 
 > [!TIP]
-> ![Media Rename](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/Photo_rename.png?raw=true
- "Media Rename")
+> ![Media Rename](Libs\\Readme\\Photo_rename.png)
 
 - red --> manual steps
 - green --> automatic steps
@@ -37,9 +35,7 @@ This program was build to update media MetaData `Date Taken`(Photos) and `Media 
 - list of allowed postfix is in [`Defaults.py`](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Defaults.py)
 
 > [!TIP]
-> ![Media Dates Change](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/Photo_MetaData_Change.png?raw=true
- "Media Dates Change")
-
+> ![Media Dates Change](Libs\\Readme\\Photo_MetaData_Change.png)
 - red --> manual steps
 - green --> automatic steps
 
@@ -51,8 +47,7 @@ This program was build to create .geojson from media files (Photos and Videos)
 - Also works with `Nested Folders`
 
 > [!TIP]
-> ![GEOJSON creation process](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/Photo_Geojson.png?raw=true
- "GEOJSON creation process")
+> ![GEOJSON creation process](Libs\\Readme\\Photo_Geojson.png)
 
 - red --> manual steps
 - green --> automatic steps
@@ -60,5 +55,4 @@ This program was build to create .geojson from media files (Photos and Videos)
 > [!CAUTION]
 > Video file types --> Under Development
 
-![Kepler example](https://github.com/JanVasko1/Picture_Rename/blob/main/Libs/Readme/MyTimeLine.gif
- "Kepler example")
+![Kepler example](Libs\\Readme\\MyTimeLine.gif)

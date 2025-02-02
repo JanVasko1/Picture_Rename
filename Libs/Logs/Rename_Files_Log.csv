@@ -1,8 +1,1 @@
 Type;Folder;File;Error
-Picture;test;a.jpg;Rename_File() got an unexpected keyword argument 'actual_path'
-Picture;test;b.jpg;Rename_File() got an unexpected keyword argument 'actual_path'
-Picture;test;c.jpg;Rename_File() got an unexpected keyword argument 'actual_path'
-Picture;test;d.jpg;Rename_File() got an unexpected keyword argument 'actual_path'
-Picture;test;e.jpg;Rename_File() got an unexpected keyword argument 'actual_path'
-Picture;test;f.jpg;Rename_File() got an unexpected keyword argument 'actual_path'
-Picture;test;h.jpg;Rename_File() got an unexpected keyword argument 'actual_path'
