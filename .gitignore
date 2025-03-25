@@ -1,4 +1,7 @@
 .VSCodeCounter/
 .vscode/
 Exports/
+build/
+dist/
 __pycache__
+PhotoManage.spec

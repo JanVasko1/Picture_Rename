@@ -15,14 +15,6 @@ from tkhtmlview import HTMLLabel
 
 import Libs.Defaults_Lists as Defaults_Lists
 
-# ------------------------------------------------------------------------------------------------------------------------------------ Set Defaults ------------------------------------------------------------------------------------------------------------------------------------ #
-Configuration = Defaults_Lists.Load_Configuration() 
-
-Win_Style_Actual = Configuration["Global_Appearance"]["Window"]["Style"]
-Theme_Actual = Configuration["Global_Appearance"]["Window"]["Theme"]
-
-SideBar_Width = Configuration["Frames"]["Page_Frames"]["SideBar"]["width"]
-
 # ------------------------------------------------------------------------------------------------------------------------------------ Local Functions ------------------------------------------------------------------------------------------------------------------------------------ #
 def Get_Current_Theme() -> str:
     Current_Theme = customtkinter.get_appearance_mode()
@@ -56,10 +48,10 @@ def Get_Header(Frame: CTk|CTkFrame) -> CTkFrame:
 
     # ------------------------- Main Functions -------------------------#
     # Theme Change - Button
-    Icon_Theme = Elements.Get_Button_Icon(Frame=Frame, Icon_Set="lucide", Icon_Name="sun-moon", Icon_Size="Header", Button_Size="Picture_Theme")
+    Icon_Theme = Elements.Get_Button_Icon(Configuration=Configuration, Frame=Frame, Icon_Set="lucide", Icon_Name="sun-moon", Icon_Size="Header", Button_Size="Picture_Theme")
     Icon_Theme.configure(text="")
     Icon_Theme.configure(command = lambda: Theme_Change())
-    Elements.Get_ToolTip(widget=Icon_Theme, message="Change theme.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Icon_Theme, message="Change theme.", ToolTip_Size="Normal")
 
     # Build look of Widget
     Icon_Theme.pack(side="right", fill="none", expand=False, padx=5, pady=5)
@@ -129,37 +121,37 @@ def Get_Side_Bar(Side_Bar_Frame: CTk|CTkFrame, Side_Bar_Frame_Height: int) -> CT
         return Side_Bar_Icon_top_pady, Side_Bar_Icon_Bottom_pady
 
     # ------------------------- Main Functions -------------------------#
-    Active_Window = Elements.Get_Frame(Frame=Side_Bar_Frame, Frame_Size="SideBar_active")
+    Active_Window = Elements.Get_Frame(Configuration=Configuration, Frame=Side_Bar_Frame, Frame_Size="SideBar_active")
 
     # Page - Metadata
-    Icon_Frame_MetaData = Elements.Get_Button_Icon(Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="replace", Icon_Size="Side_Bar_regular", Button_Size="Picture_SideBar")
+    Icon_Frame_MetaData = Elements.Get_Button_Icon(Configuration=Configuration, Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="replace", Icon_Size="Side_Bar_regular", Button_Size="Picture_SideBar")
     Icon_Frame_MetaData.configure(command = lambda: Show_ChangeMetaData_Page(Active_Window = Active_Window, Side_Bar_Row=0))    
-    Elements.Get_ToolTip(widget=Icon_Frame_MetaData, message="Change metadata photo / video file.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Icon_Frame_MetaData, message="Change metadata photo / video file.", ToolTip_Size="Normal")
 
     # Page - REname file
-    Icon_Frame_Rename_File = Elements.Get_Button_Icon(Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="file-pen", Icon_Size="Side_Bar_regular", Button_Size="Picture_SideBar")
+    Icon_Frame_Rename_File = Elements.Get_Button_Icon(Configuration=Configuration, Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="file-pen", Icon_Size="Side_Bar_regular", Button_Size="Picture_SideBar")
     Icon_Frame_Rename_File.configure(command = lambda: Show_RenameFile_Page(Active_Window = Active_Window, Side_Bar_Row=1))
-    Elements.Get_ToolTip(widget=Icon_Frame_Rename_File, message="Rename File.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Icon_Frame_Rename_File, message="Rename File.", ToolTip_Size="Normal")
 
     # Page - Data
-    Icon_Frame_GeoJson = Elements.Get_Button_Icon(Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="map-pin", Icon_Size="Side_Bar_regular", Button_Size="Picture_SideBar")
+    Icon_Frame_GeoJson = Elements.Get_Button_Icon(Configuration=Configuration, Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="map-pin", Icon_Size="Side_Bar_regular", Button_Size="Picture_SideBar")
     Icon_Frame_GeoJson.configure(command = lambda: Show_GEOJSON_Page(Active_Window = Active_Window, Side_Bar_Row=2))
-    Elements.Get_ToolTip(widget=Icon_Frame_GeoJson, message="GEO Json creation.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Icon_Frame_GeoJson, message="GEO Json creation.", ToolTip_Size="Normal")
 
     # Page - Information
-    Icon_Frame_Information = Elements.Get_Button_Icon(Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="info", Icon_Size="Side_Bar_regular", Button_Size="Picture_SideBar")
+    Icon_Frame_Information = Elements.Get_Button_Icon(Configuration=Configuration, Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="info", Icon_Size="Side_Bar_regular", Button_Size="Picture_SideBar")
     Icon_Frame_Information.configure(command = lambda: Show_Information_Page(Active_Window = Active_Window, Side_Bar_Row=3))
-    Elements.Get_ToolTip(widget=Icon_Frame_Information, message="Information page.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Icon_Frame_Information, message="Information page.", ToolTip_Size="Normal")
 
     # Page - Settings
-    Icon_Frame_Settings = Elements.Get_Button_Icon(Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="settings", Icon_Size="Side_Bar_regular", Button_Size="Picture_SideBar")
+    Icon_Frame_Settings = Elements.Get_Button_Icon(Configuration=Configuration, Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="settings", Icon_Size="Side_Bar_regular", Button_Size="Picture_SideBar")
     Icon_Frame_Settings.configure(command = lambda: Show_Settings_Page(Active_Window = Active_Window, Side_Bar_Row=4))
-    Elements.Get_ToolTip(widget=Icon_Frame_Settings, message="Settings page.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Icon_Frame_Settings, message="Settings page.", ToolTip_Size="Normal")
 
     # Close Application
-    Icon_Frame_Close = Elements.Get_Button_Icon(Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="power", Icon_Size="Side_Bar_close", Button_Size="Picture_SideBar")
+    Icon_Frame_Close = Elements.Get_Button_Icon(Configuration=Configuration, Frame=Side_Bar_Frame, Icon_Set="lucide", Icon_Name="power", Icon_Size="Side_Bar_close", Button_Size="Picture_SideBar")
     Icon_Frame_Close.configure(command = lambda: window.quit())
-    Elements.Get_ToolTip(widget=Icon_Frame_Close, message="Close.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Icon_Frame_Close, message="Close.", ToolTip_Size="Normal")
 
     # Define intend
     Side_Bar_Icon_top_pady, Side_Bar_Icon_Bottom_pady = Define_Icons_Top_Bottom_indent(Frame_Height=Side_Bar_Frame_Height, Icon_count=Icon_count, Icon_Button_Height=Icon_Button_Height, Icon_Default_pady=Icon_Default_pady, Logo_height=Logo_Height, Logo_pady=Logo_pady)
@@ -184,18 +176,18 @@ def Page_Metadata(Frame: CTk|CTkFrame):
         else:
             Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
             Progress_Bar.configure(determinate_speed=50/File_Count)
-            Change_Metadata(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
+            Change_Metadata(Settings=Settings, Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
 
     # Progress Bar
-    Progress_Bar = Elements.Get_ProgressBar(Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")
+    Progress_Bar = Elements.Get_ProgressBar(Configuration=Configuration, Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")
     Progress_Bar.set(value=0)
     Progress_Bar.pack(side="top", fill="none", expand=False, padx=5, pady=5)
 
     # ------------------------- Main Functions -------------------------#
-    Frame_MetaData_Work_Detail_Area = Elements.Get_Frame(Frame=Frame, Frame_Size="Work_Area_Detail")
+    Frame_MetaData_Work_Detail_Area = Elements.Get_Frame(Configuration=Configuration, Frame=Frame, Frame_Size="Work_Area_Detail")
     Frame_MetaData_Work_Detail_Area.grid_propagate(flag=False)
 
-    Metadata_Widget = Pages.Metadata(Frame=Frame_MetaData_Work_Detail_Area)
+    Metadata_Widget = Pages.Metadata(Settings=Settings, Configuration=Configuration, Frame=Frame_MetaData_Work_Detail_Area)
     Metadata_Process_var = Metadata_Widget.children["!ctkframe2"].children["!ctkframe3"].children["!ctkframe"].children["!ctkbutton"]
     Metadata_Process_var.configure(command = lambda: Prepare_Process_Metadata(Metadata_Widget=Metadata_Widget))
 
@@ -213,18 +205,18 @@ def Page_Rename(Frame: CTk|CTkFrame):
         else:
             Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
             Progress_Bar.configure(determinate_speed=50/File_Count)
-            Rename_Files(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
+            Rename_Files(Settings=Settings, Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar)
 
     # Progress Bar
-    Progress_Bar = Elements.Get_ProgressBar(Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")
+    Progress_Bar = Elements.Get_ProgressBar(Configuration=Configuration, Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")
     Progress_Bar.set(value=0)
     Progress_Bar.pack(side="top", fill="none", expand=False, padx=5, pady=5)
 
     # ------------------------- Main Functions -------------------------#
-    Frame_Rename_Work_Detail_Area = Elements.Get_Frame(Frame=Frame, Frame_Size="Work_Area_Detail")
+    Frame_Rename_Work_Detail_Area = Elements.Get_Frame(Configuration=Configuration, Frame=Frame, Frame_Size="Work_Area_Detail")
     Frame_Rename_Work_Detail_Area.grid_propagate(flag=False)
 
-    Rename_Widget = Pages.Rename(Frame=Frame_Rename_Work_Detail_Area)
+    Rename_Widget = Pages.Rename(Settings=Settings, Configuration=Configuration, Frame=Frame_Rename_Work_Detail_Area)
     Rename_Process_var = Rename_Widget.children["!ctkframe2"].children["!ctkframe3"].children["!ctkframe"].children["!ctkbutton"]
     Rename_Process_var.configure(command = lambda: Prepare_Process_Rename(Rename_Widget=Rename_Widget))
     
@@ -243,18 +235,18 @@ def Page_Geo_Json(Frame: CTk|CTkFrame):
         else:
             Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
             Progress_Bar.configure(determinate_speed=50/File_Count)
-            GEO_Json(Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar, Export_File_Name=Export_File_Name)
+            GEO_Json(Settings=Settings, Nested_Path=Nested_Path, window=window, Progress_Bar=Progress_Bar, Export_File_Name=Export_File_Name)
 
     # Progress Bar
-    Progress_Bar = Elements.Get_ProgressBar(Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")
+    Progress_Bar = Elements.Get_ProgressBar(Configuration=Configuration, Frame=Frame, orientation="Horizontal", Progress_Size="Download_Process")
     Progress_Bar.set(value=0)
     Progress_Bar.pack(side="top", fill="none", expand=False, padx=5, pady=5)
 
     # ------------------------- Main Functions -------------------------#
-    Frame_GEOJSON_Work_Detail_Area = Elements.Get_Frame(Frame=Frame, Frame_Size="Work_Area_Detail")
+    Frame_GEOJSON_Work_Detail_Area = Elements.Get_Frame(Configuration=Configuration, Frame=Frame, Frame_Size="Work_Area_Detail")
     Frame_GEOJSON_Work_Detail_Area.grid_propagate(flag=False)
 
-    GeoJson_Widget = Pages.GEOJson(Frame=Frame_GEOJSON_Work_Detail_Area)
+    GeoJson_Widget = Pages.GEOJson(Settings=Settings, Configuration=Configuration, Frame=Frame_GEOJSON_Work_Detail_Area)
     GeoJson_Process_var = GeoJson_Widget.children["!ctkframe2"].children["!ctkframe4"].children["!ctkframe"].children["!ctkbutton"]
     GeoJson_Process_var.configure(command = lambda: Prepare_Process_GeoJson(GeoJson_Widget=GeoJson_Widget))
 
@@ -268,7 +260,7 @@ def Page_Information(Frame: CTk|CTkFrame):
     Work_Area_Detail_Font = Configuration["Labels"]["Main"]["text_color"]
 
     # ------------------------- Main Functions -------------------------#
-    Frame_Information_Work_Detail_Area = Elements.Get_Frame(Frame=Frame, Frame_Size="Work_Area_Detail")
+    Frame_Information_Work_Detail_Area = Elements.Get_Frame(Configuration=Configuration, Frame=Frame, Frame_Size="Work_Area_Detail")
     Frame_Information_Work_Detail_Area.grid_propagate(flag=False)
 
     # Get Theme --> because of background color
@@ -289,9 +281,9 @@ def Page_Information(Frame: CTk|CTkFrame):
 
     # ------------------------- Info Text Area -------------------------#
     # Description
-    Frame_Information_Scrollable_Area = Elements.Get_Widget_Scrollable_Frame(Frame=Frame_Information_Work_Detail_Area, Frame_Size="Triple_size")
+    Frame_Information_Scrollable_Area = Elements.Get_Widget_Scrollable_Frame(Configuration=Configuration, Frame=Frame_Information_Work_Detail_Area, Frame_Size="Triple_size")
 
-    with open("Libs\\GUI\\Information.md", "r", encoding="UTF-8") as file:
+    with open(Defaults_Lists.Absolute_path(relative_path="Libs\\GUI\\Information.md"), "r", encoding="UTF-8") as file:
         html_markdown=markdown.markdown( file.read())
     file.close()
 
@@ -305,11 +297,11 @@ def Page_Information(Frame: CTk|CTkFrame):
 
 def Page_Settings(Frame: CTk|CTkFrame):
     # ------------------------- Main Functions -------------------------#
-    Frame_Settings_Work_Detail_Area = Elements.Get_Frame(Frame=Frame, Frame_Size="Work_Area_Detail")
+    Frame_Settings_Work_Detail_Area = Elements.Get_Frame(Configuration=Configuration, Frame=Frame, Frame_Size="Work_Area_Detail")
     Frame_Settings_Work_Detail_Area.grid_propagate(flag=False)
 
     # Tab View
-    TabView = Elements.Get_Tab_View(Frame=Frame_Settings_Work_Detail_Area, Tab_size="Normal")
+    TabView = Elements.Get_Tab_View(Configuration=Configuration, Frame=Frame_Settings_Work_Detail_Area, Tab_size="Normal")
     TabView.pack_propagate(flag=False)
     Tab_Gen = TabView.add("General")
     Tab_Gen.pack_propagate(flag=False)
@@ -322,16 +314,16 @@ def Page_Settings(Frame: CTk|CTkFrame):
     Tab_Gen_ToolTip_But = TabView.children["!ctksegmentedbutton"].children["!ctkbutton"]
     Tab_Photos_ToolTip_But = TabView.children["!ctksegmentedbutton"].children["!ctkbutton2"]
     Tab_Videos_ToolTip_But = TabView.children["!ctksegmentedbutton"].children["!ctkbutton2"]
-    Elements.Get_ToolTip(widget=Tab_Gen_ToolTip_But, message="Application General Setup.", ToolTip_Size="Normal")
-    Elements.Get_ToolTip(widget=Tab_Photos_ToolTip_But, message="Supported Photo formats postfixes.", ToolTip_Size="Normal")
-    Elements.Get_ToolTip(widget=Tab_Videos_ToolTip_But, message="Supported Photo formats postfixes.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Tab_Gen_ToolTip_But, message="Application General Setup.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Tab_Photos_ToolTip_But, message="Supported Photo formats postfixes.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Tab_Videos_ToolTip_But, message="Supported Photo formats postfixes.", ToolTip_Size="Normal")
 
-    Theme_Widget = Settings_Widgets.Settings_General_Theme(Frame=Tab_Gen, window=window)
-    Color_Palette_Widget = Settings_Widgets.Settings_General_Color(Frame=Tab_Gen)
+    Theme_Widget = Settings_Widgets.Settings_General_Theme(Settings=Settings, Configuration=Configuration, Frame=Tab_Gen, window=window)
+    Color_Palette_Widget = Settings_Widgets.Settings_General_Color(Settings=Settings, Configuration=Configuration, Frame=Tab_Gen)
 
-    Photo_Postfix_Widget = Settings_Widgets.Settings_Supported_Photo(Frame=Tab_Photos)
+    Photo_Postfix_Widget = Settings_Widgets.Settings_Supported_Photo(Settings=Settings, Configuration=Configuration, Frame=Tab_Photos)
 
-    Video_Postfix_Widget = Settings_Widgets.Settings_Supported_Video(Frame=Tab_Videos)
+    Video_Postfix_Widget = Settings_Widgets.Settings_Supported_Video(Settings=Settings, Configuration=Configuration, Frame=Tab_Videos)
 
     # Build look of Widget
     Frame_Settings_Work_Detail_Area.pack(side="top", fill="none", expand=True, padx=0, pady=0)
@@ -349,7 +341,7 @@ class Win(customtkinter.CTk):
         super().__init__()
         super().overrideredirect(True)
         super().title("Time Sheet Downloader")
-        super().iconbitmap(bitmap=f"Libs\\GUI\\Icons\\Logo.ico")
+        super().iconbitmap(bitmap=Defaults_Lists.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\Logo.ico"))
         self._offsetx = 0
         self._offsety = 0
         super().bind("<Button-1>",self.click_win)
@@ -370,6 +362,19 @@ class Win(customtkinter.CTk):
 
 
 if __name__ == "__main__":
+    Settings = Defaults_Lists.Load_Settings()
+    Configuration = Defaults_Lists.Load_Configuration() 
+
+    Win_Style_Actual = Configuration["Global_Appearance"]["Window"]["Style"]
+    Theme_Actual = Configuration["Global_Appearance"]["Window"]["Theme"]
+    SideBar_Width = Configuration["Frames"]["Page_Frames"]["SideBar"]["width"]
+
+    # Create folders if do not exists
+    try:
+        os.mkdir(Defaults_Lists.Absolute_path(relative_path=f"Exports\\"))
+    except:
+        pass
+
     window = Win()
     display_width = window.winfo_screenwidth()
     display_height = window.winfo_screenheight()
@@ -390,22 +395,22 @@ if __name__ == "__main__":
 
     # ---------------------------------- Content ----------------------------------#
     # Background
-    Frame_Background = Elements.Get_Frame(Frame=window, Frame_Size="Background")
+    Frame_Background = Elements.Get_Frame(Configuration=Configuration, Frame=window, Frame_Size="Background")
     Frame_Background.pack(side="top", fill="none", expand=False)
 
     # SideBar
-    Frame_Side_Bar = Elements.Get_SideBar_Frame(Frame=Frame_Background, Frame_Size="SideBar")
+    Frame_Side_Bar = Elements.Get_SideBar_Frame(Configuration=Configuration, Frame=Frame_Background, Frame_Size="SideBar")
     Frame_Side_Bar.pack(side="left", fill="y", expand=False)
 
     # Work Area
-    Frame_Work_Area = Elements.Get_Frame(Frame=Frame_Background, Frame_Size="Work_Area")
+    Frame_Work_Area = Elements.Get_Frame(Configuration=Configuration, Frame=Frame_Background, Frame_Size="Work_Area")
     Frame_Work_Area.pack(side="top", fill="both", expand=False)
 
-    Frame_Header = Elements.Get_Frame(Frame=Frame_Work_Area, Frame_Size="Work_Area_Header")
+    Frame_Header = Elements.Get_Frame(Configuration=Configuration, Frame=Frame_Work_Area, Frame_Size="Work_Area_Header")
     Frame_Header.pack_propagate(flag=False)
     Frame_Header.pack(side="top", fill="both", expand=False)
 
-    Frame_Work_Area_Detail = Elements.Get_Frame(Frame=Frame_Work_Area, Frame_Size="Work_Area_Main")
+    Frame_Work_Area_Detail = Elements.Get_Frame(Configuration=Configuration, Frame=Frame_Work_Area, Frame_Size="Work_Area_Main")
     Frame_Work_Area_Detail.pack_propagate(flag=False)
     Frame_Work_Area_Detail.pack(side="left", fill="none", expand=False)
 

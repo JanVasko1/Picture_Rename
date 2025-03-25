@@ -9,25 +9,6 @@ from customtkinter import CTk, CTkFrame, CTkEntry, StringVar, IntVar, BooleanVar
 from CTkMessagebox import CTkMessagebox
 from CTkTable import CTkTable
 
-# -------------------------------------------------------------------------------------------------------------------------------------------------- Set Defaults -------------------------------------------------------------------------------------------------------------------------------------------------- #
-Settings = Defaults_Lists.Load_Settings()
-Supported_Photo_postfix_list = list(Settings["General"]["Supported_postfix"]["Photos"])
-Supported_Video_postfix_list = list(Settings["General"]["Supported_postfix"]["Videos"])
-
-# Appearance
-Configuration = Defaults_Lists.Load_Configuration() 
-Theme_Actual = Configuration["Global_Appearance"]["Window"]["Theme"]
-Theme_List = list(Configuration["Global_Appearance"]["Window"]["Theme_List"])
-Win_Style_Actual = Configuration["Global_Appearance"]["Window"]["Style"]
-Win_Style_List = list(Configuration["Global_Appearance"]["Window"]["Style_List"])
-Accent_Color_Mode = Configuration["Global_Appearance"]["Window"]["Colors"]["Accent"]["Accent_Color_Mode"]
-Accent_Color_Mode_List = list(Configuration["Global_Appearance"]["Window"]["Colors"]["Accent"]["Accent_Color_List"])
-Accent_Color_Manual = Configuration["Global_Appearance"]["Window"]["Colors"]["Accent"]["Accent_Color_Manual"]
-
-Hover_Color_Mode = Configuration["Global_Appearance"]["Window"]["Colors"]["Hover"]["Hover_Color_Mode"]
-Hover_Color_Mode_List = list(Configuration["Global_Appearance"]["Window"]["Colors"]["Hover"]["Hover_Color_List"])
-Hover_Color_Manual = Configuration["Global_Appearance"]["Window"]["Colors"]["Hover"]["Hover_Color_Manual"]
-
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def Field_Update_Value(Variable: StringVar|IntVar|BooleanVar|None, File_Name: str, JSON_path: list, Information: int|str|list|dict) -> None:
     # Must be here as local function because 2 operation needs to be executed 
@@ -42,7 +23,12 @@ def Field_Update_Value(Variable: StringVar|IntVar|BooleanVar|None, File_Name: st
     Defaults_Lists.Information_Update_Settings(File_Name=File_Name, JSON_path=JSON_path, Information=Information)
 
 # -------------------------------------------------------------------------- Tab Appearance --------------------------------------------------------------------------#
-def Settings_General_Theme(Frame: CTk|CTkFrame, window: CTk|CTkFrame) -> CTkFrame:
+def Settings_General_Theme(Settings: dict, Configuration: dict, Frame: CTk|CTkFrame, window: CTk|CTkFrame) -> CTkFrame:
+    Theme_Actual = Configuration["Global_Appearance"]["Window"]["Theme"]
+    Theme_List = list(Configuration["Global_Appearance"]["Window"]["Theme_List"])
+    Win_Style_Actual = Configuration["Global_Appearance"]["Window"]["Style"]
+    Win_Style_List = list(Configuration["Global_Appearance"]["Window"]["Style_List"])
+
     # ------------------------- Local Functions -------------------------#
     def Appearance_Change_Theme(Theme_Frame_Var: CTkOptionMenu) ->  None:
         customtkinter.set_appearance_mode(mode_string=Theme_Frame_Var)
@@ -59,20 +45,20 @@ def Settings_General_Theme(Frame: CTk|CTkFrame, window: CTk|CTkFrame) -> CTkFram
     Win_Style_Variable = StringVar(master=Frame, value=Win_Style_Actual)
 
     # Frame - General
-    Frame_Main = Elements_Groups.Get_Widget_Frame(Frame=Frame, Name="General Appearance", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="General Appearance settings.")
+    Frame_Main = Elements_Groups.Get_Widget_Frame(Configuration=Configuration, Frame=Frame, Name="General Appearance", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="General Appearance settings.")
     Frame_Body = Frame_Main.children["!ctkframe2"]
 
     # Field - Theme
-    Theme_Frame = Elements_Groups.Get_Widget_Input_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Theme", Field_Type="Input_OptionMenu") 
+    Theme_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Theme", Field_Type="Input_OptionMenu") 
     Theme_Frame_Var = Theme_Frame.children["!ctkframe3"].children["!ctkoptionmenu"]
     Theme_Frame_Var.configure(variable=Theme_Variable)
-    Elements.Get_Option_Menu_Advance(attach=Theme_Frame_Var, values=Theme_List, command = lambda Theme_Frame_Var: Appearance_Change_Theme(Theme_Frame_Var=Theme_Frame_Var))
+    Elements.Get_Option_Menu_Advance(Configuration=Configuration, attach=Theme_Frame_Var, values=Theme_List, command = lambda Theme_Frame_Var: Appearance_Change_Theme(Theme_Frame_Var=Theme_Frame_Var))
 
     # Field - Windows Style
-    Win_Style_Frame = Elements_Groups.Get_Widget_Input_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Window Style", Field_Type="Input_OptionMenu") 
+    Win_Style_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Window Style", Field_Type="Input_OptionMenu") 
     Win_Style_Frame_Var = Win_Style_Frame.children["!ctkframe3"].children["!ctkoptionmenu"]
     Win_Style_Frame_Var.configure(variable=Win_Style_Variable)
-    Elements.Get_Option_Menu_Advance(attach=Win_Style_Frame_Var, values=Win_Style_List, command= lambda Win_Style_Selected: Appearance_Change_Win_Style(Win_Style_Selected=Win_Style_Selected, window=window))
+    Elements.Get_Option_Menu_Advance(Configuration=Configuration, attach=Win_Style_Frame_Var, values=Win_Style_List, command= lambda Win_Style_Selected: Appearance_Change_Win_Style(Win_Style_Selected=Win_Style_Selected, window=window))
 
     # Build look of Widget
     Frame_Main.pack(side="top", padx=15, pady=15)
@@ -81,7 +67,15 @@ def Settings_General_Theme(Frame: CTk|CTkFrame, window: CTk|CTkFrame) -> CTkFram
 
 
 
-def Settings_General_Color(Frame: CTk|CTkFrame) -> CTkFrame:
+def Settings_General_Color(Settings: dict, Configuration: dict, Frame: CTk|CTkFrame) -> CTkFrame:
+    Accent_Color_Mode = Configuration["Global_Appearance"]["Window"]["Colors"]["Accent"]["Accent_Color_Mode"]
+    Accent_Color_Mode_List = list(Configuration["Global_Appearance"]["Window"]["Colors"]["Accent"]["Accent_Color_List"])
+    Accent_Color_Manual = Configuration["Global_Appearance"]["Window"]["Colors"]["Accent"]["Accent_Color_Manual"]
+
+    Hover_Color_Mode = Configuration["Global_Appearance"]["Window"]["Colors"]["Hover"]["Hover_Color_Mode"]
+    Hover_Color_Mode_List = list(Configuration["Global_Appearance"]["Window"]["Colors"]["Hover"]["Hover_Color_List"])
+    Hover_Color_Manual = Configuration["Global_Appearance"]["Window"]["Colors"]["Hover"]["Hover_Color_Manual"]
+
     # ------------------------- Local Functions -------------------------#
     def Settings_Disabling_Color_Pickers(Selected_Value: str, Entry_Field: CTkEntry, Picker_Button: CTkButton, Variable: StringVar, Helper: str) -> None:
         if Selected_Value == "Windows":
@@ -136,14 +130,14 @@ def Settings_General_Color(Frame: CTk|CTkFrame) -> CTkFrame:
         #Color_Picker_window.bind(sequence="<Button-1>", func=lambda event:click_win())
         #Color_Picker_window.bind(sequence="<B1-Motion>", func=lambda event:drag_win())
         #Color_Picker_window.overrideredirect(boolean=True)
-        Color_Picker_window.iconbitmap(bitmap=f"Libs\\GUI\\Icons\\Logo.ico")
+        Color_Picker_window.iconbitmap(bitmap=Defaults_Lists.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\Logo.ico"))
         Color_Picker_window.resizable(width=False, height=False)
 
         # Rounded corners 
         #Color_Picker_window.config(background="#000001")
         #Color_Picker_window.attributes("-transparentcolor", "#000001")
 
-        Color_Picker_Frame = Elements.Get_Color_Picker(Frame=Color_Picker_window, Color_Manual_Frame_Var=Color_Manual_Frame_Var)
+        Color_Picker_Frame = Elements.Get_Color_Picker(Configuration=Configuration, Frame=Color_Picker_window, Color_Manual_Frame_Var=Color_Manual_Frame_Var)
 
         # Build look of Widget --> must be before inset
         Color_Picker_Frame.pack(padx=0, pady=0) 
@@ -153,49 +147,49 @@ def Settings_General_Color(Frame: CTk|CTkFrame) -> CTkFrame:
     Hover_Color_Mode_Variable = StringVar(master=Frame, value=Hover_Color_Mode)
 
     # Frame - General
-    Frame_Main = Elements_Groups.Get_Widget_Frame(Frame=Frame, Name="Colors", Additional_Text="Applied after restart.", Widget_size="Single_size", Widget_Label_Tooltip="Colors")
+    Frame_Main = Elements_Groups.Get_Widget_Frame(Configuration=Configuration, Frame=Frame, Name="Colors", Additional_Text="Applied after restart.", Widget_size="Single_size", Widget_Label_Tooltip="Colors")
     Frame_Body = Frame_Main.children["!ctkframe2"]
 
     # Field - Accent Color Mode
-    Accent_Color_Mode_Frame = Elements_Groups.Get_Widget_Input_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Accent Color Mode", Field_Type="Input_OptionMenu") 
+    Accent_Color_Mode_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Accent Color Mode", Field_Type="Input_OptionMenu") 
     Accent_Color_Mode_Frame_Var = Accent_Color_Mode_Frame.children["!ctkframe3"].children["!ctkoptionmenu"]
     Accent_Color_Mode_Frame_Var.configure(variable=Accent_Color_Mode_Variable)
     
     # Field - Accent Color Manual
-    Accent_Color_Manual_Frame = Elements_Groups.Get_Widget_Input_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Accent Color Manual", Field_Type="Input_Normal") 
+    Accent_Color_Manual_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Accent Color Manual", Field_Type="Input_Normal") 
     Accent_Color_Manual_Frame_Var = Accent_Color_Manual_Frame.children["!ctkframe3"].children["!ctkentry"]
     Accent_Color_Manual_Frame_Var.configure(placeholder_text=Accent_Color_Manual, placeholder_text_color="#949A9F")
     Accent_Color_Manual_Frame_Var.bind("<FocusOut>", lambda Entry_value: Field_Update_Value(Variable=None, File_Name="Configuration", JSON_path=["Global_Appearance", "Window", "Colors", "Accent", "Accent_Color_Manual"], Information=Accent_Color_Manual_Frame_Var.get()))
 
     # Button - Color Picker
-    Accent_Color_Picker_Button = Elements_Groups.Get_Widget_Button_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=1, Button_Size="Small") 
+    Accent_Color_Picker_Button = Elements_Groups.Get_Widget_Button_row(Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=1, Button_Size="Small") 
     Accent_Color_Picker_Button_Var = Accent_Color_Picker_Button.children["!ctkframe"].children["!ctkbutton"]
     Accent_Color_Picker_Button_Var.configure(text="Accent Color Picker", command = lambda :Appearance_Pick_Manual_Color(Color_Manual_Frame_Var=Accent_Color_Manual_Frame_Var, Helper="Accent"))
-    Elements.Get_ToolTip(widget=Accent_Color_Picker_Button_Var, message="Select manually Accent color.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Accent_Color_Picker_Button_Var, message="Select manually Accent color.", ToolTip_Size="Normal")
 
     # Disabling fields --> Accent_Color_Mode_Variable
-    Elements.Get_Option_Menu_Advance(attach=Accent_Color_Mode_Frame_Var, values=Accent_Color_Mode_List, command = lambda Accent_Color_Mode_Frame_Var: Settings_Disabling_Color_Pickers(Selected_Value=Accent_Color_Mode_Frame_Var, Entry_Field=Accent_Color_Manual_Frame_Var, Picker_Button=Accent_Color_Picker_Button_Var, Variable=Accent_Color_Mode_Variable, Helper="Accent"))
+    Elements.Get_Option_Menu_Advance(Configuration=Configuration, attach=Accent_Color_Mode_Frame_Var, values=Accent_Color_Mode_List, command = lambda Accent_Color_Mode_Frame_Var: Settings_Disabling_Color_Pickers(Selected_Value=Accent_Color_Mode_Frame_Var, Entry_Field=Accent_Color_Manual_Frame_Var, Picker_Button=Accent_Color_Picker_Button_Var, Variable=Accent_Color_Mode_Variable, Helper="Accent"))
     Settings_Disabling_Color_Pickers(Selected_Value=Accent_Color_Mode, Entry_Field=Accent_Color_Manual_Frame_Var, Picker_Button=Accent_Color_Picker_Button_Var, Variable=Accent_Color_Mode_Variable, Helper="Accent")  # Must be here because of initial value
 
     # Field - Hover Color Mode
-    Hover_Color_Mode_Frame = Elements_Groups.Get_Widget_Input_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Hover Color Mode", Field_Type="Input_OptionMenu") 
+    Hover_Color_Mode_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Hover Color Mode", Field_Type="Input_OptionMenu") 
     Hover_Color_Mode_Frame_Var = Hover_Color_Mode_Frame.children["!ctkframe3"].children["!ctkoptionmenu"]
     Hover_Color_Mode_Frame_Var.configure(variable=Hover_Color_Mode_Variable)
 
     # Field - Hover Color Manual
-    Hover_Color_Manual_Frame = Elements_Groups.Get_Widget_Input_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Hover Color Manual", Field_Type="Input_Normal") 
+    Hover_Color_Manual_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Hover Color Manual", Field_Type="Input_Normal") 
     Hover_Color_Manual_Frame_Var = Hover_Color_Manual_Frame.children["!ctkframe3"].children["!ctkentry"]
     Hover_Color_Manual_Frame_Var.configure(placeholder_text=Hover_Color_Manual, placeholder_text_color="#949A9F")
     Hover_Color_Manual_Frame_Var.bind("<FocusOut>", lambda Entry_value: Field_Update_Value(Variable=None, File_Name="Configuration", JSON_path=["Global_Appearance", "Window", "Colors", "Hover", "Hover_Color_Manual"], Information=Hover_Color_Manual_Frame_Var.get()))
 
     # Button - Color Picker
-    Hover_Color_Picker_Button = Elements_Groups.Get_Widget_Button_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=1, Button_Size="Small") 
+    Hover_Color_Picker_Button = Elements_Groups.Get_Widget_Button_row(Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=1, Button_Size="Small") 
     Hover_Color_Picker_Button_Var = Hover_Color_Picker_Button.children["!ctkframe"].children["!ctkbutton"]
     Hover_Color_Picker_Button_Var.configure(text="Hover Color Picker", command = lambda:Appearance_Pick_Manual_Color(Color_Manual_Frame_Var=Hover_Color_Manual_Frame_Var, Helper="Hover"))
-    Elements.Get_ToolTip(widget=Hover_Color_Picker_Button_Var, message="Select manually Hover Color.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Hover_Color_Picker_Button_Var, message="Select manually Hover Color.", ToolTip_Size="Normal")
 
     # Disabling fields --> Accent_Color_Mode_Variable
-    Elements.Get_Option_Menu_Advance(attach=Hover_Color_Mode_Frame_Var, values=Hover_Color_Mode_List, command = lambda Hover_Color_Mode_Frame_Var: Settings_Disabling_Color_Pickers(Selected_Value=Hover_Color_Mode_Frame_Var, Entry_Field=Hover_Color_Manual_Frame_Var, Picker_Button=Hover_Color_Picker_Button_Var, Variable=Hover_Color_Mode_Variable, Helper="Hover"))
+    Elements.Get_Option_Menu_Advance(Configuration=Configuration, attach=Hover_Color_Mode_Frame_Var, values=Hover_Color_Mode_List, command = lambda Hover_Color_Mode_Frame_Var: Settings_Disabling_Color_Pickers(Selected_Value=Hover_Color_Mode_Frame_Var, Entry_Field=Hover_Color_Manual_Frame_Var, Picker_Button=Hover_Color_Picker_Button_Var, Variable=Hover_Color_Mode_Variable, Helper="Hover"))
     Settings_Disabling_Color_Pickers(Selected_Value=Hover_Color_Mode, Entry_Field=Hover_Color_Manual_Frame_Var, Picker_Button=Hover_Color_Picker_Button_Var, Variable=Hover_Color_Mode_Variable, Helper="Hover")   # Must be here because of initial value
 
     # Build look of Widget
@@ -205,7 +199,9 @@ def Settings_General_Color(Frame: CTk|CTkFrame) -> CTkFrame:
 
 
 
-def Settings_Supported_Photo(Frame: CTk|CTkFrame) -> CTkFrame:
+def Settings_Supported_Photo(Settings: dict, Configuration: dict, Frame: CTk|CTkFrame) -> CTkFrame:
+    Supported_Photo_postfix_list = list(Settings["General"]["Supported_postfix"]["Photos"])
+
     # ------------------------- Local Functions -------------------------#
     def Add_Photo_Postfix(Header_List: list, Photo_Postfix_Text_Var: CTkEntry, Frame_Photo_Table_Var: CTkTable) -> None:
         Add_flag = True
@@ -296,11 +292,11 @@ def Settings_Supported_Photo(Frame: CTk|CTkFrame) -> CTkFrame:
 
     # ------------------------- Main Functions -------------------------#
     # Frame - General
-    Frame_Main = Elements_Groups.Get_Widget_Frame(Frame=Frame, Name="Photo Postfixes", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="List of supported phots postfixes.")
+    Frame_Main = Elements_Groups.Get_Widget_Frame(Configuration=Configuration, Frame=Frame, Name="Photo Postfixes", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="List of supported phots postfixes.")
     Frame_Body = Frame_Main.children["!ctkframe2"]
 
     # Field - Subject
-    Photo_Postfix_Text = Elements_Groups.Get_Widget_Input_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Postfix", Field_Type="Input_Normal") 
+    Photo_Postfix_Text = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Postfix", Field_Type="Input_Normal") 
     Photo_Postfix_Text_Var = Photo_Postfix_Text.children["!ctkframe3"].children["!ctkentry"]
     Photo_Postfix_Text_Var.configure(placeholder_text="Add postfix")
 
@@ -310,23 +306,23 @@ def Settings_Supported_Photo(Frame: CTk|CTkFrame) -> CTkFrame:
     for Format in Supported_Photo_postfix_list:
         Photo_Formats_list.append([Format])
         
-    Frame_Photo_Table = Elements_Groups.Get_Table_Frame(Frame=Frame_Body, Table_Size="Single_size", Table_Values=Photo_Formats_list, Table_Columns=len(Header_List), Table_Rows=len(Photo_Formats_list))
+    Frame_Photo_Table = Elements_Groups.Get_Table_Frame(Configuration=Configuration, Frame=Frame_Body, Table_Size="Single_size", Table_Values=Photo_Formats_list, Table_Columns=len(Header_List), Table_Rows=len(Photo_Formats_list))
     Frame_Photo_Table_Var = Frame_Photo_Table.children["!ctktable"]
     Frame_Photo_Table_Var.configure(wraplength=440)
 
     # Buttons
-    Button_Frame = Elements_Groups.Get_Widget_Button_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=3, Button_Size="Small") 
+    Button_Frame = Elements_Groups.Get_Widget_Button_row(Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=3, Button_Size="Small") 
     Button_Add_Var = Button_Frame.children["!ctkframe"].children["!ctkbutton"]
     Button_Add_Var.configure(text="Add", command = lambda:Add_Photo_Postfix(Header_List=Header_List, Photo_Postfix_Text_Var=Photo_Postfix_Text_Var, Frame_Photo_Table_Var=Frame_Photo_Table_Var))
-    Elements.Get_ToolTip(widget=Button_Add_Var, message="Add selected postfix to skip list", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Add_Var, message="Add selected postfix to skip list", ToolTip_Size="Normal")
 
     Button_Del_One_Var = Button_Frame.children["!ctkframe"].children["!ctkbutton2"]
     Button_Del_One_Var.configure(text="Del", command = lambda:Del_Photo_Postfix_one(Photo_Postfix_Text_Var=Photo_Postfix_Text_Var, Frame_Photo_Table_Var=Frame_Photo_Table_Var))
-    Elements.Get_ToolTip(widget=Button_Del_One_Var, message="Delete row from table based on input text.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Del_One_Var, message="Delete row from table based on input text.", ToolTip_Size="Normal")
 
     Button_Del_all_Var = Button_Frame.children["!ctkframe"].children["!ctkbutton3"]
     Button_Del_all_Var.configure(text="Del all", command = lambda:Del_Photo_Postfix_all(Frame_Photo_Table_Var=Frame_Photo_Table_Var))
-    Elements.Get_ToolTip(widget=Button_Del_all_Var, message="Delete all rows from table.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Del_all_Var, message="Delete all rows from table.", ToolTip_Size="Normal")
 
 
     # Build look of Widget
@@ -336,7 +332,8 @@ def Settings_Supported_Photo(Frame: CTk|CTkFrame) -> CTkFrame:
 
 
 
-def Settings_Supported_Video(Frame: CTk|CTkFrame) -> CTkFrame:
+def Settings_Supported_Video(Settings: dict, Configuration: dict, Frame: CTk|CTkFrame) -> CTkFrame:
+    Supported_Video_postfix_list = list(Settings["General"]["Supported_postfix"]["Videos"])
     # ------------------------- Local Functions -------------------------#
     def Add_Video_Postfix(Header_List: list, Video_Postfix_Text_Var: CTkEntry, Frame_Video_Table_Var: CTkTable) -> None:
         Add_flag = True
@@ -427,11 +424,11 @@ def Settings_Supported_Video(Frame: CTk|CTkFrame) -> CTkFrame:
 
     # ------------------------- Main Functions -------------------------#
     # Frame - General
-    Frame_Main = Elements_Groups.Get_Widget_Frame(Frame=Frame, Name="Video Postfixes", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="List of supported phots postfixes.")
+    Frame_Main = Elements_Groups.Get_Widget_Frame(Configuration=Configuration, Frame=Frame, Name="Video Postfixes", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="List of supported phots postfixes.")
     Frame_Body = Frame_Main.children["!ctkframe2"]
 
     # Field - Subject
-    Video_Postfix_Text = Elements_Groups.Get_Widget_Input_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Postfix", Field_Type="Input_Normal") 
+    Video_Postfix_Text = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Postfix", Field_Type="Input_Normal") 
     Video_Postfix_Text_Var = Video_Postfix_Text.children["!ctkframe3"].children["!ctkentry"]
     Video_Postfix_Text_Var.configure(placeholder_text="Add postfix")
 
@@ -441,23 +438,23 @@ def Settings_Supported_Video(Frame: CTk|CTkFrame) -> CTkFrame:
     for Format in Supported_Video_postfix_list:
         Video_Formats_list.append([Format])
         
-    Frame_Video_Table = Elements_Groups.Get_Table_Frame(Frame=Frame_Body, Table_Size="Single_size", Table_Values=Video_Formats_list, Table_Columns=len(Header_List), Table_Rows=len(Video_Formats_list))
+    Frame_Video_Table = Elements_Groups.Get_Table_Frame(Configuration=Configuration, Frame=Frame_Body, Table_Size="Single_size", Table_Values=Video_Formats_list, Table_Columns=len(Header_List), Table_Rows=len(Video_Formats_list))
     Frame_Video_Table_Var = Frame_Video_Table.children["!ctktable"]
     Frame_Video_Table_Var.configure(wraplength=440)
 
     # Buttons
-    Button_Frame = Elements_Groups.Get_Widget_Button_row(Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=3, Button_Size="Small") 
+    Button_Frame = Elements_Groups.Get_Widget_Button_row(Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=3, Button_Size="Small") 
     Button_Add_Var = Button_Frame.children["!ctkframe"].children["!ctkbutton"]
     Button_Add_Var.configure(text="Add", command = lambda:Add_Video_Postfix(Header_List=Header_List, Video_Postfix_Text_Var=Video_Postfix_Text_Var, Frame_Video_Table_Var=Frame_Video_Table_Var))
-    Elements.Get_ToolTip(widget=Button_Add_Var, message="Add selected postfix to skip list", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Add_Var, message="Add selected postfix to skip list", ToolTip_Size="Normal")
 
     Button_Del_One_Var = Button_Frame.children["!ctkframe"].children["!ctkbutton2"]
     Button_Del_One_Var.configure(text="Del", command = lambda:Del_Video_Postfix_one(Video_Postfix_Text_Var=Video_Postfix_Text_Var, Frame_Video_Table_Var=Frame_Video_Table_Var))
-    Elements.Get_ToolTip(widget=Button_Del_One_Var, message="Delete row from table based on input text.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Del_One_Var, message="Delete row from table based on input text.", ToolTip_Size="Normal")
 
     Button_Del_all_Var = Button_Frame.children["!ctkframe"].children["!ctkbutton3"]
     Button_Del_all_Var.configure(text="Del all", command = lambda:Del_Video_Postfix_all(Frame_Video_Table_Var=Frame_Video_Table_Var))
-    Elements.Get_ToolTip(widget=Button_Del_all_Var, message="Delete all rows from table.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Del_all_Var, message="Delete all rows from table.", ToolTip_Size="Normal")
 
 
     # Build look of Widget

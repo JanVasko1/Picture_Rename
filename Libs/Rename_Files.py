@@ -8,13 +8,6 @@ from customtkinter import CTkProgressBar, CTk
 
 logging.basicConfig(level=logging.ERROR)
 
-# -------------------------------------------------------------------------------------------------------------------------------------------------- Set Defaults -------------------------------------------------------------------------------------------------------------------------------------------------- #
-Settings = Defaults_Lists.Load_Settings()
-Export_format = Settings["General"]["File_Format"]
-Attr_format = Settings["Rename"]["Attr_format"]
-Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
-Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
-
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def Format_DateTime_All(Original_Date_Time_str, Read_format, Export_format):
     Original_Date_Time_str = Original_Date_Time_str.replace("\u200e", "")
@@ -56,12 +49,17 @@ def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> N
     window.update_idletasks()
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def Rename_Files(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
+def Rename_Files(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
+    Export_format = Settings["General"]["File_Format"]
+    Attr_format = Settings["Rename"]["Attr_format"]
+    Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
+    Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
+
     # Create Log file
-    Log_file = open("Libs\\Logs\\Rename_Files_Log.csv", "w", encoding="UTF-8")
+    Log_file = open(Defaults_Lists.Absolute_path(relative_path=f"Libs\\Logs\\Rename_Files_Log.csv"), "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
     Log_file.close()
-    Log_file = open("Libs\\Logs\\Rename_Files_Log.csv", "a", encoding="UTF-8")
+    Log_file = open(Defaults_Lists.Absolute_path(relative_path=f"Libs\\Logs\\Rename_Files_Log.csv"), "a", encoding="UTF-8")
     
     # Get Date for each file
     for actual_path in Nested_Path:

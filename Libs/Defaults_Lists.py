@@ -1,16 +1,17 @@
 # Import Libraries
 import json
+import os
 
 from CTkMessagebox import CTkMessagebox
 
 def Load_Settings() -> dict:
-    File = open(file=f"Libs\\Settings.json", mode="r", encoding="UTF-8", errors="ignore")
+    File = open(file=Absolute_path(relative_path=f"Libs\\Settings.json"), mode="r", encoding="UTF-8", errors="ignore")
     Settings = json.load(fp=File)
     File.close()
     return Settings
 
 def Load_Configuration() -> dict:
-    File = open(file=f"Libs\\GUI\\Configuration.json", mode="r", encoding="UTF-8", errors="ignore")
+    File = open(file=Absolute_path(relative_path=f"Libs\\GUI\\Configuration.json"), mode="r", encoding="UTF-8", errors="ignore")
     Configuration = json.load(fp=File)
     File.close()
     return Configuration
@@ -36,11 +37,11 @@ def Information_Update_Settings(File_Name: str, JSON_path: list, Information: in
         
         # Save in Settings.json
         if File_Name == "Settings":
-            with open(f"Libs\\Settings.json", mode="wt", encoding="UTF-8", errors="ignore") as file:
+            with open(Absolute_path(relative_path=f"Libs\\Settings.json"), mode="wt", encoding="UTF-8", errors="ignore") as file:
                 json.dump(obj=File_dict, fp=file, indent=4, default=str, ensure_ascii=False)
             file.close()
         elif File_Name == "Configuration":
-            with open(f"Libs\\GUI\\Configuration.json", mode="wt", encoding="UTF-8", errors="ignore") as file:
+            with open(Absolute_path(relative_path=f"Libs\\GUI\\Configuration.json"), mode="wt", encoding="UTF-8", errors="ignore") as file:
                 json.dump(obj=File_dict, fp=file, indent=4, default=str, ensure_ascii=False)
             file.close()
         else:
@@ -48,3 +49,12 @@ def Information_Update_Settings(File_Name: str, JSON_path: list, Information: in
             
     except Exception as Error:
         CTkMessagebox(title="Error", message=f"Not possible to update {Information} into Field: {JSON_path} of {File_Name}", icon="cancel", fade_in_duration=1)
+
+# --------------------------------------------- PyInstaller --------------------------------------------- #
+def Absolute_path(relative_path: str) -> str:
+    try:
+        base_path = os.path.abspath(".")
+        Absolute_path_str = os.path.join(base_path, relative_path)
+    except:
+        Absolute_path_str = relative_path
+    return Absolute_path_str

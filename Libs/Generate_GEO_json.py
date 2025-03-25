@@ -13,17 +13,6 @@ from customtkinter import CTkProgressBar, CTk
 
 logging.basicConfig(level=logging.ERROR)
 
-# -------------------------------------------------------------------------------------------------------------------------------------------------- Set Defaults -------------------------------------------------------------------------------------------------------------------------------------------------- #
-Settings = Defaults_Lists.Load_Settings()
-
-GEO_df = DataFrame(columns=["Date", "Latitude", "Longitude", "Album" ,"Album2", "Name"])
-PIL_DateTime_Format = Settings["GEOJson"]["PIL_DateTime_Format"]
-Exif_ID = Settings["MetaData"]["Exif_ID"]
-GPS_ID = Settings["MetaData"]["GPS_ID"]
-Date_Taken_ID = Settings["MetaData"]["Date_Taken_ID"]
-Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
-Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
-
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def convert_to_degrees(value: tuple) -> float:
     d = float(value[0])
@@ -35,7 +24,11 @@ def Format_DateTime_All(Original_Date_Time_str: str, DateTime_Format: str) -> da
     Original_Date_Time_dt = datetime.strptime(Original_Date_Time_str, DateTime_Format)
     return Original_Date_Time_dt
 
-def Get_Picture_Main_Att(file_path: str, Actual_Folder: str, filename: str, Log_file) -> list|bool:
+def Get_Picture_Main_Att(Settings: dict, file_path: str, Actual_Folder: str, filename: str, Log_file) -> list|bool:
+    Exif_ID = Settings["MetaData"]["Exif_ID"]
+    GPS_ID = Settings["MetaData"]["GPS_ID"]
+    Date_Taken_ID = Settings["MetaData"]["Date_Taken_ID"]
+
     try:
         # Open the image file
         image = Image.open(file_path)
@@ -105,7 +98,7 @@ def Create_geojson(GEO_df: DataFrame, Export_File_Name: str) -> None:
         }
         geojson["features"].append(feature)
 
-    with open(f"Exports\\{Export_File_Name}.geojson", "w") as fp:
+    with open(Defaults_Lists.Absolute_path(relative_path=f"Exports\\{Export_File_Name}.geojson"), "w") as fp:
         json.dump(geojson, fp)   
 
 def Progress_Bar_step(window: CTk, Progress_Bar: CTkProgressBar) -> None:
@@ -117,12 +110,17 @@ def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> N
     window.update_idletasks()
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def GEO_Json(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar, Export_File_Name: str) -> None:
+def GEO_Json(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar, Export_File_Name: str) -> None:
+    GEO_df = DataFrame(columns=["Date", "Latitude", "Longitude", "Album" ,"Album2", "Name"])
+    PIL_DateTime_Format = Settings["GEOJson"]["PIL_DateTime_Format"]
+    Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
+    Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
+
     # Create Log file
-    Log_file = open("Libs\\Logs\\GEO_JSON_Log.csv", "w", encoding="UTF-8")
+    Log_file = open(Defaults_Lists.Absolute_path(relative_path=f"Libs\\Logs\\GEO_JSON_Log.csv"), "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
     Log_file.close()
-    Log_file = open("Libs\\Logs\\GEO_JSON_Log.csv", "a", encoding="UTF-8")
+    Log_file = open(Defaults_Lists.Absolute_path(relative_path=f"Libs\\Logs\\GEO_JSON_Log.csv"), "a", encoding="UTF-8")
     
     # Get Date for each file
     for actual_path in Nested_Path:

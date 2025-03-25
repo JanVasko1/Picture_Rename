@@ -10,25 +10,10 @@ from customtkinter import CTkProgressBar, CTk
 
 logging.basicConfig(level=logging.ERROR)
 
-# -------------------------------------------------------------------------------------------------------------------------------------------------- Set Defaults -------------------------------------------------------------------------------------------------------------------------------------------------- #
-Settings = Defaults_Lists.Load_Settings()
-Date_dt_Format = Settings["MetaData"]["Date_dt_Format"]
-Exif_ID = Settings["MetaData"]["Exif_ID"]
-GPS_ID = Settings["MetaData"]["GPS_ID"]
-DateTime_ID = Settings["MetaData"]["DateTime_ID"]
-Date_Taken_ID = Settings["MetaData"]["Date_Taken_ID"]
-DateTimeDigitized_ID = Settings["MetaData"]["DateTimeDigitized_ID"]
-PreviewDateTime_ID = Settings["MetaData"]["PreviewDateTime_ID"]
-Name_format = Settings["General"]["File_Format"]
-Property_format = Settings["MetaData"]["Property_format"]
-
-Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
-Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
-
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def Init_Picture_Exif(File_Name: str, file_path: str, postfix: str, DateTime_import:str) -> None:
     # Read the image data using PIL
-    image = Image.open(f"{file_path}\\{File_Name}{postfix}")
+    image = Image.open(Defaults_Lists.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"))
 
     exif_dict = {
         "0th": {
@@ -44,12 +29,20 @@ def Init_Picture_Exif(File_Name: str, file_path: str, postfix: str, DateTime_imp
     # Convert the dictionary to bytes
     exif_bytes = piexif.dump(exif_dict)
 
-    image.save(fp=f"{file_path}\\{File_Name}{postfix}", exif=exif_bytes)
+    image.save(fp=Defaults_Lists.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"), exif=exif_bytes)
     image.close()
 
-def Change_Property_picture(File_Name_dt: datetime, File_Name: str, file_path: str, postfix: str) -> None:
+def Change_Property_picture(Settings: dict, File_Name_dt: datetime, File_Name: str, file_path: str, postfix: str) -> None:
+    Date_dt_Format = Settings["MetaData"]["Date_dt_Format"]
+    Exif_ID = Settings["MetaData"]["Exif_ID"]
+    GPS_ID = Settings["MetaData"]["GPS_ID"]
+    DateTime_ID = Settings["MetaData"]["DateTime_ID"]
+    Date_Taken_ID = Settings["MetaData"]["Date_Taken_ID"]
+    DateTimeDigitized_ID = Settings["MetaData"]["DateTimeDigitized_ID"]
+    PreviewDateTime_ID = Settings["MetaData"]["PreviewDateTime_ID"]
+
     # Read the image data using PIL
-    image = Image.open(f"{file_path}\\{File_Name}{postfix}")
+    image = Image.open(Defaults_Lists.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"))
     DateTime_import = File_Name_dt.strftime(Date_dt_Format)
 
     # Extract EXIF data
@@ -63,7 +56,7 @@ def Change_Property_picture(File_Name_dt: datetime, File_Name: str, file_path: s
     if Date_Taken == "":
         image.close()
         Init_Picture_Exif(File_Name=File_Name, file_path=file_path, postfix=postfix, DateTime_import=DateTime_import)
-        image = Image.open(f"{file_path}\\{File_Name}{postfix}")
+        image = Image.open(Defaults_Lists.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"))
         DateTime_import = File_Name_dt.strftime(Date_dt_Format)
 
         # Extract EXIF data
@@ -90,14 +83,14 @@ def Change_Property_picture(File_Name_dt: datetime, File_Name: str, file_path: s
         exif1.get_ifd(tag=GPS_ID).pop(key)
 
     # Save
-    image.save(fp=f"{file_path}\\{File_Name}{postfix}", exif=exif1)
+    image.save(fp=Defaults_Lists.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"), exif=exif1)
     creation_time = File_Name_dt.timestamp()
     modification_time = File_Name_dt.timestamp()
-    os.utime(f"{file_path}\\{File_Name}{postfix}", (creation_time, modification_time))
+    os.utime(Defaults_Lists.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"), (creation_time, modification_time))
 
-def Change_Property_video(File_Name_dt: datetime, File_Name: str, file_path: str, postfix: str, Property_format:str):
-    input_video = f"{file_path}\\{File_Name}{postfix}"
-    output_video = f"{file_path}\\{File_Name}A{postfix}"
+def Change_Property_video(Settings: dict, File_Name_dt: datetime, File_Name: str, file_path: str, postfix: str, Property_format:str):
+    input_video = Defaults_Lists.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}")
+    output_video = Defaults_Lists.Absolute_path(relative_path=f"{file_path}\\{File_Name}A{postfix}")
     Date_Formatted = File_Name_dt.strftime("%Y-%m-%dT%H:%M:%S")
 
     # TODO --> Zkontrolovat: tenhle zápis přemaže všechna jiná metadata (pokud existujou, jako je GPS ...), musím je zkopírovat a přenést
@@ -142,12 +135,17 @@ def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> N
     window.update_idletasks()
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def Change_Metadata(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
+def Change_Metadata(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
+    Name_format = Settings["General"]["File_Format"]
+    Property_format = Settings["MetaData"]["Property_format"]
+    Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
+    Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
+
     # Create Log file
-    Log_file = open("Libs\\Logs\\Change_Metadata_Log.csv", "w", encoding="UTF-8")
+    Log_file = open(Defaults_Lists.Absolute_path(relative_path=f"Libs\\Logs\\Change_Metadata_Log.csv"), "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
     Log_file.close()
-    Log_file = open("Libs\\Logs\\Change_Metadata_Log.csv", "a", encoding="UTF-8")
+    Log_file = open(Defaults_Lists.Absolute_path(relative_path=f"Libs\\Logs\\Change_Metadata_Log.csv"), "a", encoding="UTF-8")
 
     # Get Date for each file
     for actual_path in Nested_Path:
@@ -167,7 +165,7 @@ def Change_Metadata(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar
                 try:
                     File_Name_dt, Correct_Name = File_Name_Format_Check(File_Name=File_Name, Name_format=Name_format)
                     if Correct_Name == True:
-                        Change_Property_picture(File_Name_dt=File_Name_dt, File_Name=File_Name, file_path=actual_path, postfix=postfix)
+                        Change_Property_picture(Settings=Settings, File_Name_dt=File_Name_dt, File_Name=File_Name, file_path=actual_path, postfix=postfix)
                         Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                     else:
                         Log_file.write(f"""Picture;{Actual_Folder};{filename};File name is not in proper format\n""")
@@ -183,7 +181,7 @@ def Change_Metadata(Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar
                 try:
                     File_Name_dt, Correct_Name = File_Name_Format_Check(File_Name=File_Name, Name_format=Name_format)
                     if Correct_Name == True:
-                        Change_Property_video(File_Name_dt=File_Name_dt, File_Name=File_Name, file_path=actual_path, postfix=postfix, Property_format=Property_format)
+                        Change_Property_video(Settings=Settings, File_Name_dt=File_Name_dt, File_Name=File_Name, file_path=actual_path, postfix=postfix, Property_format=Property_format)
                         Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                     else:
                         Log_file.write(f"""Video;{Actual_Folder};{filename};File name is not in proper format\n""")
