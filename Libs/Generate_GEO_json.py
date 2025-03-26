@@ -8,7 +8,9 @@ import json
 
 from PIL import Image
 
+import Libs.File_Manipulation as File_Manipulation
 import Libs.Data_Functions as Data_Functions
+
 from customtkinter import CTkProgressBar, CTk
 
 logging.basicConfig(level=logging.ERROR)
@@ -98,8 +100,9 @@ def Create_geojson(GEO_df: DataFrame, Export_File_Name: str) -> None:
         }
         geojson["features"].append(feature)
 
-    with open(Data_Functions.Absolute_path(relative_path=f"Exports\\{Export_File_Name}.geojson"), "w") as fp:
-        json.dump(geojson, fp)   
+    Save_Path = File_Manipulation.Get_Downloads_File_Path(File_Name=f"{Export_File_Name}", File_postfix="geojson")
+    with open(file=Save_Path, mode="w") as file: 
+            json.dump(geojson, file)
 
 def Progress_Bar_step(window: CTk, Progress_Bar: CTkProgressBar) -> None:
     Progress_Bar.step()

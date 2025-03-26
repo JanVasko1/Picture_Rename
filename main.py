@@ -25,7 +25,7 @@ class Win(CTk):
 
         display_width = self.winfo_screenwidth()
         display_height = self.winfo_screenheight()
-        Window_Frame_width = 800
+        Window_Frame_width = 660
         Window_Frame_height = 450
         left_position = int(display_width // 2 - Window_Frame_width // 2)
         top_position = int(display_height // 2 - Window_Frame_height // 2)
