@@ -2,56 +2,66 @@
 from PIL import Image
 from datetime import datetime
 
-from customtkinter import CTkButton, CTk, CTkFrame, CTkScrollableFrame, CTkEntry, CTkLabel, CTkFont, CTkImage, CTkRadioButton, CTkTabview, CTkOptionMenu, CTkCheckBox, CTkProgressBar, CTkInputDialog, CTkComboBox, get_appearance_mode
+from customtkinter import CTk, CTkButton, CTkFrame, CTkScrollableFrame, CTkEntry, CTkLabel, CTkFont, CTkImage, CTkRadioButton, CTkTabview, CTkOptionMenu, CTkCheckBox, CTkProgressBar, CTkInputDialog, CTkComboBox, get_appearance_mode
 from CTkTable import CTkTable
 from CTkColorPicker import CTkColorPicker
 from CTkToolTip import CTkToolTip
 from CTkMessagebox import CTkMessagebox
 
-import Libs.Defaults_Lists as Defaults_Lists
+import Libs.Data_Functions as Data_Functions
 from Libs.GUI.CTk.ctk_scrollable_dropdown import CTkScrollableDropdown as CTkScrollableDropdown 
 
 from iconipy import IconFactory 
 import winaccent
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def Time_Validate(Settings: dict, Value: str) -> None:
-    Time_Format = Settings["General"]["Formats"]["Time"]
+def Time_Validate(Settings: dict, Configuration: dict|None, window: CTk, Field: CTkEntry) -> None:
+    Time_Format = Settings["0"]["General"]["Formats"]["Time"]
+    Value = Field.get()
 
     if Value != "":
         try:
             datetime.strptime(Value, Time_Format)
         except:
-            CTkMessagebox(title="Error", message=f"Value: {Value} in not proper Time format, should be: HH:MM.", icon="cancel", fade_in_duration=1)
+            Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Value: {Value} in not proper Time format, should be: HH:MM.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
+            Field.delete(first_index=0, last_index=100)
     else:
         pass
 
-def Date_Validate(Settings: dict, Value: str) -> None:
-    Date_Format = Settings["General"]["Formats"]["Date"]
+def Date_Validate(Settings: dict, Configuration: dict|None, window: CTk, Field: CTkEntry) -> None:
+    Date_Format = Settings["0"]["General"]["Formats"]["Date"]
+    Value = Field.get()
 
     if Value != "":
         try:
             datetime.strptime(Value, Date_Format)
         except:
-            CTkMessagebox(title="Error", message=f"Value: {Value} in not in proper Date format, should be: YYYY-MM-DD.", icon="cancel", fade_in_duration=1)
+            Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Value: {Value} in not in proper Date format, should be: YYYY-MM-DD.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
+            Field.delete(first_index=0, last_index=100)
     else:
         pass
 
-def Int_Validate(Settings: dict, Value: str) -> None:
+def Int_Validate(Settings: dict, Configuration: dict|None, window: CTk, Field: CTkEntry) -> None:
+    Value = Field.get()
+
     if Value != "":
         try:
             int(Value)
         except:
-            CTkMessagebox(title="Error", message=f"Value: {Value} in not whole number.", icon="cancel", fade_in_duration=1)
+            Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Value: {Value} in not whole number.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
+            Field.delete(first_index=0, last_index=100)
     else:
         pass
 
-def Float_Validate(Settings: dict, Value: str) -> None:
+def Float_Validate(Settings: dict, Configuration: dict|None, window: CTk, Field: CTkEntry) -> None:
+    Value = Field.get()
+
     if Value != "":
         try:
             float(Value)
         except:
-            CTkMessagebox(title="Error", message=f"Value: {Value} in not float number.", icon="cancel", fade_in_duration=1)
+            Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Value: {Value} in not float number.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
+            Field.delete(first_index=0, last_index=100)
     else:
         pass
 
@@ -133,7 +143,7 @@ def Get_Font(Configuration:dict, Font_Size: str) -> CTkFont:
     return Font_Text_Main
 
 # ---------------------------------------------- Text ----------------------------------------------# 
-def Get_Label(Configuration:dict, Frame: CTk|CTkFrame, Label_Size: str, Font_Size: str) -> CTkLabel:
+def Get_Label(Configuration:dict, Frame: CTkFrame, Label_Size: str, Font_Size: str) -> CTkLabel:
     Configuration_Text_Main = Configuration["Labels"][f"{Label_Size}"]
     Text_Main = CTkLabel(
         master = Frame,
@@ -147,18 +157,23 @@ def Get_Label(Configuration:dict, Frame: CTk|CTkFrame, Label_Size: str, Font_Siz
         wraplength = Configuration_Text_Main["wraplength"])
     return Text_Main
 
-def Get_Label_Icon(Configuration: dict, Frame: CTk|CTkFrame, Label_Size: str, Font_Size: str, Icon_Set: str, Icon_Name: str, Icon_Size: str) -> CTkLabel:
+def Get_Label_Icon(Configuration: dict|None, Frame: CTkFrame, Label_Size: str, Font_Size: str, Icon_Name: str, Icon_Size: str) -> CTkLabel:
     Frame_Label = Get_Label(Configuration=Configuration, Frame=Frame, Label_Size=Label_Size, Font_Size=Font_Size)
-    CTK_Image = Get_CTk_Icon(Configuration=Configuration, Icon_Set=Icon_Set, Icon_Name=Icon_Name, Icon_Size=Icon_Size)
+    CTK_Image = Get_CTk_Icon(Configuration=Configuration, Icon_Name=Icon_Name, Icon_Size=Icon_Size)
     Frame_Label.configure(image=CTK_Image, text="", anchor="e")
     return Frame_Label
 
 # ---------------------------------------------- Buttons ----------------------------------------------# 
-def Get_Button(Configuration:dict, Frame: CTk|CTkFrame, Button_Size: str) -> CTkButton:
+def Get_Button_Text(Configuration:dict, Frame: CTkFrame, Button_Size: str) -> CTkButton:
     Configuration_Button_Normal = Configuration["Buttons"][f"{Button_Size}"]
 
-    fg_color = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Button_Normal["fg_color"])
-    hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Button_Normal["hover_color"], Accent_Color=fg_color)
+    if Button_Size == "DatePicker_Days":
+        fg_color = Configuration_Button_Normal["fg_color"]
+        Accent_Color_help = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Button_Normal["Accent_Color_help"])
+        hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Button_Normal["hover_color"], Accent_Color=Accent_Color_help)
+    else:
+        fg_color = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Button_Normal["fg_color"])
+        hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Button_Normal["hover_color"], Accent_Color=fg_color)
 
     Button_Normal = CTkButton(
         master = Frame,
@@ -176,14 +191,16 @@ def Get_Button(Configuration:dict, Frame: CTk|CTkFrame, Button_Size: str) -> CTk
         text_color = tuple(Configuration_Button_Normal["text_color"]))
     return Button_Normal
 
-def Get_Button_Icon(Configuration:dict, Frame: CTk|CTkFrame, Icon_Set: str, Icon_Name: str, Icon_Size: str, Button_Size: str) -> CTkFrame:
+def Get_Button_Icon(Configuration:dict, Frame: CTkFrame, Icon_Name: str, Icon_Size: str, Button_Size: str) -> CTkFrame:
     Configuration_Button_Icon = Configuration["Buttons"][f"{Button_Size}"]
 
-    if Button_Size == "Picture_SideBar":
+    if Button_Size == "Picture_Transparent":
+        fg_color = "transparent"
         Accent_Color_help = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Button_Icon["Accent_Color_help"])
+        hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Button_Icon["hover_color"], Accent_Color=Accent_Color_help)
     else:
-        Accent_Color_help = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Button_Icon["fg_color"])
-    hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Button_Icon["hover_color"], Accent_Color=Accent_Color_help)
+        fg_color = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Button_Icon["fg_color"])
+        hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Button_Icon["hover_color"], Accent_Color=fg_color)
 
     Frame_Button = CTkButton(
         master = Frame,
@@ -192,39 +209,17 @@ def Get_Button_Icon(Configuration:dict, Frame: CTk|CTkFrame, Icon_Set: str, Icon
         corner_radius = Configuration_Button_Icon["corner_radius"],
         border_width = Configuration_Button_Icon["border_width"],
         bg_color = Configuration_Button_Icon["bg_color"],
-        fg_color = Configuration_Button_Icon["fg_color"],
+        fg_color = fg_color,
         hover = Configuration_Button_Icon["hover"],
         hover_color = hover_color,
         anchor = Configuration_Button_Icon["anchor"],
         text = "")
-    CTK_Image = Get_CTk_Icon(Configuration=Configuration, Icon_Set=Icon_Set, Icon_Name=Icon_Name, Icon_Size=Icon_Size)
+    CTK_Image = Get_CTk_Icon(Configuration=Configuration, Icon_Name=Icon_Name, Icon_Size=Icon_Size)
     Frame_Button.configure(image=CTK_Image, text="")
     return Frame_Button
 
-def Get_Button_Chart(Configuration:dict, Frame: CTk|CTkFrame, Button_Size: str) -> CTkButton:
-    Configuration_Button_Chart = Configuration["Buttons"][f"{Button_Size}"]
-
-    fg_color = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Button_Chart["fg_color"])
-    hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Button_Chart["hover_color"], Accent_Color=fg_color)
-
-    Frame_Button = CTkButton(
-        master = Frame,
-        font = Get_Font(Configuration=Configuration, Font_Size="Field_Label"),
-        width = Configuration_Button_Chart["width"],
-        height = Configuration_Button_Chart["height"],
-        corner_radius = Configuration_Button_Chart["corner_radius"],
-        border_width = Configuration_Button_Chart["border_width"],
-        border_color = Configuration_Button_Chart["border_color"],
-        bg_color = Configuration_Button_Chart["bg_color"],
-        fg_color = fg_color,
-        hover = Configuration_Button_Chart["hover"],
-        hover_color = hover_color,
-        anchor = Configuration_Button_Chart["anchor"],
-        text_color=tuple(Configuration_Button_Chart["text_color"]))
-    return Frame_Button
-
 # ---------------------------------------------- Fields ----------------------------------------------# 
-def Get_Entry_Field(Settings: dict, Configuration:dict, Frame: CTk|CTkFrame, Field_Size: str, Validation: str|None = None) -> CTkEntry:
+def Get_Entry_Field(Settings: dict, Configuration:dict, window: CTk, Frame: CTkFrame, Field_Size: str, Validation: str|None = None) -> CTkEntry:
     Configuration_Field = Configuration["Fields"]["Entry"][f"{Field_Size}"]
 
     Field = CTkEntry(
@@ -242,19 +237,19 @@ def Get_Entry_Field(Settings: dict, Configuration:dict, Frame: CTk|CTkFrame, Fie
         validate="focusout")
     
     if Validation == "Time":
-        Field.configure(validatecommand=lambda: Time_Validate(Settings=Settings, Value=Field.get()))
+        Field.configure(validatecommand=lambda: Time_Validate(Settings=Settings, Configuration=Configuration, window=window, Field=Field))
     elif Validation == "Date":
-        Field.configure(validatecommand=lambda: Date_Validate(Settings=Settings, Value=Field.get()))
+        Field.configure(validatecommand=lambda: Date_Validate(Settings=Settings, Configuration=Configuration, window=window, Field=Field))
     elif Validation == "Integer":
-        Field.configure(validatecommand=lambda: Int_Validate(Settings=Settings, Value=Field.get()))
+        Field.configure(validatecommand=lambda: Int_Validate(Settings=Settings, Configuration=Configuration, window=window, Field=Field))
     elif Validation == "Float":
-        Field.configure(validatecommand=lambda: Float_Validate(Settings=Settings, Value=Field.get()))
+        Field.configure(validatecommand=lambda: Float_Validate(Settings=Settings, Configuration=Configuration, window=window, Field=Field))
     else:
         pass
 
     return Field
 
-def Get_Password_Normal(Configuration:dict, Frame: CTk|CTkFrame) -> CTkEntry:
+def Get_Password_Normal(Configuration:dict, Frame: CTkFrame) -> CTkEntry:
     Configuration_Password_Normal = Configuration["Fields"]["Entry"]["Normal"]
 
     Password_Normal = CTkEntry(
@@ -272,7 +267,7 @@ def Get_Password_Normal(Configuration:dict, Frame: CTk|CTkFrame) -> CTkEntry:
         show="*")
     return Password_Normal
 
-def Get_RadioButton_Normal(Configuration:dict, Frame: CTk|CTkFrame, Var_Value: int|str) -> CTkRadioButton:
+def Get_RadioButton_Normal(Configuration:dict, Frame: CTkFrame, Var_Value: int|str) -> CTkRadioButton:
     Configuration_RadioButton_Normal = Configuration["Fields"]["RadioButton"]["Normal"]
     
     fg_color = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_RadioButton_Normal["fg_color"])
@@ -294,7 +289,7 @@ def Get_RadioButton_Normal(Configuration:dict, Frame: CTk|CTkFrame, Var_Value: i
         value=Var_Value)
     return RadioButton_Normal
 
-def Get_Option_Menu(Configuration:dict, Frame: CTk|CTkFrame) -> CTkOptionMenu:
+def Get_Option_Menu(Configuration:dict, Frame: CTkFrame) -> CTkOptionMenu:
     # Base CTkOptionMenu
     Configuration_Base_Option_Menu = Configuration["Fields"]["OptionMenu"]["BaseCTk"]["Normal"]
     
@@ -323,21 +318,29 @@ def Get_Option_Menu(Configuration:dict, Frame: CTk|CTkFrame) -> CTkOptionMenu:
     
     return Base_Option_Menu
 
-def Get_Option_Menu_Advance(Configuration:dict, attach: CTkOptionMenu|CTkComboBox|CTkLabel|CTkButton, values: list, command: any) -> CTkScrollableDropdown:
+def Get_Option_Menu_Advance(Configuration:dict, attach: CTkOptionMenu|CTkComboBox|CTkLabel|CTkButton, values: list, command: any, GUI_Level_ID: int|None = None) -> CTkScrollableDropdown:
     # Advance CTkScrollableDropdown
     Configuration_Advance_Option_Menu = Configuration["Fields"]["OptionMenu"]["AdvancedCTk"]["Normal"]
+    BaseCTk_width = attach.cget("width")
 
     Accent_Color_help = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Advance_Option_Menu["fg_color"])
     scrollbar_button_hover_color_advance = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Advance_Option_Menu["scrollbar_button_hover_color"], Accent_Color=Accent_Color_help)
     hover_color_advance = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Advance_Option_Menu["hover_color"], Accent_Color=Accent_Color_help)
 
+    if type(GUI_Level_ID) is int:
+        fg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["fg_color"])
+        frame_border_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["border_color"])
+    else:
+        fg_color = tuple(Configuration_Advance_Option_Menu["fg_color"])
+        frame_border_color = tuple(Configuration_Advance_Option_Menu["frame_border_color"])
+
     Advance_Option_Menu = CTkScrollableDropdown(
         attach = attach,
         values = values,
         image_values = Configuration_Advance_Option_Menu["image_values"],
-        width = Configuration_Advance_Option_Menu["width"],
+        width = BaseCTk_width,
         height = Configuration_Advance_Option_Menu["height"],
-        fg_color = tuple(Configuration_Advance_Option_Menu["fg_color"]),
+        fg_color = fg_color,
         button_color = tuple(Configuration_Advance_Option_Menu["button_color"]),
         hover_color = hover_color_advance,
         text_color = tuple(Configuration_Advance_Option_Menu["text_color"]),
@@ -345,7 +348,7 @@ def Get_Option_Menu_Advance(Configuration:dict, attach: CTkOptionMenu|CTkComboBo
         justify = Configuration_Advance_Option_Menu["justify"],
         frame_corner_radius = Configuration_Advance_Option_Menu["frame_corner_radius"],
         frame_border_width = Configuration_Advance_Option_Menu["frame_border_width"],
-        frame_border_color = tuple(Configuration_Advance_Option_Menu["frame_border_color"]),
+        frame_border_color = frame_border_color,
         scrollbar = Configuration_Advance_Option_Menu["scrollbar"],
         scrollbar_button_color = tuple(Configuration_Advance_Option_Menu["scrollbar_button_color"]),
         scrollbar_button_hover_color = scrollbar_button_hover_color_advance,
@@ -356,7 +359,7 @@ def Get_Option_Menu_Advance(Configuration:dict, attach: CTkOptionMenu|CTkComboBo
 
     return Advance_Option_Menu
 
-def Get_CheckBox(Configuration:dict, Frame: CTk|CTkFrame) -> CTkCheckBox:
+def Get_CheckBox(Configuration:dict, Frame: CTkFrame) -> CTkCheckBox:
     Configuration_Check_Box = Configuration["Fields"]["CheckBox"]["Normal"]
     
     fg_color = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Check_Box["fg_color"])
@@ -379,12 +382,31 @@ def Get_CheckBox(Configuration:dict, Frame: CTk|CTkFrame) -> CTkCheckBox:
         text_color = tuple(Configuration_Check_Box["text_color"]),
         hover = Configuration_Check_Box["hover"])
     return Check_Box
+    
 
 
 # ---------------------------------------------- Frames ----------------------------------------------# 
 # NonScrollable
-def Get_Frame(Configuration:dict, Frame: CTk|CTkFrame, Frame_Size: str) -> CTkFrame:
+def Get_Frame(Configuration:dict, Frame: CTkFrame, Frame_Size: str, GUI_Level_ID: int|None = None) -> CTkFrame:
     Configuration_NonScrollable = Configuration["Frames"]["Page_Frames"][f"{Frame_Size}"]
+
+    if type(GUI_Level_ID) is int:
+        fg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["fg_color"])
+        border_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["border_color"])
+        if GUI_Level_ID == 0:
+            bg_color = tuple(Configuration_NonScrollable["bg_color"])
+        else:
+            bg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID - 1}"]["fg_color"])
+    else:
+        border_color = tuple(Configuration_NonScrollable["border_color"])
+        if Configuration_NonScrollable["fg_color"] == "transparent":
+            fg_color = Configuration_NonScrollable["fg_color"]
+        else:
+            fg_color = tuple(Configuration_NonScrollable["fg_color"])
+        if Configuration_NonScrollable["bg_color"] == "transparent":
+            bg_color = Configuration_NonScrollable["bg_color"]
+        else:
+            bg_color = tuple(Configuration_NonScrollable["bg_color"])
 
     Frame_NonScrollable = CTkFrame(
         master = Frame,
@@ -392,12 +414,12 @@ def Get_Frame(Configuration:dict, Frame: CTk|CTkFrame, Frame_Size: str) -> CTkFr
         height = Configuration_NonScrollable["height"],
         corner_radius = Configuration_NonScrollable["corner_radius"],
         border_width = Configuration_NonScrollable["border_width"],
-        border_color = tuple(Configuration_NonScrollable["border_color"]),
-        bg_color = Configuration_NonScrollable["bg_color"],
-        fg_color = Configuration_NonScrollable["fg_color"])
+        border_color = border_color,
+        bg_color = bg_color,
+        fg_color = fg_color)
     return Frame_NonScrollable
 
-def Get_SideBar_Frame(Configuration:dict, Frame: CTk|CTkFrame, Frame_Size: str) -> CTkFrame:
+def Get_SideBar_Frame(Configuration:dict, Frame: CTkFrame, Frame_Size: str) -> CTkFrame:
     Configuration_SideBar = Configuration["Frames"]["Page_Frames"][f"{Frame_Size}"]
 
     fg_color = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_SideBar["fg_color"])
@@ -413,117 +435,78 @@ def Get_SideBar_Frame(Configuration:dict, Frame: CTk|CTkFrame, Frame_Size: str) 
         fg_color = fg_color)
     return Frame_NonScrollable
 
-def Get_Dashboards_Frame(Configuration:dict, Frame: CTk|CTkFrame, Frame_Size: str) -> CTkFrame:
-    Configuration_Dashboard = Configuration["Frames"]["Dashboard"]["Background_Frames"][f"{Frame_Size}"]
-
-    Frame_NonScrollable = CTkFrame(
-        master = Frame,
-        width = Configuration_Dashboard["width"],
-        height = Configuration_Dashboard["height"],
-        corner_radius = Configuration_Dashboard["corner_radius"],
-        border_width = Configuration_Dashboard["border_width"],
-        border_color = tuple(Configuration_Dashboard["border_color"]),
-        bg_color = Configuration_Dashboard["bg_color"],
-        fg_color = Configuration_Dashboard["fg_color"])
-    return Frame_NonScrollable
-
 # ------------------------------------------------------------------------------------------------------------ Widgets  ------------------------------------------------------------------------------------------------------------ #
-# ------------------------------------------ Dashboards Widgets Frames ------------------------------------------#
-def Get_Dashboard_Widget_Frame_Body(Configuration:dict, Frame: CTk|CTkFrame, Widget_Line: str, Widget_size: str) -> CTkFrame:
-    Configuration_Frame_Dash_Body = Configuration["Frames"]["Dashboard"]["Widgets"][f"{Widget_Line}"][f"{Widget_size}"]["Body"]
-
-    Frame_Body = CTkFrame(
-        master = Frame,
-        width = Configuration_Frame_Dash_Body["width"],
-        height = Configuration_Frame_Dash_Body["height"],
-        corner_radius = Configuration_Frame_Dash_Body["corner_radius"],
-        border_width = Configuration_Frame_Dash_Body["border_width"],
-        border_color = tuple(Configuration_Frame_Dash_Body["border_color"]),
-        bg_color = Configuration_Frame_Dash_Body["bg_color"],
-        fg_color = tuple(Configuration_Frame_Dash_Body["fg_color"]))
-    return Frame_Body
-
-def Get_Dashboard_Widget_Frame_Body_Scrollable(Configuration:dict, Frame: CTk|CTkFrame, Widget_Line: str, Widget_size: str) -> CTkScrollableFrame:
-    Configuration_Frame_Dash_Body_Scroll = Configuration["Frames"]["Dashboard"]["Widgets"][f"{Widget_Line}"][f"{Widget_size}"]["Body_Scrollable"]
-    
-    Accent_Color_help = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Frame_Dash_Body_Scroll["Accent_Color_help"])
-    scrollbar_button_hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Frame_Dash_Body_Scroll["scrollbar_button_hover_color"], Accent_Color=Accent_Color_help)
-
-    Frame_Body_Scroll = CTkScrollableFrame(
-        master = Frame,
-        width = Configuration_Frame_Dash_Body_Scroll["width"],
-        height = Configuration_Frame_Dash_Body_Scroll["height"],
-        corner_radius = Configuration_Frame_Dash_Body_Scroll["corner_radius"],
-        border_width = Configuration_Frame_Dash_Body_Scroll["border_width"],
-        border_color = tuple(Configuration_Frame_Dash_Body_Scroll["border_color"]),
-        bg_color = Configuration_Frame_Dash_Body_Scroll["bg_color"],
-        fg_color = tuple(Configuration_Frame_Dash_Body_Scroll["fg_color"]),
-        scrollbar_fg_color = Configuration_Frame_Dash_Body_Scroll["scrollbar_fg_color"],
-        scrollbar_button_color = tuple(Configuration_Frame_Dash_Body_Scroll["scrollbar_button_color"]),
-        scrollbar_button_hover_color = scrollbar_button_hover_color)
-    return Frame_Body_Scroll
-
-def Get_Dashboard_Widget_Frame_Header(Configuration:dict, Frame: CTk|CTkFrame, Widget_Line: str, Widget_size: str) -> CTkFrame:
-    Configuration_Frame_Dash_Header = Configuration["Frames"]["Dashboard"]["Widgets"][f"{Widget_Line}"][f"{Widget_size}"]["Header"]
-
-    Frame_Header = CTkFrame(
-        master = Frame,
-        width = Configuration_Frame_Dash_Header["width"],
-        height = Configuration_Frame_Dash_Header["height"],
-        corner_radius = Configuration_Frame_Dash_Header["corner_radius"],
-        border_width = Configuration_Frame_Dash_Header["border_width"],
-        bg_color = Configuration_Frame_Dash_Header["bg_color"],
-        fg_color = Configuration_Frame_Dash_Header["fg_color"])
-    return Frame_Header
-
-def Get_Dashboard_Widget_Frame_Area(Configuration:dict, Frame: CTk|CTkFrame, Widget_Line: str, Widget_size: str) -> CTkFrame:
-    Configuration_Frame_Dash_Data = Configuration["Frames"]["Dashboard"]["Widgets"][f"{Widget_Line}"][f"{Widget_size}"]["Data_Area"]
-
-    Frame_Area = CTkFrame(
-        master = Frame,
-        width = Configuration_Frame_Dash_Data["width"],
-        height = Configuration_Frame_Dash_Data["height"],
-        corner_radius = Configuration_Frame_Dash_Data["corner_radius"],
-        border_width = Configuration_Frame_Dash_Data["border_width"],
-        bg_color = Configuration_Frame_Dash_Data["bg_color"],
-        fg_color = Configuration_Frame_Dash_Data["bg_color"])
-    return Frame_Area
-
 # ------------------------------------------ Widget Frames ------------------------------------------#
 # Scrollable --> Frames For tables
-def Get_Widget_Scrollable_Frame(Configuration:dict, Frame: CTk|CTkFrame, Frame_Size: str) -> CTkScrollableFrame:
+def Get_Widget_Scrollable_Frame(Configuration:dict, Frame: CTkFrame, Frame_Size: str, GUI_Level_ID: int|None = None) -> CTkScrollableFrame:
     Configuration_Scrollable = Configuration["Frames"]["Widgets"]["Widget_Frames"]["Scrollable_Frames"][f"{Frame_Size}"]
 
     Accent_Color_help = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Scrollable["Accent_Color_help"])
     scrollbar_button_hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Scrollable["scrollbar_button_hover_color"], Accent_Color=Accent_Color_help)
+
+    if type(GUI_Level_ID) is int:
+        fg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["fg_color"])
+        border_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["border_color"])
+        if GUI_Level_ID == 0:
+            bg_color = tuple(Configuration_Scrollable["bg_color"])
+        else:
+            bg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID - 1}"]["fg_color"])
+    else:
+        border_color = tuple(Configuration_Scrollable["border_color"])
+        if Configuration_Scrollable["fg_color"] == "transparent":
+            fg_color = Configuration_Scrollable["fg_color"]
+        else:
+            fg_color = tuple(Configuration_Scrollable["fg_color"])
+        if Configuration_Scrollable["bg_color"] == "transparent":
+            bg_color = Configuration_Scrollable["bg_color"]
+        else:
+            bg_color = tuple(Configuration_Scrollable["bg_color"])
 
     Frame_Scrollable = CTkScrollableFrame(
         master = Frame,
         width = Configuration_Scrollable["width"],
         corner_radius = Configuration_Scrollable["corner_radius"],
         border_width = Configuration_Scrollable["border_width"],
-        border_color = tuple(Configuration_Scrollable["border_color"]),
-        bg_color = Configuration_Scrollable["bg_color"],
-        fg_color = Configuration_Scrollable["fg_color"],
+        border_color = border_color,
+        bg_color = bg_color,
+        fg_color = fg_color,
         scrollbar_fg_color = Configuration_Scrollable["scrollbar_fg_color"],
         scrollbar_button_color = tuple(Configuration_Scrollable["scrollbar_button_color"]),
         scrollbar_button_hover_color = scrollbar_button_hover_color)
     return Frame_Scrollable
 
-def Get_Widget_Frame_Body(Configuration:dict, Frame: CTk|CTkFrame, Widget_size: str) -> CTkFrame:
+def Get_Widget_Frame_Body(Configuration:dict, Frame: CTkFrame, Widget_size: str, GUI_Level_ID: int|None = None) -> CTkFrame:
     Configuration_Frame_Single_Column = Configuration["Frames"]["Widgets"]["Widget_Frames"][f"{Widget_size}"]["Body"]
+
+    if type(GUI_Level_ID) is int:
+        fg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["fg_color"])
+        border_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["border_color"])
+        if GUI_Level_ID == 0:
+            bg_color = tuple(Configuration_Frame_Single_Column["bg_color"])
+        else:
+            bg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID - 1}"]["fg_color"])
+    else:
+        border_color = tuple(Configuration_Frame_Single_Column["border_color"])
+        if Configuration_Frame_Single_Column["fg_color"] == "transparent":
+            fg_color = Configuration_Frame_Single_Column["fg_color"]
+        else:
+            fg_color = tuple(Configuration_Frame_Single_Column["fg_color"])
+        if Configuration_Frame_Single_Column["bg_color"] == "transparent":
+            bg_color = Configuration_Frame_Single_Column["bg_color"]
+        else:
+            bg_color = tuple(Configuration_Frame_Single_Column["bg_color"])
 
     Frame_Single_Column = CTkFrame(
         master = Frame,
         width = Configuration_Frame_Single_Column["width"],
         corner_radius = Configuration_Frame_Single_Column["corner_radius"],
         border_width = Configuration_Frame_Single_Column["border_width"],
-        border_color = Configuration_Frame_Single_Column["border_color"],
-        bg_color = Configuration_Frame_Single_Column["bg_color"],
-        fg_color = tuple(Configuration_Frame_Single_Column["fg_color"]))
+        border_color = border_color,
+        bg_color = bg_color,
+        fg_color = fg_color)
     return Frame_Single_Column
 
-def Get_Widget_Frame_Header(Configuration:dict, Frame: CTk|CTkFrame, Widget_size: str) -> CTkFrame:
+def Get_Widget_Frame_Header(Configuration:dict, Frame: CTkFrame, Widget_size: str) -> CTkFrame:
     Configuration_Frame_Single_Column_Header = Configuration["Frames"]["Widgets"]["Widget_Frames"][f"{Widget_size}"]["Header"]
 
     Frame_Single_Column_Header = CTkFrame(
@@ -536,7 +519,7 @@ def Get_Widget_Frame_Header(Configuration:dict, Frame: CTk|CTkFrame, Widget_size
         fg_color = Configuration_Frame_Single_Column_Header["fg_color"])
     return Frame_Single_Column_Header
 
-def Get_Widget_Frame_Area(Configuration:dict, Frame: CTk|CTkFrame, Widget_size: str) -> CTkFrame:
+def Get_Widget_Frame_Area(Configuration:dict, Frame: CTkFrame, Widget_size: str) -> CTkFrame:
     Configuration_Frame_Single_Column_Data_Area = Configuration["Frames"]["Widgets"]["Widget_Frames"][f"{Widget_size}"]["Data_Area"]
 
     Frame_Single_Column = CTkFrame(
@@ -549,7 +532,7 @@ def Get_Widget_Frame_Area(Configuration:dict, Frame: CTk|CTkFrame, Widget_size: 
     return Frame_Single_Column
 
 # ------------------------------------------ Widget Field Frames ------------------------------------------#
-def Get_Widget_Field_Frame_Area(Configuration:dict, Frame: CTk|CTkFrame, Field_Frame_Type: str) -> CTkFrame:
+def Get_Widget_Field_Frame_Area(Configuration:dict, Frame: CTkFrame, Field_Frame_Type: str) -> CTkFrame:
     Configuration_Field_Single_Area = Configuration["Frames"]["Widgets"]["Field_Frames"][f"{Field_Frame_Type}"]["Area"]
 
     Frame_Field_Single_Area = CTkFrame(
@@ -562,7 +545,7 @@ def Get_Widget_Field_Frame_Area(Configuration:dict, Frame: CTk|CTkFrame, Field_F
         fg_color = Configuration_Field_Single_Area["fg_color"])
     return Frame_Field_Single_Area
 
-def Get_Widget_Field_Frame_Label(Configuration:dict, Frame: CTk|CTkFrame, Field_Frame_Type: str) -> CTkFrame:
+def Get_Widget_Field_Frame_Label(Configuration:dict, Frame: CTkFrame, Field_Frame_Type: str) -> CTkFrame:
     Configuration_Field_Single_Label = Configuration["Frames"]["Widgets"]["Field_Frames"][f"{Field_Frame_Type}"]["Label"]
 
     Frame_Field_Single_Label = CTkFrame(
@@ -575,7 +558,7 @@ def Get_Widget_Field_Frame_Label(Configuration:dict, Frame: CTk|CTkFrame, Field_
         fg_color = Configuration_Field_Single_Label["fg_color"])
     return Frame_Field_Single_Label
 
-def Get_Widget_Field_Frame_Space(Configuration:dict, Frame: CTk|CTkFrame, Field_Frame_Type: str) -> CTkFrame:
+def Get_Widget_Field_Frame_Space(Configuration:dict, Frame: CTkFrame, Field_Frame_Type: str) -> CTkFrame:
     Configuration_Field_Single_Space = Configuration["Frames"]["Widgets"]["Field_Frames"][f"{Field_Frame_Type}"]["Space"]
 
     Frame_Field_Single_Space = CTkFrame(
@@ -588,7 +571,7 @@ def Get_Widget_Field_Frame_Space(Configuration:dict, Frame: CTk|CTkFrame, Field_
         fg_color = Configuration_Field_Single_Space["fg_color"])
     return Frame_Field_Single_Space
 
-def Get_Widget_Field_Frame_Value(Configuration:dict, Frame: CTk|CTkFrame, Field_Frame_Type: str) -> CTkFrame:
+def Get_Widget_Field_Frame_Value(Configuration:dict, Frame: CTkFrame, Field_Frame_Type: str) -> CTkFrame:
     Configuration_Field_Single_Value = Configuration["Frames"]["Widgets"]["Field_Frames"][f"{Field_Frame_Type}"]["Value"]
 
     Frame_Field_Single_Value = CTkFrame(
@@ -602,12 +585,30 @@ def Get_Widget_Field_Frame_Value(Configuration:dict, Frame: CTk|CTkFrame, Field_
     return Frame_Field_Single_Value
 
 # ------------------------------------------ Tab View ------------------------------------------ 
-def Get_Tab_View(Configuration:dict, Frame: CTk|CTkFrame, Tab_size: str) -> CTkTabview:
+def Get_Tab_View(Configuration:dict, Frame: CTkFrame, Tab_size: str, GUI_Level_ID: int|None = None) -> CTkTabview:
     Configuration_TabView_Normal = Configuration["TabView"][f"{Tab_size}"]
     
     segmented_button_selected_color = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_TabView_Normal["segmented_button_selected_color"])
     segmented_button_selected_hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_TabView_Normal["segmented_button_selected_hover_color"], Accent_Color=segmented_button_selected_color)
     segmented_button_unselected_hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_TabView_Normal["segmented_button_unselected_hover_color"], Accent_Color=segmented_button_selected_color)
+
+    if type(GUI_Level_ID) is int:
+        fg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["fg_color"])
+        border_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["border_color"])
+        if GUI_Level_ID == 0:
+            bg_color = tuple(Configuration_TabView_Normal["bg_color"])
+        else:
+            bg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID - 1}"]["fg_color"])
+    else:
+        border_color = tuple(Configuration_TabView_Normal["border_color"])
+        if Configuration_TabView_Normal["fg_color"] == "transparent":
+            fg_color = Configuration_TabView_Normal["fg_color"]
+        else:
+            fg_color = tuple(Configuration_TabView_Normal["fg_color"])
+        if Configuration_TabView_Normal["bg_color"] == "transparent":
+            bg_color = Configuration_TabView_Normal["bg_color"]
+        else:
+            bg_color = tuple(Configuration_TabView_Normal["bg_color"])
 
     TabView_Normal = CTkTabview(
         master = Frame,
@@ -615,10 +616,10 @@ def Get_Tab_View(Configuration:dict, Frame: CTk|CTkFrame, Tab_size: str) -> CTkT
         height = Configuration_TabView_Normal["height"],
         corner_radius = Configuration_TabView_Normal["corner_radius"],
         border_width = Configuration_TabView_Normal["border_width"],
-        border_color = tuple(Configuration_TabView_Normal["border_color"]),
-        bg_color = Configuration_TabView_Normal["bg_color"],
-        fg_color = Configuration_TabView_Normal["fg_color"],
-        segmented_button_fg_color = Configuration_TabView_Normal["segmented_button_fg_color"],
+        border_color = border_color,
+        bg_color = bg_color,
+        fg_color = fg_color,
+        segmented_button_fg_color = border_color,
         segmented_button_selected_color = segmented_button_selected_color,
         segmented_button_selected_hover_color = segmented_button_selected_hover_color,
         segmented_button_unselected_color = tuple(Configuration_TabView_Normal["segmented_button_unselected_color"]),
@@ -629,7 +630,7 @@ def Get_Tab_View(Configuration:dict, Frame: CTk|CTkFrame, Tab_size: str) -> CTkT
     return TabView_Normal
 
 # ---------------------------------------------- Tables ----------------------------------------------# 
-def Get_Table(Configuration:dict, Frame: CTk|CTkFrame, Table_size: str, rows: int, columns: int) -> CTkTable:
+def Get_Table(Configuration:dict, Frame: CTk|CTkFrame, Table_size: str, rows: int, columns: int, GUI_Level_ID: int|None = None) -> CTkTable:
     def Colors_Theme_change(colors_rows: list) -> tuple:
         # Will be obsolete if Table will implement Light/Dark colors
         Current_Theme = get_appearance_mode()
@@ -642,8 +643,12 @@ def Get_Table(Configuration:dict, Frame: CTk|CTkFrame, Table_size: str, rows: in
         return tuple([color1, color2])
     
     Configuration_Table_Single = Configuration["Tables"][f"{Table_size}"]
+
+    if type(GUI_Level_ID) is int:
+        colors_rows = list(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["fg_color"])
+    else:
+        colors_rows = Configuration_Table_Single["colors"]
     
-    colors_rows = Configuration_Table_Single["colors"]
     colors_rows = Colors_Theme_change(colors_rows=colors_rows)
     header_color = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Table_Single["header_color"])
     hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Table_Single["hover_color"], Accent_Color=header_color)
@@ -668,12 +673,12 @@ def Get_Table(Configuration:dict, Frame: CTk|CTkFrame, Table_size: str, rows: in
     return Table_Single
 
 # ---------------------------------------------- Icons ----------------------------------------------# 
-def Create_Icon(Configuration:dict, Icon_Set: str, Icon_Name: str, Icon_Size: str, Theme_index: int) -> Image:
+def Create_Icon(Configuration:dict, Icon_Name: str, Icon_Size: str, Theme_index: int) -> Image:
     # Theme_Index: 0 --> light, 1 --> dark
     Configuration_Icon = Configuration["Icons"][f"{Icon_Size}"]
     
     Icon_Fact = IconFactory(
-        icon_set = Icon_Set,
+        icon_set = "lucide",
         icon_size = Configuration_Icon["icon_size"],
         font_size = Configuration_Icon["font_size"],
         font_color = Configuration_Icon["font_color"][Theme_index],
@@ -684,38 +689,43 @@ def Create_Icon(Configuration:dict, Icon_Set: str, Icon_Name: str, Icon_Size: st
     Icon_PIL = Icon_Fact.asPil(Icon_Name)
     return Icon_PIL
 
-def Get_CTk_Icon(Configuration:dict, Icon_Set: str, Icon_Name: str, Icon_Size: str) -> CTkImage:
+def Get_CTk_Icon(Configuration:dict, Icon_Name: str, Icon_Size: str) -> CTkImage:
     Configuration_Icon = Configuration["Icons"][f"{Icon_Size}"]
     Icon_Size_px = Configuration_Icon["icon_size"]
     Picture = CTkImage(
-        light_image = Create_Icon(Configuration=Configuration, Icon_Set=Icon_Set, Icon_Name=Icon_Name, Icon_Size=Icon_Size, Theme_index=0),
-        dark_image =Create_Icon(Configuration=Configuration, Icon_Set=Icon_Set, Icon_Name=Icon_Name, Icon_Size=Icon_Size, Theme_index=1),
+        light_image = Create_Icon(Configuration=Configuration, Icon_Name=Icon_Name, Icon_Size=Icon_Size, Theme_index=0),
+        dark_image =Create_Icon(Configuration=Configuration, Icon_Name=Icon_Name, Icon_Size=Icon_Size, Theme_index=1),
         size = (Icon_Size_px, Icon_Size_px))
     return Picture
 
-def Get_Background_Image(Configuration:dict, Frame: CTk|CTkFrame, Image_Name: str, postfix: str, width: int, heigh: int) -> CTkLabel:
+def Get_Custom_Image(Configuration:dict, Frame: CTkFrame, Image_Name: str, postfix: str, width: int, heigh: int) -> CTkLabel:
     Picture = CTkImage(
-        light_image = Image.open(Defaults_Lists.Absolute_path(relative_path=f"D:\\KM-Calendar_Reading\\Libs\\GUI\\Icons\\{Image_Name}_Light.{postfix}")),
-        dark_image = Image.open(Defaults_Lists.Absolute_path(relative_path=f"D:\\KM-Calendar_Reading\\Libs\\GUI\\Icons\\{Image_Name}_Dark.{postfix}")),
+        light_image = Image.open(Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\{Image_Name}_Light.{postfix}")),
+        dark_image = Image.open(Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\{Image_Name}_Dark.{postfix}")),
         size = (width, heigh))
     Background_Image_Label = Get_Label(Configuration=Configuration, Frame=Frame, Label_Size="Main", Font_Size="Main")
     Background_Image_Label.configure(image=Picture, text="")
     return Background_Image_Label
 
 # ---------------------------------------------- Progress Bar ----------------------------------------------# 
-def Get_ProgressBar(Configuration:dict, Frame: CTk|CTkFrame, orientation: str, Progress_Size: str) -> CTkProgressBar:
+def Get_ProgressBar(Configuration:dict, Frame: CTkFrame, orientation: str, Progress_Size: str, GUI_Level_ID: int|None = None) -> CTkProgressBar:
     Configuration_ProgressBar = Configuration["ProgressBar"][f"{orientation}"][f"{Progress_Size}"]
+
+    if type(GUI_Level_ID) is int:
+        border_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["border_color"])
+    else:
+        border_color = tuple(Configuration_ProgressBar["border_color"])
 
     Progress_Bar = CTkProgressBar(
         master = Frame,
         width = Configuration_ProgressBar["width"],
         height = Configuration_ProgressBar["height"],
         border_width = Configuration_ProgressBar["border_width"],
-        border_color = tuple(Configuration_ProgressBar["border_color"]),
+        border_color = border_color,
         corner_radius = Configuration_ProgressBar["corner_radius"],
         bg_color = Configuration_ProgressBar["bg_color"],
         fg_color = tuple(Configuration_ProgressBar["fg_color"]),
-        progress_color = tuple(Configuration_ProgressBar["progress_color"]),
+        progress_color = tuple(Configuration_ProgressBar["fg_color"]),
         orientation = Configuration_ProgressBar["orientation"],
         determinate_speed = Configuration_ProgressBar["determinate_speed"],
         indeterminate_speed = Configuration_ProgressBar["indeterminate_speed"],
@@ -724,29 +734,52 @@ def Get_ProgressBar(Configuration:dict, Frame: CTk|CTkFrame, orientation: str, P
 
 
 # ---------------------------------------------- InputDialog ----------------------------------------------# 
-def Get_DialogWindow(Configuration:dict, text: str, title: str, Dialog_Type: str) -> CTkInputDialog:
+def Get_DialogWindow(Configuration:dict, text: str, title: str, Dialog_Type: str, GUI_Level_ID: int|None = None) -> CTkInputDialog:
+    def drag_win():
+        x = Dialog.winfo_pointerx() - Dialog._offsetx
+        y = Dialog.winfo_pointery() - Dialog._offsety
+        Dialog.geometry(f"+{x}+{y}")
+
+    def click_win():
+        Dialog._offsetx = Dialog.winfo_pointerx() - Dialog.winfo_rootx()
+        Dialog._offsety = Dialog.winfo_pointery() - Dialog.winfo_rooty()
+
     Configuration_Dialog = Configuration["InputDialog"][f"{Dialog_Type}"]
     
     button_fg_color = Define_Accent_Color(Configuration=Configuration, Color_json=Configuration_Dialog["button_fg_color"])
     button_hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Configuration_Dialog["button_hover_color"], Accent_Color=button_fg_color)
 
+    if type(GUI_Level_ID) is int:
+        fg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["fg_color"])
+        border_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["border_color"])
+    else:
+        border_color = tuple(Configuration_Dialog["entry_border_color"])
+        if Configuration_Dialog["fg_color"] == "transparent":
+            fg_color = Configuration_Dialog["fg_color"]
+        else:
+            fg_color = tuple(Configuration_Dialog["fg_color"])
+
     Dialog = CTkInputDialog(
         text=text,
         title=title,
         font = Get_Font(Configuration=Configuration, Font_Size="Field_Label"),
-        fg_color = tuple(Configuration_Dialog["fg_color"]),
+        fg_color = fg_color,
         text_color = tuple(Configuration_Dialog["text_color"]),
         button_fg_color = button_fg_color,
         button_hover_color = button_hover_color,
         button_text_color = tuple(Configuration_Dialog["button_text_color"]),
         entry_fg_color = tuple(Configuration_Dialog["entry_fg_color"]),
-        entry_border_color = tuple(Configuration_Dialog["entry_border_color"]),
-        entry_text_color = tuple(Configuration_Dialog["entry_text_color"]),
-        password = Configuration_Dialog["password"])
+        entry_border_color = None,
+        entry_text_color = tuple(Configuration_Dialog["entry_text_color"]))
+    Dialog.overrideredirect(True)
+    Dialog.attributes("-transparentcolor", "#000001")
+    Dialog.bind(sequence="<Button-1>", func=lambda event:click_win())
+    Dialog.bind(sequence="<B1-Motion>", func=lambda event:drag_win())
+    Dialog.iconbitmap(bitmap=Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\HQ_Data_Generator.ico"))
     return Dialog
 
 # ---------------------------------------------- Color_Picker ----------------------------------------------# 
-def Get_Color_Picker(Configuration:dict, Frame: CTk|CTkFrame, Color_Manual_Frame_Var: CTkEntry) -> CTkColorPicker:
+def Get_Color_Picker(Configuration:dict, Frame: CTkFrame, Color_Manual_Frame_Var: CTkEntry, GUI_Level_ID: int|None = None) -> CTkColorPicker:
     def Change_Entry_Information(color: str) -> None:
         Color_Manual_Frame_Var.delete(first_index=0, last_index=8)
         Color_Manual_Frame_Var.insert(index=0, string=color)
@@ -765,7 +798,13 @@ def Get_Color_Picker(Configuration:dict, Frame: CTk|CTkFrame, Color_Manual_Frame
             
     Configuration_Color_Picker = Configuration["Color_Picker"]
 
-    fg_color = Configuration_Color_Picker["fg_color"]
+    if type(GUI_Level_ID) is int:
+        fg_color = list(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["fg_color"])
+    else:
+        if Configuration_Color_Picker["fg_color"] == "transparent":
+            fg_color = Configuration_Color_Picker["fg_color"]
+        else:
+            fg_color = Configuration_Color_Picker["fg_color"]
     fg_color = Color_Picker_fg_change(fg_color=fg_color)
 
     Color_Picker = CTkColorPicker(
@@ -780,8 +819,29 @@ def Get_Color_Picker(Configuration:dict, Frame: CTk|CTkFrame, Color_Manual_Frame
     return Color_Picker
 
 # ---------------------------------------------- CTkToolTip ----------------------------------------------# 
-def Get_ToolTip(Configuration:dict, widget: any, message: str, ToolTip_Size) -> CTkToolTip:
+def Get_ToolTip(Configuration:dict, widget: any, message: str, ToolTip_Size: str, GUI_Level_ID: int|None = None) -> CTkToolTip:
+    def Color_ToolTip_fg_change(Compare_Color: list|str) -> str:
+        # Will be obsolete if CTkColor_Picker will implement Light/Dark colors
+        Current_Theme = get_appearance_mode()
+        if type(Compare_Color) is list:
+            if Current_Theme == "Light":
+                Compare_Color = Compare_Color[0]
+            elif Current_Theme == "Dark":
+                Compare_Color = Compare_Color[1]
+        else:
+            Compare_Color = Compare_Color
+        return Compare_Color
+    
     Configuration_ToolTip = Configuration["Tooltips"][f"{ToolTip_Size}"]
+
+    if type(GUI_Level_ID) is int:
+        bg_color = list(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["fg_color"])
+        border_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["border_color"])
+    else:
+        bg_color = Configuration_ToolTip["bg_color"]
+        border_color = Configuration_ToolTip["border_color"]
+    bg_color = Color_ToolTip_fg_change(Compare_Color=bg_color)
+    border_color = Color_ToolTip_fg_change(Compare_Color=border_color)
 
     ToolTip = CTkToolTip(
         widget = widget,
@@ -790,10 +850,49 @@ def Get_ToolTip(Configuration:dict, widget: any, message: str, ToolTip_Size) -> 
         follow = Configuration_ToolTip["follow"],
         x_offset = Configuration_ToolTip["x_offset"],
         y_offset = Configuration_ToolTip["y_offset"],
-        bg_color = Configuration_ToolTip["bg_color"],
+        bg_color = bg_color,
         corner_radius = Configuration_ToolTip["corner_radius"],
         border_width = Configuration_ToolTip["border_width"],
-        border_color = Configuration_ToolTip["border_color"],
+        border_color = border_color,
         alpha = Configuration_ToolTip["alpha"],
         padding = tuple(Configuration_ToolTip["padding"]))
     return ToolTip
+
+def Get_MessageBox(Configuration:dict, title: str, message: str, icon: str, fade_in_duration: int, GUI_Level_ID: int, option_1: str = "OK", option_2: str|None = None, option_3: str|None = None, window: CTk|None = None) -> CTkMessagebox:
+    Button_Normal = Configuration["Buttons"]["Small"]
+    Label_Title_Label = Configuration["Labels"]["Field_Label"]
+    if title == "Error":
+        Label_Field_Label = Configuration["Labels"]["Column_Header_Additional"]
+    else:
+        Label_Field_Label = Configuration["Labels"]["Field_Label"]
+    
+    button_color = Define_Accent_Color(Configuration=Configuration, Color_json=Button_Normal["fg_color"])
+    button_hover_color = Define_Hover_Color(Configuration=Configuration, Color_json=Button_Normal["hover_color"], Accent_Color=button_color)
+
+    fg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["fg_color"])
+    border_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID}"]["border_color"])
+    bg_color = tuple(Configuration["Global_Appearance"]["GUI_Level_ID"][f"{GUI_Level_ID - 1}"]["fg_color"])
+
+    MessageBox = CTkMessagebox(
+        master=window,
+        title = title,
+        message = message,
+        font = Get_Font(Configuration=Configuration, Font_Size="Field_Label"),
+        topmost = True,
+        border_color = border_color,
+        bg_color = bg_color,
+        fg_color = fg_color,
+        text_color = Label_Field_Label["text_color"],
+        title_color = Label_Title_Label["text_color"],
+        button_width = Button_Normal["width"],
+        button_height = Button_Normal["height"],
+        button_color = button_color,
+        button_text_color = Button_Normal["text_color"],
+        button_hover_color = button_hover_color,
+        corner_radius = 10,
+        icon = icon,
+        fade_in_duration=fade_in_duration,
+        option_1 = option_1, 
+        option_2 = option_2,
+        option_3 = option_3)
+    return MessageBox.get()

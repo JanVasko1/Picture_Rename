@@ -22,20 +22,20 @@ def Entry_field_Insert(Field: CTkEntry, Value: str|int) -> None:
     else:
         pass
 
-def Metadata(Settings: dict, Configuration: dict, Frame: CTk|CTkFrame) -> CTkFrame:
+def Metadata(Settings: dict, Configuration: dict, window: CTk, Frame: CTk|CTkFrame, GUI_Level_ID: int|None = None) -> CTkFrame:
     Nested_Folder_Variable = BooleanVar(master=Frame, value=False)
 
     # Frame - General
-    Frame_Main = Elements_Groups.Get_Widget_Frame(Configuration=Configuration, Frame=Frame, Name="Metadata", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="Change Date Take / Media Created date and time according to file name.")
+    Frame_Main = Elements_Groups.Get_Widget_Frame(Configuration=Configuration, Frame=Frame, Name="Metadata", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="Change Date Take / Media Created date and time according to file name.", GUI_Level_ID=GUI_Level_ID)
     Frame_Body = Frame_Main.children["!ctkframe2"]
 
     # Field - Use
-    Nested_Folders_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Nested Folders", Field_Type="Input_CheckBox") 
+    Nested_Folders_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Nested Folders", Field_Type="Input_CheckBox") 
     Nested_Folders_Frame_Var = Nested_Folders_Frame.children["!ctkframe3"].children["!ctkcheckbox"]
     Nested_Folders_Frame_Var.configure(variable=Nested_Folder_Variable, text="")
 
     # Field - Search Text
-    Metadata_Path = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Path", Field_Type="Input_Normal") 
+    Metadata_Path = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Path", Field_Type="Input_Normal") 
     Metadata_Path_Var = Metadata_Path.children["!ctkframe3"].children["!ctkentry"]
     Metadata_Path_Var.configure(placeholder_text="Folder path.")
 
@@ -43,27 +43,27 @@ def Metadata(Settings: dict, Configuration: dict, Frame: CTk|CTkFrame) -> CTkFra
     Button_Frame = Elements_Groups.Get_Widget_Button_row(Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=1, Button_Size="Normal") 
     Button_Process_Var = Button_Frame.children["!ctkframe"].children["!ctkbutton"]
     Button_Process_Var.configure(text="Process")
-    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Process_Var, message="Change MetaData of files in folder/s.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Process_Var, message="Change MetaData of files in folder/s.", ToolTip_Size="Normal", GUI_Level_ID=GUI_Level_ID)
 
     # Build look of Widget
     Frame_Main.pack(side="top", padx=15, pady=15)
 
     return Frame_Main
 
-def Rename(Settings: dict, Configuration: dict, Frame: CTk|CTkFrame) -> CTkFrame:
+def Rename(Settings: dict, Configuration: dict, window: CTk, Frame: CTk|CTkFrame, GUI_Level_ID: int|None = None) -> CTkFrame:
     Rename_Nested_Folder_Variable = BooleanVar(master=Frame, value=False)
 
     # Frame - General
-    Frame_Main = Elements_Groups.Get_Widget_Frame(Configuration=Configuration, Frame=Frame, Name="Rename", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="Change names in path from Date_Take of Media Created.")
+    Frame_Main = Elements_Groups.Get_Widget_Frame(Configuration=Configuration, Frame=Frame, Name="Rename", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="Change names in path from Date_Take of Media Created.", GUI_Level_ID=GUI_Level_ID)
     Frame_Body = Frame_Main.children["!ctkframe2"]
 
     # Field - Use
-    Nested_Folders_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Nested Folders", Field_Type="Input_CheckBox") 
+    Nested_Folders_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Nested Folders", Field_Type="Input_CheckBox") 
     Nested_Folders_Frame_Var = Nested_Folders_Frame.children["!ctkframe3"].children["!ctkcheckbox"]
     Nested_Folders_Frame_Var.configure(variable=Rename_Nested_Folder_Variable, text="")
 
     # Field - Search Text
-    Rename_Path = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Path", Field_Type="Input_Normal") 
+    Rename_Path = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Path", Field_Type="Input_Normal") 
     Rename_Path_Var = Rename_Path.children["!ctkframe3"].children["!ctkentry"]
     Rename_Path_Var.configure(placeholder_text="Folder path.")
 
@@ -71,32 +71,32 @@ def Rename(Settings: dict, Configuration: dict, Frame: CTk|CTkFrame) -> CTkFrame
     Button_Frame = Elements_Groups.Get_Widget_Button_row(Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=1, Button_Size="Normal") 
     Button_Process_Var = Button_Frame.children["!ctkframe"].children["!ctkbutton"]
     Button_Process_Var.configure(text="Process")
-    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Process_Var, message="Change File names in folder/s.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Process_Var, message="Change File names in folder/s.", ToolTip_Size="Normal", GUI_Level_ID=GUI_Level_ID)
 
     # Build look of Widget
     Frame_Main.pack(side="top", padx=15, pady=15)
 
     return Frame_Main
 
-def GEOJson(Settings: dict, Configuration: dict, Frame: CTk|CTkFrame) -> CTkFrame:
+def GEOJson(Settings: dict, Configuration: dict, window: CTk, Frame: CTk|CTkFrame, GUI_Level_ID: int|None = None) -> CTkFrame:
     Rename_Nested_Folder_Variable = BooleanVar(master=Frame, value=False)
 
     # Frame - General
-    Frame_Main = Elements_Groups.Get_Widget_Frame(Configuration=Configuration, Frame=Frame, Name="Geo json", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="Create geo_json file from media files in path.")
+    Frame_Main = Elements_Groups.Get_Widget_Frame(Configuration=Configuration, Frame=Frame, Name="Geo json", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="Create geo_json file from media files in path.", GUI_Level_ID=GUI_Level_ID)
     Frame_Body = Frame_Main.children["!ctkframe2"]
 
     # Field - Use
-    Nested_Folders_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Nested Folders", Field_Type="Input_CheckBox") 
+    Nested_Folders_Frame = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Nested Folders", Field_Type="Input_CheckBox") 
     Nested_Folders_Frame_Var = Nested_Folders_Frame.children["!ctkframe3"].children["!ctkcheckbox"]
     Nested_Folders_Frame_Var.configure(variable=Rename_Nested_Folder_Variable, text="")
 
     # Field - Search Text
-    GEOJson_Export_Name = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="File Name", Field_Type="Input_Normal") 
+    GEOJson_Export_Name = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="File Name", Field_Type="Input_Normal") 
     GEOJson_Export_Name_Var = GEOJson_Export_Name.children["!ctkframe3"].children["!ctkentry"]
     GEOJson_Export_Name_Var.configure(placeholder_text="Folder path.")
 
     # Field - Search Text
-    GEOJson_Path = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Path", Field_Type="Input_Normal") 
+    GEOJson_Path = Elements_Groups.Get_Widget_Input_row(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Label="Path", Field_Type="Input_Normal") 
     GEOJson_Path_Var = GEOJson_Path.children["!ctkframe3"].children["!ctkentry"]
     GEOJson_Path_Var.configure(placeholder_text="Folder path.")
 
@@ -104,7 +104,7 @@ def GEOJson(Settings: dict, Configuration: dict, Frame: CTk|CTkFrame) -> CTkFram
     Button_Frame = Elements_Groups.Get_Widget_Button_row(Configuration=Configuration, Frame=Frame_Body, Field_Frame_Type="Single_Column" , Buttons_count=1, Button_Size="Normal") 
     Button_Process_Var = Button_Frame.children["!ctkframe"].children["!ctkbutton"]
     Button_Process_Var.configure(text="Process")
-    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Process_Var, message="Change File names in folder/s.", ToolTip_Size="Normal")
+    Elements.Get_ToolTip(Configuration=Configuration, widget=Button_Process_Var, message="Change File names in folder/s.", ToolTip_Size="Normal", GUI_Level_ID=GUI_Level_ID)
 
     # Build look of Widget
     Frame_Main.pack(side="top", padx=15, pady=15)

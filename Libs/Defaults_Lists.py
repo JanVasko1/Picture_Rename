@@ -1,60 +1,109 @@
 # Import Libraries
+import pickle
 import json
-import os
+import random
+from datetime import datetime, timedelta
 
-from CTkMessagebox import CTkMessagebox
+import Libs.Data_Functions as Data_Functions
+
+# --------------------------------------------- Load defaults --------------------------------------------- #
+def Load_Application() -> dict:
+    File = open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\App\\Application.json"), mode="r", encoding="UTF-8", errors="ignore")
+    Application = json.load(fp=File)
+    File.close()
+    return Application
 
 def Load_Settings() -> dict:
-    File = open(file=Absolute_path(relative_path=f"Libs\\Settings.json"), mode="r", encoding="UTF-8", errors="ignore")
+    File = open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\Settings.json"), mode="r", encoding="UTF-8", errors="ignore")
     Settings = json.load(fp=File)
     File.close()
     return Settings
 
+def Load_Settings_Part(my_dict: dict, JSON_path: list) -> str|int|float|list|dict:
+    for key in JSON_path[:]:
+        my_dict = my_dict.setdefault(key, {})
+    return my_dict
+
 def Load_Configuration() -> dict:
-    File = open(file=Absolute_path(relative_path=f"Libs\\GUI\\Configuration.json"), mode="r", encoding="UTF-8", errors="ignore")
+    File = open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Configuration.json"), mode="r", encoding="UTF-8", errors="ignore")
     Configuration = json.load(fp=File)
     File.close()
     return Configuration
 
-def Information_Update_Settings(File_Name: str, JSON_path: list, Information: int|str|list|dict) -> None:
-    def update_value(File_dict: dict, JSON_path: list, Information: int|str|list|dict) -> None:
-        # Must be in local function !!!!
-        for key in JSON_path[:-1]:
-            File_dict = File_dict[key]
-        File_dict[JSON_path[-1]] = Information
+def Load_Documents() -> dict:
+    File = open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\Documents.json"), mode="r", encoding="UTF-8", errors="ignore")
+    Configuration = json.load(fp=File)
+    File.close()
+    return Configuration
 
-    try:
-        # Load File
-        if File_Name == "Settings":
-            File_dict = Load_Settings()
-        elif File_Name == "Configuration":
-            File_dict = Load_Configuration()
-        else:
-            pass
+def Load_Template(NUS_Version: str, Template: str) -> dict:
+    File = open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\Process\\_File_Templates\\{NUS_Version}\\{Template}.json"), mode="r", encoding="UTF-8", errors="ignore")
+    Template = json.load(fp=File)
+    File.close()
+    return Template
 
-        # Update values
-        update_value(File_dict=File_dict, JSON_path=JSON_path, Information=Information)
-        
-        # Save in Settings.json
-        if File_Name == "Settings":
-            with open(Absolute_path(relative_path=f"Libs\\Settings.json"), mode="wt", encoding="UTF-8", errors="ignore") as file:
-                json.dump(obj=File_dict, fp=file, indent=4, default=str, ensure_ascii=False)
-            file.close()
-        elif File_Name == "Configuration":
-            with open(Absolute_path(relative_path=f"Libs\\GUI\\Configuration.json"), mode="wt", encoding="UTF-8", errors="ignore") as file:
-                json.dump(obj=File_dict, fp=file, indent=4, default=str, ensure_ascii=False)
-            file.close()
-        else:
-            pass
-            
-    except Exception as Error:
-        CTkMessagebox(title="Error", message=f"Not possible to update {Information} into Field: {JSON_path} of {File_Name}", icon="cancel", fade_in_duration=1)
+# --------------------------------------------- OAuth2 --------------------------------------------- #
+def Create_Azure_Auth() -> None:
+    Auth_Data = {
+        "Display_name": "", 
+        "client_id": "", 
+        "object_id": "0dc98f9d-26eb-4085-8a26-0d1d8abd21e1", 
+        "tenant_id": "17f69c66-2114-4826-9fb1-6e496607aebc", 
+        "client_secret": ""}
+    with open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\Azure\\Authorization.pkl"), mode="wb") as Authorization:
+        pickle.dump(obj=Auth_Data, file=Authorization)
 
-# --------------------------------------------- PyInstaller --------------------------------------------- #
-def Absolute_path(relative_path: str) -> str:
-    try:
-        base_path = os.path.abspath(".")
-        Absolute_path_str = os.path.join(base_path, relative_path)
-    except:
-        Absolute_path_str = relative_path
-    return Absolute_path_str
+def Load_Azure_Auth() -> list[str, str, str]:
+    with open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\Azure\\Authorization.pkl"), mode="rb") as Authorization:
+        Aut_Data = pickle.load(Authorization)
+    Display_name = Aut_Data["Display_name"]
+    client_id = Aut_Data["client_id"]
+    client_secret = Aut_Data["client_secret"]
+    tenant_id = Aut_Data["tenant_id"]
+    return Display_name, client_id, client_secret, tenant_id
+
+def Save_set_key_Auth(Key: str, Value: str) -> None:
+    with open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\Azure\\Authorization.pkl"), mode="rb") as Authorization:
+        Auth_Data = pickle.load(Authorization)
+
+    Auth_Data[Key] = Value
+
+    with open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\Azure\\Authorization.pkl"), mode="wb") as Authorization:
+        pickle.dump(obj=Auth_Data, file=Authorization)
+
+# --------------------------------------------- List / Dict Operations --------------------------------------------- #
+def List_from_Dict(Dictionary: dict, Key_Argument: str) -> list:
+    Return_List = []
+    for key, value in Dictionary.items():
+        Return_List.append(value[f"{Key_Argument}"])
+    Return_List.sort()
+    return Return_List
+
+def List_missing_values(Source_list, Compare_list):
+    set_source = set(Source_list)
+    set_compare = set(Compare_list)
+    missing_values = set_compare - set_source
+    return list(missing_values)
+
+def Dict_Main_Key_Change(Dictionary: dict, counter: int) -> dict:
+    new_dict = {}
+    for key, value in Dictionary.items():
+        new_key = f"{counter}"
+        new_dict[new_key] = value
+        counter += 1
+    return new_dict
+
+# --------------------------------------------- Other Defaults --------------------------------------------- #
+def Date_str_to_Week_str(Date_str: str, Format: str) -> str:
+    Date_dt = datetime.strptime(Date_str, Format)
+    Week = Date_dt.isocalendar()[1]
+    Year = Date_dt.isocalendar()[0]
+    Year_Week_str = f"{Year}-{Week}"
+    return Year_Week_str
+
+def DateString_minus_Number_Day(Date_str: str, No_Days: int, Format: str) -> str:
+    Date_dt = datetime.strptime(Date_str, Format)
+    New_Date_dt = Date_dt + timedelta(days=No_Days)
+    New_Date = New_Date_dt.strftime(Format)
+    return New_Date
+
