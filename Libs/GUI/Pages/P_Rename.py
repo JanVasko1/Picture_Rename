@@ -34,6 +34,11 @@ def Page_Rename(Settings: dict, Configuration: dict, window: CTk, Frame: CTkFram
             Generate_RENAME_thread.start()
             Generate_RENAME_thread.join(timeout=0.1) 
 
+    # Progress Bar
+    Progress_Bar_Frame = Elements.Get_Frame(Configuration=Configuration, Frame=Frame, Frame_Size="Work_Area_Status_Line", GUI_Level_ID=1)
+    Progress_Bar = Elements.Get_ProgressBar(Configuration=Configuration, Frame=Progress_Bar_Frame, orientation="Horizontal", Progress_Size="Download_Process", GUI_Level_ID=1)
+    Progress_Bar.set(value=0)
+
     # ---------- Tab View ---------- #
     TabView = Elements.Get_Tab_View(Configuration=Configuration, Frame=Frame, Tab_size="Normal", GUI_Level_ID=1)
     TabView.pack_propagate(flag=False)
@@ -42,17 +47,15 @@ def Page_Rename(Settings: dict, Configuration: dict, window: CTk, Frame: CTkFram
     Tab_PO_ToolTip_But = TabView.children["!ctksegmentedbutton"].children["!ctkbutton"]
     Elements.Get_ToolTip(Configuration=Configuration, widget=Tab_PO_ToolTip_But, message="Process for rename media file according to selected Datetime format.", ToolTip_Size="Normal", GUI_Level_ID=1)
 
-    # Progress Bar
-    Progress_Bar = Elements.Get_ProgressBar(Configuration=Configuration, Frame=Tab_RENAME, orientation="Horizontal", Progress_Size="Download_Process")
-    Progress_Bar.set(value=0)
-    Progress_Bar.pack(side="top", fill="none", expand=False, padx=5, pady=5)
-
     Frame_RENAME_Column_A = Elements.Get_Frame(Configuration=Configuration, Frame=Tab_RENAME, Frame_Size="Work_Area_Columns", GUI_Level_ID=1)
 
     Rename_Widget = W_All_pages.Rename(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_RENAME_Column_A, GUI_Level_ID=2)
     Rename_Process_var = Rename_Widget.children["!ctkframe2"].children["!ctkframe3"].children["!ctkframe"].children["!ctkbutton"]
     Rename_Process_var.configure(command = lambda: Prepare_Process_Rename(Rename_Widget=Rename_Widget))
     
-    TabView.pack(side="top", fill="both", expand=True, padx=10, pady=10)
+    Progress_Bar_Frame.pack(side="top", fill="x", expand=False, padx=10, pady=(10, 0))
+    Progress_Bar.pack(side="top", fill="none", expand=False, padx=5, pady=5)
+
+    TabView.pack(side="top", fill="both", expand=True, padx=10, pady=(0, 10))
     Frame_RENAME_Column_A.pack(side="left", fill="both", expand=True, padx=5, pady=5)
     Rename_Widget.pack(side="top", fill="none", expand=False, padx=5, pady=5)

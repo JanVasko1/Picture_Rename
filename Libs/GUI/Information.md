@@ -56,3 +56,4 @@ This program was build to create .geojson from media files (Photos and Videos)
 > Video file types --> Under Development
 
 ![Kepler example](Libs\\Readme\\MyTimeLine.gif)
+

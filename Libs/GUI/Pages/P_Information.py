@@ -3,7 +3,7 @@ import os
 import markdown
 
 import Libs.GUI.Elements as Elements
-import Libs.Defaults_Lists as Defaults_Lists
+import Libs.Data_Functions as Data_Functions
 
 import customtkinter
 from customtkinter import CTk, CTkFrame
@@ -28,7 +28,7 @@ def Get_Current_Theme() -> str:
 # -------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------- #
 def Page_Information(Settings: dict, Configuration: dict, window: CTk, Frame: CTkFrame):
     Work_Area_Detail_Font = Configuration["Labels"]["Main"]["text_color"]
-    Work_Area_Detail_Background = Configuration["Frames"]["Widgets"]["Widget_Frames"]["Scrollable_Frames"]["Triple_size"]["fg_color"]
+    Work_Area_Detail_Background = list(Configuration["Global_Appearance"]["GUI_Level_ID"]["1"]["fg_color"])
     
     # ------------------------- Main Functions -------------------------#
     # Get Theme --> because of background color
@@ -51,12 +51,12 @@ def Page_Information(Settings: dict, Configuration: dict, window: CTk, Frame: CT
     # Description
     Frame_Information_Scrollable_Area = Elements.Get_Widget_Scrollable_Frame(Configuration=Configuration, Frame=Frame, Frame_Size="Triple_size", GUI_Level_ID=1)
 
-    with open(Defaults_Lists.Absolute_path(relative_path="Libs\\GUI\\Information.md"), "r", encoding="UTF-8") as file:
+    with open(Data_Functions.Absolute_path(relative_path="Libs\\GUI\\Information.md"), "r", encoding="UTF-8") as file:
         html_markdown=markdown.markdown( file.read())
     file.close()
 
     Information_html = HTMLLabel(Frame_Information_Scrollable_Area, html=f"{html_markdown}", background=HTML_Background_Color, font="Roboto", fg=HTML_Font_Color)
-    Information_html.configure(height=700)
+    Information_html.configure(height=300)
 
     # Build look of Widget
     Frame_Information_Scrollable_Area.pack(side="top", fill="both", expand=True, padx=10, pady=10)

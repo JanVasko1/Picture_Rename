@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import logging
 import windows_metadata
 
-import Libs.Defaults_Lists as Defaults_Lists
+import Libs.Data_Functions as Data_Functions
 from customtkinter import CTkProgressBar, CTk
 
 logging.basicConfig(level=logging.ERROR)
@@ -56,10 +56,10 @@ def Rename_Files(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: C
     Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
 
     # Create Log file
-    Log_file = open(Defaults_Lists.Absolute_path(relative_path=f"Libs\\Logs\\Rename_Files_Log.csv"), "w", encoding="UTF-8")
+    Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\Rename_Files_Log.csv"), "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
     Log_file.close()
-    Log_file = open(Defaults_Lists.Absolute_path(relative_path=f"Libs\\Logs\\Rename_Files_Log.csv"), "a", encoding="UTF-8")
+    Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\Rename_Files_Log.csv"), "a", encoding="UTF-8")
     
     # Get Date for each file
     for actual_path in Nested_Path:

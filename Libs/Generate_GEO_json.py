@@ -8,7 +8,7 @@ import json
 
 from PIL import Image
 
-import Libs.Defaults_Lists as Defaults_Lists
+import Libs.Data_Functions as Data_Functions
 from customtkinter import CTkProgressBar, CTk
 
 logging.basicConfig(level=logging.ERROR)
@@ -98,7 +98,7 @@ def Create_geojson(GEO_df: DataFrame, Export_File_Name: str) -> None:
         }
         geojson["features"].append(feature)
 
-    with open(Defaults_Lists.Absolute_path(relative_path=f"Exports\\{Export_File_Name}.geojson"), "w") as fp:
+    with open(Data_Functions.Absolute_path(relative_path=f"Exports\\{Export_File_Name}.geojson"), "w") as fp:
         json.dump(geojson, fp)   
 
 def Progress_Bar_step(window: CTk, Progress_Bar: CTkProgressBar) -> None:
@@ -117,10 +117,10 @@ def GEO_Json(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkPr
     Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
 
     # Create Log file
-    Log_file = open(Defaults_Lists.Absolute_path(relative_path=f"Libs\\Logs\\GEO_JSON_Log.csv"), "w", encoding="UTF-8")
+    Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\GEO_JSON_Log.csv"), "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
     Log_file.close()
-    Log_file = open(Defaults_Lists.Absolute_path(relative_path=f"Libs\\Logs\\GEO_JSON_Log.csv"), "a", encoding="UTF-8")
+    Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\GEO_JSON_Log.csv"), "a", encoding="UTF-8")
     
     # Get Date for each file
     for actual_path in Nested_Path:
