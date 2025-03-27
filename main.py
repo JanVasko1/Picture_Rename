@@ -88,6 +88,6 @@ if __name__ == "__main__":
     Frame_Work_Area_Main.pack(side="left", fill="none", expand=False)
 
     P_Header.Get_Header(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Header)
-    app = P_Side_Bar.SidebarApp(Side_Bar_Frame=Frame_Side_Bar, Settings=Settings, Configuration=Configuration, window=window, Frame_Work_Area_Main=Frame_Work_Area_Main)
+    SideBar = P_Side_Bar.SidebarApp(Side_Bar_Frame=Frame_Side_Bar, Settings=Settings, Configuration=Configuration, window=window, Frame_Work_Area_Main=Frame_Work_Area_Main)
     # run
     window.mainloop()
