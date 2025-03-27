@@ -29,8 +29,8 @@ def Page_Metadata(Settings: dict, Configuration: dict, window: CTk, Frame: CTkFr
             Elements.Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"No path selected.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
         else:
             Nested_Path, File_Count = Nested_Folders(Nested_Folder=Nested_Folder, Selected_path=Selected_path)
-            Progress_Bar.configure(determinate_speed=50/File_Count)
-            Generate_META_thread = threading.Thread(target=Change_metadata.Change_Metadata, args=(Settings, Nested_Path, window, Progress_Bar))
+            Progress_Bar.configure(determinate_speed = round(number=50 / File_Count, ndigits=3), progress_color="#517A31")
+            Generate_META_thread = threading.Thread(target=Change_metadata.Change_Metadata, args=(Settings, Configuration, Nested_Path, window, Progress_Bar))
             Generate_META_thread.start()
             Generate_META_thread.join(timeout=0.1) 
 

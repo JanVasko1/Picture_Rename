@@ -1,6 +1,11 @@
 ### Contact
 **Author**: Jan Vaško<br>
-**Email**: Jan.Vasko@konicaminolta.eu<br>
+**Email**: Jan.Vasko@vaskode.com<br>
 **Mobile**: +420 601 383 301<br>
 
 ### Version List
+#### 1.0.1
+-SideBar as Class
+
+### 1.0.0
+- Start

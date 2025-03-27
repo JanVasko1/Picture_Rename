@@ -9,6 +9,7 @@ import Libs.Data_Functions as Data_Functions
 
 import Libs.GUI.Pages.P_Header as P_Header
 import Libs.GUI.Pages.P_Side_Bar as P_Side_Bar
+import Libs.GUI.Pages.P_Side_Bar as P_Side_Bar
 
 # ------------------------------------------------------------------------------------------------------------------------------------ Local Functions ------------------------------------------------------------------------------------------------------------------------------------ #
 def Get_Current_Theme() -> str:
@@ -60,12 +61,6 @@ if __name__ == "__main__":
     Settings = Defaults_Lists.Load_Settings()
     Configuration = Defaults_Lists.Load_Configuration() 
 
-    # Create folders if do not exists
-    try:
-        os.mkdir(Data_Functions.Absolute_path(relative_path=f"Exports\\"))
-    except:
-        pass
-
     # Base Windows style setup --> always keep normal before change
     Theme_Actual = Configuration["Global_Appearance"]["Window"]["Theme"]
     SideBar_Width = Configuration["Frames"]["Page_Frames"]["SideBar"]["width"]
@@ -93,7 +88,6 @@ if __name__ == "__main__":
     Frame_Work_Area_Main.pack(side="left", fill="none", expand=False)
 
     P_Header.Get_Header(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Header)
-    P_Side_Bar.Get_Side_Bar(Settings=Settings, Configuration=Configuration, window=window, Frame_Work_Area_Main=Frame_Work_Area_Main, Side_Bar_Frame=Frame_Side_Bar)
-
+    app = P_Side_Bar.SidebarApp(Side_Bar_Frame=Frame_Side_Bar, Settings=Settings, Configuration=Configuration, window=window, Frame_Work_Area_Main=Frame_Work_Area_Main)
     # run
     window.mainloop()

@@ -10,6 +10,7 @@ from PIL import Image
 
 import Libs.File_Manipulation as File_Manipulation
 import Libs.Data_Functions as Data_Functions
+import Libs.GUI.Elements as Elements
 
 from customtkinter import CTkProgressBar, CTk
 
@@ -113,7 +114,7 @@ def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> N
     window.update_idletasks()
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def GEO_Json(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar, Export_File_Name: str) -> None:
+def GEO_Json(Settings: dict, Configuration: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar, Export_File_Name: str) -> None:
     GEO_df = DataFrame(columns=["Date", "Latitude", "Longitude", "Album" ,"Album2", "Name"])
     PIL_DateTime_Format = Settings["GEOJson"]["PIL_DateTime_Format"]
     Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
@@ -141,7 +142,7 @@ def GEO_Json(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkPr
 
             elif postfix in Supported_photo_formats:
                 try:
-                    GEO_Attributes, Date_Taken = Get_Picture_Main_Att(file_path=file_path, Actual_Folder=Actual_Folder, filename=filename, Log_file=Log_file)
+                    GEO_Attributes, Date_Taken = Get_Picture_Main_Att(Settings=Settings, file_path=file_path, Actual_Folder=Actual_Folder, filename=filename, Log_file=Log_file)
                     if GEO_Attributes != False:
                         Formatted_Date_Time =  Format_DateTime_All(Original_Date_Time_str=Date_Taken, DateTime_Format=PIL_DateTime_Format)
                         Add_to_Dataframe(GEO_df=GEO_df, GEO_attributes=GEO_Attributes, Date=Formatted_Date_Time, Album=Higher_Actual_Folder, Album2=Actual_Folder, Name=filename)
@@ -162,7 +163,7 @@ def GEO_Json(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkPr
 
                     Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
 
-                except:
+                except Exception as error:
                     Log_file.write(f"""Video;{Actual_Folder};{filename};{error}\n""")
                     Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                     continue
@@ -177,3 +178,4 @@ def GEO_Json(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkPr
 
     Log_file.close()
     Progress_Bar_set(window=window, Progress_Bar=Progress_Bar, value=1) 
+    Elements.Get_MessageBox(Configuration=Configuration, window=window, title="Success", message="GEO JSON file successfully created.", icon="check", fade_in_duration=1, GUI_Level_ID=1)

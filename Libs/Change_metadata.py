@@ -6,6 +6,7 @@ import subprocess
 import piexif
 
 import Libs.Data_Functions as Data_Functions
+import Libs.GUI.Elements as Elements
 from customtkinter import CTkProgressBar, CTk
 
 logging.basicConfig(level=logging.ERROR)
@@ -135,7 +136,7 @@ def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> N
     window.update_idletasks()
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def Change_Metadata(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
+def Change_Metadata(Settings: dict, Configuration: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
     Name_format = Settings["General"]["File_Format"]
     Property_format = Settings["MetaData"]["Property_format"]
     Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
@@ -199,3 +200,4 @@ def Change_Metadata(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar
 
     Log_file.close()
     Progress_Bar_set(window=window, Progress_Bar=Progress_Bar, value=1) 
+    Elements.Get_MessageBox(Configuration=Configuration, window=window, title="Success", message="MEtaData successfully changed.", icon="check", fade_in_duration=1, GUI_Level_ID=1)

@@ -4,6 +4,8 @@ import logging
 import windows_metadata
 
 import Libs.Data_Functions as Data_Functions
+import Libs.GUI.Elements as Elements
+
 from customtkinter import CTkProgressBar, CTk
 
 logging.basicConfig(level=logging.ERROR)
@@ -49,7 +51,7 @@ def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> N
     window.update_idletasks()
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def Rename_Files(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
+def Rename_Files(Settings: dict, Configuration: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
     Export_format = Settings["General"]["File_Format"]
     Attr_format = Settings["Rename"]["Attr_format"]
     Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
@@ -99,7 +101,7 @@ def Rename_Files(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: C
                         Rename_File(file_path=file_path, actual_path=actual_path, Formatted_Date_Time=Formatted_Date_Time, postfix=postfix, Export_format=Export_format)
                     Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
 
-                except:
+                except Exception as error:
                     Log_file.write(f"""Video;{Actual_Folder};{filename};{error}\n""")
                     Progress_Bar_step(window=window, Progress_Bar=Progress_Bar)
                     continue
@@ -111,3 +113,4 @@ def Rename_Files(Settings: dict, Nested_Path: list, window: CTk, Progress_Bar: C
 
     Log_file.close()
     Progress_Bar_set(window=window, Progress_Bar=Progress_Bar, value=1) 
+    Elements.Get_MessageBox(Configuration=Configuration, window=window, title="Success", message="Files successfully renamed.", icon="check", fade_in_duration=1, GUI_Level_ID=1)
