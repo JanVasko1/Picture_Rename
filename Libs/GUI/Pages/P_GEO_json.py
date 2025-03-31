@@ -50,13 +50,12 @@ def Page_Geo_Json(Settings: dict, Configuration: dict, window: CTk, Frame: CTkFr
 
     Frame_GEO_Column_A = Elements.Get_Frame(Configuration=Configuration, Frame=Tab_GEO, Frame_Size="Work_Area_Columns", GUI_Level_ID=1)
 
-    GeoJson_Widget = W_All_pages.GEOJson(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_GEO_Column_A, GUI_Level_ID=2)
-    GeoJson_Process_var = GeoJson_Widget.children["!ctkframe2"].children["!ctkframe4"].children["!ctkframe"].children["!ctkbutton"]
-    GeoJson_Process_var.configure(command = lambda: Prepare_Process_GeoJson(GeoJson_Widget=GeoJson_Widget))
-
     Progress_Bar_Frame.pack(side="top", fill="x", expand=False, padx=10, pady=(10, 0))
     Progress_Bar.pack(side="top", fill="none", expand=False, padx=5, pady=5)
 
     TabView.pack(side="top", fill="both", expand=True, padx=10, pady=(0, 10))
     Frame_GEO_Column_A.pack(side="left", fill="both", expand=True, padx=5, pady=5)
-    GeoJson_Widget.pack(side="top", fill="none", expand=False, padx=5, pady=5)
+
+    # Widgets
+    GEOJson_Widget = W_All_pages.GEOJson_new(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_GEO_Column_A, GUI_Level_ID=2)
+    GEOJson_Widget.Show()   

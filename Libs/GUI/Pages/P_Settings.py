@@ -42,23 +42,22 @@ def Page_Settings(Settings: dict, Configuration: dict, window: CTk, Frame: CTk|C
 
     # ---------- Settings ---------- #
     Frame_Settings_Column_A = Elements.Get_Frame(Configuration=Configuration, Frame=Tab_Gen, Frame_Size="Work_Area_Columns", GUI_Level_ID=1)
-    Color_Palette_Widget = W_Settings.Settings_General_Color(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Settings_Column_A, GUI_Level_ID=2)
-
-    # ---------- Photo Formats ---------- #
     Frame_P_Formats_Column_A = Elements.Get_Frame(Configuration=Configuration, Frame=Tab_Photos, Frame_Size="Work_Area_Columns", GUI_Level_ID=1)
-    Photo_Postfix_Widget = W_Settings.Settings_Supported_Photo(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_P_Formats_Column_A, GUI_Level_ID=2)
-
-    # ---------- Video Formats ---------- #
     Frame_V_Formats_Column_A = Elements.Get_Frame(Configuration=Configuration, Frame=Tab_Videos, Frame_Size="Work_Area_Columns", GUI_Level_ID=1)
+    
+    Photo_Postfix_Widget = W_Settings.Settings_Supported_Photo(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_P_Formats_Column_A, GUI_Level_ID=2)
     Video_Postfix_Widget = W_Settings.Settings_Supported_Video(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_V_Formats_Column_A, GUI_Level_ID=2)
 
     # Build look of Widget
     TabView.pack(side="top", fill="both", expand=True, padx=10, pady=10)
     Frame_Settings_Column_A.pack(side="left", fill="both", expand=True, padx=5, pady=5)
-    Color_Palette_Widget.pack(side="top", fill="none", expand=False, padx=5, pady=5)
+
 
     Frame_P_Formats_Column_A.pack(side="left", fill="both", expand=True, padx=5, pady=5)
     Photo_Postfix_Widget.pack(side="top", fill="none", expand=False, padx=5, pady=5)
 
     Frame_V_Formats_Column_A.pack(side="left", fill="both", expand=True, padx=5, pady=5)
     Video_Postfix_Widget.pack(side="top", fill="none", expand=False, padx=5, pady=5)
+
+    Apperance_Widget = W_Settings.Settings_General_Color(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Settings_Column_A, GUI_Level_ID=2)
+    Apperance_Widget.Show()   

@@ -49,13 +49,11 @@ def Page_Metadata(Settings: dict, Configuration: dict, window: CTk, Frame: CTkFr
 
     Frame_META_Column_A = Elements.Get_Frame(Configuration=Configuration, Frame=Tab_META, Frame_Size="Work_Area_Columns", GUI_Level_ID=1)
 
-    Metadata_Widget = W_All_pages.Metadata(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_META_Column_A, GUI_Level_ID=2)
-    Metadata_Process_var = Metadata_Widget.children["!ctkframe2"].children["!ctkframe3"].children["!ctkframe"].children["!ctkbutton"]
-    Metadata_Process_var.configure(command = lambda: Prepare_Process_Metadata(Metadata_Widget=Metadata_Widget))
-
     Progress_Bar_Frame.pack(side="top", fill="x", expand=False, padx=10, pady=(10, 0))
     Progress_Bar.pack(side="top", fill="none", expand=False, padx=5, pady=5)
 
     TabView.pack(side="top", fill="both", expand=True, padx=10, pady=(0, 10))
     Frame_META_Column_A.pack(side="left", fill="both", expand=True, padx=5, pady=5)
-    Metadata_Widget.pack(side="top", fill="none", expand=False, padx=5, pady=5)
+
+    Metadata_Widget = W_All_pages.Metadata_new(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_META_Column_A, GUI_Level_ID=2)
+    Metadata_Widget.Show()   

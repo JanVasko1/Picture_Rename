@@ -2,6 +2,7 @@
 from PIL import Image
 from datetime import datetime
 
+
 from customtkinter import CTk, CTkButton, CTkFrame, CTkScrollableFrame, CTkEntry, CTkLabel, CTkFont, CTkImage, CTkRadioButton, CTkTabview, CTkOptionMenu, CTkCheckBox, CTkProgressBar, CTkInputDialog, CTkComboBox, get_appearance_mode
 from CTkTable import CTkTable
 from CTkColorPicker import CTkColorPicker
@@ -15,57 +16,6 @@ from iconipy import IconFactory
 import winaccent
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def Time_Validate(Settings: dict, Configuration: dict|None, window: CTk, Field: CTkEntry) -> None:
-    Time_Format = Settings["0"]["General"]["Formats"]["Time"]
-    Value = Field.get()
-
-    if Value != "":
-        try:
-            datetime.strptime(Value, Time_Format)
-        except:
-            Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Value: {Value} in not proper Time format, should be: HH:MM.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
-            Field.delete(first_index=0, last_index=100)
-    else:
-        pass
-
-def Date_Validate(Settings: dict, Configuration: dict|None, window: CTk, Field: CTkEntry) -> None:
-    Date_Format = Settings["0"]["General"]["Formats"]["Date"]
-    Value = Field.get()
-
-    if Value != "":
-        try:
-            datetime.strptime(Value, Date_Format)
-        except:
-            Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Value: {Value} in not in proper Date format, should be: YYYY-MM-DD.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
-            Field.delete(first_index=0, last_index=100)
-    else:
-        pass
-
-def Int_Validate(Settings: dict, Configuration: dict|None, window: CTk, Field: CTkEntry) -> None:
-    Value = Field.get()
-
-    if Value != "":
-        try:
-            int(Value)
-        except:
-            Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Value: {Value} in not whole number.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
-            Field.delete(first_index=0, last_index=100)
-    else:
-        pass
-
-def Float_Validate(Settings: dict, Configuration: dict|None, window: CTk, Field: CTkEntry) -> None:
-    Value = Field.get()
-
-    if Value != "":
-        try:
-            float(Value)
-        except:
-            Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Value: {Value} in not float number.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
-            Field.delete(first_index=0, last_index=100)
-    else:
-        pass
-
-
 def lighten_hex_color(hex_color, percentage):
     # Remove the hash symbol if present
     hex_color = hex_color.lstrip('#')
@@ -233,19 +183,7 @@ def Get_Entry_Field(Settings: dict, Configuration:dict, window: CTk, Frame: CTkF
         bg_color = Configuration_Field["bg_color"],
         fg_color = tuple(Configuration_Field["fg_color"]),
         text_color = tuple(Configuration_Field["text_color"]),
-        placeholder_text_color = tuple(Configuration_Field["placeholder_text_color"]),
-        validate="focusout")
-    
-    if Validation == "Time":
-        Field.configure(validatecommand=lambda: Time_Validate(Settings=Settings, Configuration=Configuration, window=window, Field=Field))
-    elif Validation == "Date":
-        Field.configure(validatecommand=lambda: Date_Validate(Settings=Settings, Configuration=Configuration, window=window, Field=Field))
-    elif Validation == "Integer":
-        Field.configure(validatecommand=lambda: Int_Validate(Settings=Settings, Configuration=Configuration, window=window, Field=Field))
-    elif Validation == "Float":
-        Field.configure(validatecommand=lambda: Float_Validate(Settings=Settings, Configuration=Configuration, window=window, Field=Field))
-    else:
-        pass
+        placeholder_text_color = tuple(Configuration_Field["placeholder_text_color"]))
 
     return Field
 
@@ -779,11 +717,7 @@ def Get_DialogWindow(Configuration:dict, text: str, title: str, Dialog_Type: str
     return Dialog
 
 # ---------------------------------------------- Color_Picker ----------------------------------------------# 
-def Get_Color_Picker(Configuration:dict, Frame: CTkFrame, Color_Manual_Frame_Var: CTkEntry, GUI_Level_ID: int|None = None) -> CTkColorPicker:
-    def Change_Entry_Information(color: str) -> None:
-        Color_Manual_Frame_Var.delete(first_index=0, last_index=8)
-        Color_Manual_Frame_Var.insert(index=0, string=color)
-
+def Get_Color_Picker(Configuration:dict, Frame: CTkFrame, GUI_Level_ID: int|None = None) -> CTkColorPicker:
     def Color_Picker_fg_change(fg_color: list|str) -> str:
         # Will be obsolete if CTkColor_Picker will implement Light/Dark colors
         Current_Theme = get_appearance_mode()
@@ -814,7 +748,6 @@ def Get_Color_Picker(Configuration:dict, Frame: CTkFrame, Color_Manual_Frame_Var
         fg_color = fg_color,
         slider_border = Configuration_Color_Picker["slider_border"],
         corner_radius = Configuration_Color_Picker["corner_radius"],
-        command = lambda color: Change_Entry_Information(color=color),
         orientation = Configuration_Color_Picker["orientation"])
     return Color_Picker
 

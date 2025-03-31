@@ -1,6 +1,4 @@
 # Import Libraries
-import os
-
 from customtkinter import CTk, deactivate_automatic_dpi_awareness, get_appearance_mode, set_appearance_mode
 
 import Libs.GUI.Elements as Elements

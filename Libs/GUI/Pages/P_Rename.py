@@ -49,13 +49,11 @@ def Page_Rename(Settings: dict, Configuration: dict, window: CTk, Frame: CTkFram
 
     Frame_RENAME_Column_A = Elements.Get_Frame(Configuration=Configuration, Frame=Tab_RENAME, Frame_Size="Work_Area_Columns", GUI_Level_ID=1)
 
-    Rename_Widget = W_All_pages.Rename(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_RENAME_Column_A, GUI_Level_ID=2)
-    Rename_Process_var = Rename_Widget.children["!ctkframe2"].children["!ctkframe3"].children["!ctkframe"].children["!ctkbutton"]
-    Rename_Process_var.configure(command = lambda: Prepare_Process_Rename(Rename_Widget=Rename_Widget))
-    
     Progress_Bar_Frame.pack(side="top", fill="x", expand=False, padx=10, pady=(10, 0))
     Progress_Bar.pack(side="top", fill="none", expand=False, padx=5, pady=5)
 
     TabView.pack(side="top", fill="both", expand=True, padx=10, pady=(0, 10))
     Frame_RENAME_Column_A.pack(side="left", fill="both", expand=True, padx=5, pady=5)
-    Rename_Widget.pack(side="top", fill="none", expand=False, padx=5, pady=5)
+
+    Rename_Widget = W_All_pages.Rename_new(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_RENAME_Column_A, GUI_Level_ID=2)
+    Rename_Widget.Show()   

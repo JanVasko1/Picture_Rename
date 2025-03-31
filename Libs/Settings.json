@@ -1,39 +1,46 @@
 {
-    "General": {
-        "File_Format": "%Y%m%d_%H%M%S",
-        "Supported_postfix": {
-            "Photos": [
-                ".JPEG",
-                ".JPG",
-                ".jpeg",
-                ".jpg"
-            ],
-            "Videos": [
-                ".3GP",
-                ".3gp",
-                ".AVI",
-                ".MOV",
-                ".MP4",
-                ".avi",
-                ".mov",
-                ".mp4"
-            ]
+    "0": {
+        "General": {
+            "Formats": {
+                "Date": "%Y-%m-%d",
+                "Time": "%H:%M",
+                "Numbers_DateTime": "%Y%m%d%H%M%S"
+            },
+            "File_Format": "%Y%m%d_%H%M%S",
+            "Supported_postfix": {
+                "Photos": [
+                    ".JPEG",
+                    ".JPG",
+                    ".jpeg",
+                    ".jpg"
+                ],
+                "Videos": [
+                    ".3GP",
+                    ".3gp",
+                    ".AVI",
+                    ".MOV",
+                    ".MP4",
+                    ".avi",
+                    ".mov",
+                    ".mp4"
+                ]
+            }
+        },
+        "MetaData": {
+            "Property_format": "%Y-%m-%d %H:%M:%S",
+            "Date_dt_Format": "%Y:%m:%d %H:%M:%S",
+            "Exif_ID": 34665,
+            "GPS_ID": 34853,
+            "DateTime_ID": 306,
+            "Date_Taken_ID": 36867,
+            "DateTimeDigitized_ID": 36868,
+            "PreviewDateTime_ID": 50971
+        },
+        "Rename": {
+            "Attr_format": "%Y-%m-%d %H:%M"
+        },
+        "GEOJson": {
+            "PIL_DateTime_Format": "%Y:%m:%d %H:%M:%S"
         }
-    },
-    "MetaData": {
-        "Property_format": "%Y-%m-%d %H:%M:%S",
-        "Date_dt_Format": "%Y:%m:%d %H:%M:%S",
-        "Exif_ID": 34665,
-        "GPS_ID": 34853,
-        "DateTime_ID": 306,
-        "Date_Taken_ID": 36867,
-        "DateTimeDigitized_ID": 36868,
-        "PreviewDateTime_ID": 50971
-    },
-    "Rename": {
-        "Attr_format": "%Y-%m-%d %H:%M"
-    },
-    "GEOJson": {
-        "PIL_DateTime_Format": "%Y:%m:%d %H:%M:%S"
     }
 }
