@@ -5,25 +5,9 @@ import markdown
 import Libs.GUI.Elements as Elements
 import Libs.Data_Functions as Data_Functions
 
-import customtkinter
 from customtkinter import CTk, CTkFrame
+import Libs.CustomTkinter_Functions as CustomTkinter_Functions
 from tkhtmlview import HTMLLabel
-
-# -------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------- #
-def Nested_Folders(Nested_Folder: bool, Selected_path: str) -> list[list, int]:
-    if Nested_Folder == True:
-        # Read actual folder and folders inside
-        Nested_Path = [x[0] for x in os.walk(Selected_path)]
-        File_Count = sum([len(files) for r, d, files in os.walk(Selected_path)])
-    else:
-        Nested_Path = [Selected_path]
-        File_Count = [len(files) for r, d, files in os.walk(Selected_path)]
-        File_Count = File_Count[0]
-    return Nested_Path, File_Count
-
-def Get_Current_Theme() -> str:
-    Current_Theme = customtkinter.get_appearance_mode()
-    return Current_Theme
 
 # -------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------- #
 def Page_Information(Settings: dict, Configuration: dict, window: CTk, Frame: CTkFrame):
@@ -32,7 +16,7 @@ def Page_Information(Settings: dict, Configuration: dict, window: CTk, Frame: CT
     
     # ------------------------- Main Functions -------------------------#
     # Get Theme --> because of background color
-    Current_Theme = Get_Current_Theme() 
+    Current_Theme = CustomTkinter_Functions.Get_Current_Theme() 
 
     if Current_Theme == "Dark":
         HTML_Background_Color = Work_Area_Detail_Background[1]
@@ -55,7 +39,7 @@ def Page_Information(Settings: dict, Configuration: dict, window: CTk, Frame: CT
         html_markdown=markdown.markdown( file.read())
     file.close()
 
-    Information_html = HTMLLabel(Frame_Information_Scrollable_Area, html=f"{html_markdown}", background=HTML_Background_Color, font="Roboto", fg=HTML_Font_Color)
+    Information_html = HTMLLabel(Frame_Information_Scrollable_Area, html=f"""<p style="color: {HTML_Font_Color};">{html_markdown}</p>""", background=HTML_Background_Color, font="Roboto")
     Information_html.configure(height=270)
 
     # Build look of Widget

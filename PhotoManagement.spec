@@ -30,7 +30,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='PhotoManagement',
+    name='PhotoManager',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -42,6 +42,7 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     icon=['Libs\\GUI\\Icons\\Logo.ico'],
+    version='Version.rc',
 )
 coll = COLLECT(
     exe,
@@ -50,5 +51,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='PhotoManage',
+    name='PhotoManager',
 )

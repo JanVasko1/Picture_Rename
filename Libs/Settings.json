@@ -27,6 +27,7 @@
             }
         },
         "MetaData": {
+            "Nested_Folders": true,
             "Property_format": "%Y-%m-%d %H:%M:%S",
             "Date_dt_Format": "%Y:%m:%d %H:%M:%S",
             "Exif_ID": 34665,
@@ -34,13 +35,18 @@
             "DateTime_ID": 306,
             "Date_Taken_ID": 36867,
             "DateTimeDigitized_ID": 36868,
-            "PreviewDateTime_ID": 50971
+            "PreviewDateTime_ID": 50971,
+            "Selected_path": ""
         },
         "Rename": {
-            "Attr_format": "%Y-%m-%d %H:%M"
+            "Nested_Folders": true,
+            "Attr_format": "%Y-%m-%d %H:%M",
+            "Selected_path": ""
         },
         "GEOJson": {
-            "PIL_DateTime_Format": "%Y:%m:%d %H:%M:%S"
+            "Nested_Folders": true,
+            "PIL_DateTime_Format": "%Y:%m:%d %H:%M:%S",
+            "Selected_path": ""
         }
     }
 }

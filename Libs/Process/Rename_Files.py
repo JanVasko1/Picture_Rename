@@ -52,10 +52,10 @@ def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> N
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def Rename_Files(Settings: dict, Configuration: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
-    Export_format = Settings["General"]["File_Format"]
-    Attr_format = Settings["Rename"]["Attr_format"]
-    Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
-    Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
+    Export_format = Settings["0"]["General"]["File_Format"]
+    Attr_format = Settings["0"]["Rename"]["Attr_format"]
+    Supported_photo_formats = Settings["0"]["General"]["Supported_postfix"]["Photos"]
+    Supported_video_formats = Settings["0"]["General"]["Supported_postfix"]["Videos"]
 
     # Create Log file
     Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\Rename_Files_Log.csv"), "w", encoding="UTF-8")

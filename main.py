@@ -5,10 +5,6 @@ import Libs.GUI.Elements as Elements
 import Libs.Defaults_Lists as Defaults_Lists
 import Libs.Data_Functions as Data_Functions
 
-import Libs.GUI.Pages.P_Header as P_Header
-import Libs.GUI.Pages.P_Side_Bar as P_Side_Bar
-import Libs.GUI.Pages.P_Side_Bar as P_Side_Bar
-
 # ------------------------------------------------------------------------------------------------------------------------------------ Local Functions ------------------------------------------------------------------------------------------------------------------------------------ #
 def Get_Current_Theme() -> str:
     Current_Theme = get_appearance_mode()
@@ -25,7 +21,7 @@ class Win(CTk):
         display_width = self.winfo_screenwidth()
         display_height = self.winfo_screenheight()
         Window_Frame_width = 660
-        Window_Frame_height = 450
+        Window_Frame_height = 550
         left_position = int(display_width // 2 - Window_Frame_width // 2)
         top_position = int(display_height // 2 - Window_Frame_height // 2)
         self.geometry(f"{Window_Frame_width}x{Window_Frame_height}+{left_position}+{top_position}")
@@ -85,7 +81,10 @@ if __name__ == "__main__":
     Frame_Work_Area_Main.pack_propagate(flag=False)
     Frame_Work_Area_Main.pack(side="left", fill="none", expand=False)
 
-    P_Header.Get_Header(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Header)
-    SideBar = P_Side_Bar.SidebarApp(Side_Bar_Frame=Frame_Side_Bar, Settings=Settings, Configuration=Configuration, window=window, Frame_Work_Area_Main=Frame_Work_Area_Main)
+    import Libs.GUI.Pages.P_Header as P_Header
+    import Libs.GUI.Pages.P_Side_Bar as P_Side_Bar
+    P_Side_Bar.SidebarApp(Settings=Settings, Configuration=Configuration, window=window, Frame_Work_Area_Main=Frame_Work_Area_Main, Side_Bar_Frame=Frame_Side_Bar)
+    P_Header.HeaderBarApp(Settings=Settings, Configuration=Configuration, window=window, Frame=Frame_Header, Frame_Side_Bar=Frame_Side_Bar)
+
     # run
     window.mainloop()

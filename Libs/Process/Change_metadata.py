@@ -34,13 +34,13 @@ def Init_Picture_Exif(File_Name: str, file_path: str, postfix: str, DateTime_imp
     image.close()
 
 def Change_Property_picture(Settings: dict, File_Name_dt: datetime, File_Name: str, file_path: str, postfix: str) -> None:
-    Date_dt_Format = Settings["MetaData"]["Date_dt_Format"]
-    Exif_ID = Settings["MetaData"]["Exif_ID"]
-    GPS_ID = Settings["MetaData"]["GPS_ID"]
-    DateTime_ID = Settings["MetaData"]["DateTime_ID"]
-    Date_Taken_ID = Settings["MetaData"]["Date_Taken_ID"]
-    DateTimeDigitized_ID = Settings["MetaData"]["DateTimeDigitized_ID"]
-    PreviewDateTime_ID = Settings["MetaData"]["PreviewDateTime_ID"]
+    Date_dt_Format = Settings["0"]["MetaData"]["Date_dt_Format"]
+    Exif_ID = Settings["0"]["MetaData"]["Exif_ID"]
+    GPS_ID = Settings["0"]["MetaData"]["GPS_ID"]
+    DateTime_ID = Settings["0"]["MetaData"]["DateTime_ID"]
+    Date_Taken_ID = Settings["0"]["MetaData"]["Date_Taken_ID"]
+    DateTimeDigitized_ID = Settings["0"]["MetaData"]["DateTimeDigitized_ID"]
+    PreviewDateTime_ID = Settings["0"]["MetaData"]["PreviewDateTime_ID"]
 
     # Read the image data using PIL
     image = Image.open(Data_Functions.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"))
@@ -137,10 +137,10 @@ def Progress_Bar_set(window: CTk, Progress_Bar: CTkProgressBar, value: int) -> N
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def Change_Metadata(Settings: dict, Configuration: dict, Nested_Path: list, window: CTk, Progress_Bar: CTkProgressBar) -> None:
-    Name_format = Settings["General"]["File_Format"]
-    Property_format = Settings["MetaData"]["Property_format"]
-    Supported_photo_formats = Settings["General"]["Supported_postfix"]["Photos"]
-    Supported_video_formats = Settings["General"]["Supported_postfix"]["Videos"]
+    Name_format = Settings["0"]["General"]["File_Format"]
+    Property_format = Settings["0"]["MetaData"]["Property_format"]
+    Supported_photo_formats = Settings["0"]["General"]["Supported_postfix"]["Photos"]
+    Supported_video_formats = Settings["0"]["General"]["Supported_postfix"]["Videos"]
 
     # Create Log file
     Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\Change_Metadata_Log.csv"), "w", encoding="UTF-8")

@@ -184,7 +184,6 @@ def Get_Entry_Field(Settings: dict, Configuration:dict, window: CTk, Frame: CTkF
         fg_color = tuple(Configuration_Field["fg_color"]),
         text_color = tuple(Configuration_Field["text_color"]),
         placeholder_text_color = tuple(Configuration_Field["placeholder_text_color"]))
-
     return Field
 
 def Get_Password_Normal(Configuration:dict, Frame: CTkFrame) -> CTkEntry:
@@ -713,7 +712,7 @@ def Get_DialogWindow(Configuration:dict, text: str, title: str, Dialog_Type: str
     Dialog.attributes("-transparentcolor", "#000001")
     Dialog.bind(sequence="<Button-1>", func=lambda event:click_win())
     Dialog.bind(sequence="<B1-Motion>", func=lambda event:drag_win())
-    Dialog.iconbitmap(bitmap=Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\HQ_Data_Generator.ico"))
+    Dialog.iconbitmap(bitmap=Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\Logo.ico"))
     return Dialog
 
 # ---------------------------------------------- Color_Picker ----------------------------------------------# 

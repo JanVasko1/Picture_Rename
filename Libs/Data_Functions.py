@@ -56,12 +56,12 @@ def Get_All_Templates_List(Settings: dict, window: CTk|None) -> list:
     Files_Templates = [x.replace(".json", "") for x in Files_Templates]
     Files_Templates = list(set(Files_Templates))
     Files_Templates.sort()
-    Save_Value(Settings=Settings, Configuration=None, Documents=None, window=window, Variable=None, File_Name="Settings", JSON_path=["0", "General", "Template", "Templates_List"], Information=Files_Templates, User_Change=False)
+    Save_Value(Settings=Settings, Configuration=None, window=window, Variable=None, File_Name="Settings", JSON_path=["0", "General", "Template", "Templates_List"], Information=Files_Templates, User_Change=False)
 
     return Files_Templates
 
 # --------------------------------------------- Global Settings update --------------------------------------------- #
-def Save_Value(Settings: dict|None, Configuration: dict|None|None, Documents: dict|None, window: CTk|None, Variable: StringVar|IntVar|BooleanVar|None, File_Name: str, JSON_path: list, Information: bool|int|str|list|dict, User_Change: bool|None = True) -> None:
+def Save_Value(Settings: dict|None, Configuration: dict|None|None, window: CTk|None, Variable: StringVar|IntVar|BooleanVar|None, File_Name: str, JSON_path: list, Information: bool|int|str|list|dict, User_Change: bool|None = True) -> None:
     def Value_change(my_dict: dict, JSON_path: list, Information: bool|int|str|list|dict) -> None:
         for key in JSON_path[:-1]:
             my_dict = my_dict.setdefault(key, {})
@@ -80,14 +80,6 @@ def Save_Value(Settings: dict|None, Configuration: dict|None|None, Documents: di
     # Globals update with every change of setup
     try:
         if File_Name == "Settings":
-            # Update Actual Template - to delete when any change is done in Settings
-            if User_Change == True:
-                Actual_Template_Variable = StringVar(master=window, value=Settings["0"]["General"]["Template"]["Last_Used"], name="Actual_Template_Variable")
-                Actual_Template_Variable.set("")
-                Save_Value(Settings=Settings, Configuration=None, Documents=None, window=window, Variable=Actual_Template_Variable, File_Name="Settings", JSON_path=["0", "General", "Template", "Last_Used"], Information="", User_Change=False)
-            else:
-                pass
-
             # Update current Settings
             Value_change(my_dict=Settings, JSON_path=JSON_path, Information=Information)
 
@@ -102,14 +94,6 @@ def Save_Value(Settings: dict|None, Configuration: dict|None|None, Documents: di
             # Save to file
             with open(Absolute_path(relative_path=f"Libs\\GUI\\Configuration.json"), mode="wt", encoding="UTF-8", errors="ignore") as file:
                 json.dump(obj=Configuration, fp=file, indent=4, default=str, ensure_ascii=False)
-            file.close()
-        elif File_Name == "Documents":
-            # Update current Documents
-            Value_change(my_dict=Documents, JSON_path=JSON_path, Information=Information)
-
-            # Save to file
-            with open(Absolute_path(relative_path=f"Libs\\Documents.json"), mode="wt", encoding="UTF-8", errors="ignore") as file:
-                json.dump(obj=Documents, fp=file, indent=4, default=str, ensure_ascii=False)
             file.close()
         else:
             pass
@@ -185,7 +169,7 @@ def Import_Data(Settings: dict, Configuration: dict|None, window: CTk|None, impo
             else:
                 pass
 
-        Save_Value(Settings=Settings, Configuration=None, Documents=None, window=window, Variable=None, File_Name="Settings", JSON_path=JSON_path, Information=Upload_updated_data, User_Change=User_Change)
+        Save_Value(Settings=Settings, Configuration=None, window=window, Variable=None, File_Name="Settings", JSON_path=JSON_path, Information=Upload_updated_data, User_Change=User_Change)
 
     else:
         pass

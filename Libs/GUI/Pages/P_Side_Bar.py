@@ -8,6 +8,7 @@ import Libs.GUI.Pages.P_MetaData as P_MetaData
 import Libs.GUI.Pages.P_Rename as P_Rename
 import Libs.GUI.Pages.P_Settings as P_Settings
 
+import Libs.Data_Functions as Data_Functions
 import Libs.GUI.Elements as Elements
 
 class SidebarApp:
@@ -46,8 +47,8 @@ class SidebarApp:
         
         # Icons
         self.Icon_Default_pady = 10
-        self.Side_Bar_Top_pady = 65
-        self.Side_Bar_Bottom_pady = 35
+        self.Side_Bar_Top_pady = 110
+        self.Side_Bar_Bottom_pady = 90
         self.Icon_count = len(self.names)
 
         # Active button tracker
@@ -147,4 +148,8 @@ class SidebarApp:
         P_Settings.Page_Settings(Settings=self.Settings, Configuration=self.Configuration, window=self.window, Frame=self.Frame_Work_Area_Main)
 
     def Show_Close_Page(self) -> None:
+        # Delete Operational data from Settings
+        Data_Functions.Save_Value(Settings=self.Settings, Configuration=None, window=self.window, Variable=None, File_Name="Settings", JSON_path=["0", "MetaData", "Selected_path"], Information="")
+        Data_Functions.Save_Value(Settings=self.Settings, Configuration=None, window=self.window, Variable=None, File_Name="Settings", JSON_path=["0", "Rename", "Selected_path"], Information="")
+        Data_Functions.Save_Value(Settings=self.Settings, Configuration=None, window=self.window, Variable=None, File_Name="Settings", JSON_path=["0", "GEOJson", "Selected_path"], Information="")
         self.window.quit()

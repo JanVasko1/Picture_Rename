@@ -1,26 +1,14 @@
 # Import Libraries
 import Libs.Defaults_Lists as Defaults_Lists
-import Libs.GUI.Elements_Groups as Elements_Groups
+import Libs.CustomTkinter_Functions as CustomTkinter_Functions
 import Libs.Data_Functions as Data_Functions
+import Libs.GUI.Elements_Groups as Elements_Groups
 import Libs.GUI.Elements as Elements
 
-from Libs.GUI.Widgets.Widgets_Class import WidgetFrame, WidgetRow_CheckBox, WidgetRow_Input_Normal, WidgetRow_OptionMenu, Widget_Section_Row, WidgetRow_Color_Picker
+from Libs.GUI.Widgets.Widgets_Class import WidgetFrame, WidgetRow_OptionMenu, Widget_Section_Row, WidgetRow_Color_Picker
 
-from customtkinter import CTk, CTkFrame, CTkEntry, StringVar, IntVar, BooleanVar, CTkOptionMenu, CTkButton, set_appearance_mode
+from customtkinter import CTk, CTkFrame, CTkEntry, StringVar, set_appearance_mode
 from CTkTable import CTkTable
-
-# -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
-def Field_Update_Value(Variable: StringVar|IntVar|BooleanVar|None, File_Name: str, JSON_path: list, Information: int|str|list|dict) -> None:
-    # Must be here as local function because 2 operation needs to be executed 
-    if Variable is None:
-        pass
-    elif type(Variable) is None:
-        pass
-    elif type(Variable) is BooleanVar:
-        Information = Information.get()
-    else:
-        Variable.set(value=Information)
-    Defaults_Lists.Information_Update_Settings(File_Name=File_Name, JSON_path=JSON_path, Information=Information)
 
 # -------------------------------------------------------------------------- Tab Appearance --------------------------------------------------------------------------#
 
@@ -31,76 +19,41 @@ def Settings_General_Color(Settings: dict, Configuration: dict|None, window: CTk
     Accent_Color_Mode = Configuration["Global_Appearance"]["Window"]["Colors"]["Accent"]["Accent_Color_Mode"]
     Accent_Color_Mode_List = list(Configuration["Global_Appearance"]["Window"]["Colors"]["Accent"]["Accent_Color_List"])
     Accent_Color_Manual = Configuration["Global_Appearance"]["Window"]["Colors"]["Accent"]["Accent_Color_Manual"]
-
     Hover_Color_Mode = Configuration["Global_Appearance"]["Window"]["Colors"]["Hover"]["Hover_Color_Mode"]
     Hover_Color_Mode_List = list(Configuration["Global_Appearance"]["Window"]["Colors"]["Hover"]["Hover_Color_List"])
     Hover_Color_Manual = Configuration["Global_Appearance"]["Window"]["Colors"]["Hover"]["Hover_Color_Manual"]
-
-    Theme_Variable = StringVar(master=Frame, value=Theme_Actual, name="Theme_Variable")
-    Accent_Color_Mode_Variable = StringVar(master=Frame, value=Accent_Color_Mode, name="Accent_Color_Mode_Variable")
-    Hover_Color_Mode_Variable = StringVar(master=Frame, value=Hover_Color_Mode, name="Hover_Color_Mode_Variable")
+    Theme_Variable = StringVar(master=Frame, value=Theme_Actual)
+    Accent_Color_Mode_Variable = StringVar(master=Frame, value=Accent_Color_Mode)
+    Hover_Color_Mode_Variable = StringVar(master=Frame, value=Hover_Color_Mode)
 
     # ------------------------- Local Functions ------------------------#
-    def Settings_Disabling_Color_Pickers(Selected_Value: str, Entry_Field: CTkEntry, Picker_Button: CTkButton, Variable: StringVar, Helper: str) -> None:
-        if Selected_Value == "Windows":
-            Entry_Field.configure(state="disabled")
-            Picker_Button.configure(state="disabled")
-            # Accent only
-            Data_Functions.Save_Value(Settings=None, Configuration=Configuration, Documents=None, window=window, Variable=Variable, File_Name="Configuration", JSON_path=["Global_Appearance", "Window", "Colors", "Accent", "Accent_Color_Mode"], Information=Selected_Value)
-        elif Selected_Value == "App Default":
-            Entry_Field.configure(state="disabled")
-            Picker_Button.configure(state="disabled")
-            # Both
-            if Helper == "Accent":
-                Data_Functions.Save_Value(Settings=None, Configuration=Configuration, Documents=None, window=window, Variable=Variable, File_Name="Configuration", JSON_path=["Global_Appearance", "Window", "Colors", "Accent", "Accent_Color_Mode"], Information=Selected_Value)
-            elif Helper == "Hover":
-                Data_Functions.Save_Value(Settings=None, Configuration=Configuration, Documents=None, window=window, Variable=Variable, File_Name="Configuration", JSON_path=["Global_Appearance", "Window", "Colors", "Hover", "Hover_Color_Mode"], Information=Selected_Value)
-        elif Selected_Value == "Accent Lighter":
-            Entry_Field.configure(state="disabled")
-            Picker_Button.configure(state="disabled")
-            # Hover only
-            Data_Functions.Save_Value(Settings=None, Configuration=Configuration, Documents=None, window=window, Variable=Variable, File_Name="Configuration", JSON_path=["Global_Appearance", "Window", "Colors", "Hover", "Hover_Color_Mode"], Information=Selected_Value)
-        elif Selected_Value == "Manual":
-            Entry_Field.configure(state="normal")
-            Picker_Button.configure(state="normal")
-            # Both
-            if Helper == "Accent":
-                Data_Functions.Save_Value(Settings=None, Configuration=Configuration, Documents=None, window=window, Variable=Variable, File_Name="Configuration", JSON_path=["Global_Appearance", "Window", "Colors", "Accent", "Accent_Color_Mode"], Information=Selected_Value)
-            elif Helper == "Hover":
-                Data_Functions.Save_Value(Settings=None, Configuration=Configuration, Documents=None, window=window, Variable=Variable, File_Name="Configuration", JSON_path=["Global_Appearance", "Window", "Colors", "Hover", "Hover_Color_Mode"], Information=Selected_Value)
-        else:
-            Elements.Get_MessageBox(Configuration=Configuration, window=window, title="Error", message="Accent Color Method not allowed", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
-
-
-    def Appearance_Change_Theme(Theme_Frame_Var: CTkOptionMenu) ->  None:
-        set_appearance_mode(mode_string=Theme_Frame_Var)
-        Data_Functions.Save_Value(Settings=None, Configuration=Configuration, Documents=None, window=window, Variable=Theme_Variable, File_Name="Configuration", JSON_path=["Global_Appearance", "Window", "Theme"], Information=Theme_Frame_Var)
+    def Appearance_Change_Theme() ->  None:
+        set_appearance_mode(mode_string=Theme_Variable.get())
 
     # ------------------------- Main Functions -------------------------#
     # Widget
-    Appearance_Widget = WidgetFrame(Configuration=Configuration, Frame=Frame, Name="Colors", Additional_Text="SideBar applied after restart.", Widget_size="Single_size", Widget_Label_Tooltip="Application colors.", GUI_Level_ID=GUI_Level_ID)
+    Appearance_Widget = WidgetFrame(Configuration=Configuration, Frame=Frame, Name="Appearance", Additional_Text="SideBar applied after restart.", Widget_size="Single_size", Widget_Label_Tooltip="General Appearance setup.", GUI_Level_ID=GUI_Level_ID)
 
     # Fields
-    Theme_Frame_Row = WidgetRow_OptionMenu(Settings=Settings, Configuration=Configuration, master=Appearance_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column" , Label="Theme", Variable=Theme_Variable, Values=Theme_List, Local_function=lambda Theme_Frame_Var: Appearance_Change_Theme(Theme_Frame_Var=Theme_Frame_Var), GUI_Level_ID=GUI_Level_ID) 
-    
-    Accent_Color_Sep_Row = Widget_Section_Row(Configuration=Configuration, master=Appearance_Widget.Body_Frame, Field_Frame_Type="Single_Column" , Label="Accent color", Label_Size="Field_Label" , Font_Size="Section_Separator")
-    Accent_Color_Manual_Row = WidgetRow_Color_Picker(Settings=Settings, Configuration=Configuration, master=Appearance_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column" , Label="Accent Color Manual", Save_To="Configuration", Save_path=["Global_Appearance", "Window", "Colors", "Accent", "Accent_Color_Manual"], Button_ToolTip="ColorPicker")
-    Accent_Color_Mode_Row = WidgetRow_OptionMenu(Settings=Settings, Configuration=Configuration, master=Appearance_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column" , Label="Accent Color Mode", Variable=Accent_Color_Mode_Variable, Values=Accent_Color_Mode_List, Local_function=lambda Accent_Color_Mode_Frame_Var: Settings_Disabling_Color_Pickers(Selected_Value=Accent_Color_Mode_Frame_Var, Entry_Field=Accent_Color_Manual_Row.Input_Entry, Picker_Button=Accent_Color_Manual_Row.Button_Drop_Down, Variable=Accent_Color_Mode_Variable, Helper="Accent"), GUI_Level_ID=GUI_Level_ID) 
+    Theme_Row = WidgetRow_OptionMenu(Settings=Settings, Configuration=Configuration, master=Appearance_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column", Label="Theme", Variable=Theme_Variable, Values=Theme_List, Save_To="Configuration", Save_path=["Global_Appearance", "Window", "Theme"], Local_function_list=[Appearance_Change_Theme], GUI_Level_ID=GUI_Level_ID) 
 
-    Hover_Color_Sep_Row = Widget_Section_Row(Configuration=Configuration, master=Appearance_Widget.Body_Frame, Field_Frame_Type="Single_Column" , Label="Hover color", Label_Size="Field_Label" , Font_Size="Section_Separator")
-    Hover_Color_Manual_Row = WidgetRow_Color_Picker(Settings=Settings, Configuration=Configuration, master=Appearance_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column" , Label="Hover Color Manual", Save_To="Configuration", Save_path=["Global_Appearance", "Window", "Colors", "Hover", "Hover_Color_Manual"], Button_ToolTip="ColorPicker")
-    Hover_Color_Mode_Row = WidgetRow_OptionMenu(Settings=Settings, Configuration=Configuration, master=Appearance_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column" , Label="Hover Color Mode", Variable=Hover_Color_Mode_Variable, Values=Hover_Color_Mode_List, Local_function=lambda Hover_Color_Mode_Frame_Var: Settings_Disabling_Color_Pickers(Selected_Value=Hover_Color_Mode_Frame_Var, Entry_Field=Hover_Color_Manual_Row.Input_Entry, Picker_Button=Hover_Color_Manual_Row.Button_Drop_Down, Variable=Hover_Color_Mode_Variable, Helper="Hover"), GUI_Level_ID=GUI_Level_ID) 
+    Accent_Section_Row = Widget_Section_Row(Configuration=Configuration, master=Appearance_Widget.Body_Frame, Field_Frame_Type="Single_Column", Label="Accent color", Label_Size="Field_Label", Font_Size="Section_Separator")
+    Accent_Color_Manual_Row = WidgetRow_Color_Picker(Settings=Settings, Configuration=Configuration, master=Appearance_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column", Label="Accent Color Manual", Value=Accent_Color_Manual, placeholder_text_color="#949A9F", Save_To="Configuration", Save_path=["Global_Appearance", "Window", "Colors", "Accent", "Accent_Color_Manual"], Button_ToolTip="Color Picker.", Picker_Always_on_Top=True, Picker_Fixed_position=True, GUI_Level_ID=GUI_Level_ID + 1)
+    Accent_Fields_Blocking_dict = CustomTkinter_Functions.Fields_Blocking(Values=["App Default", "Windows", "Manual"], Freeze_fields=[[Accent_Color_Manual_Row],[Accent_Color_Manual_Row],[]])
+    Accent_Color_Mode_Row = WidgetRow_OptionMenu(Settings=Settings, Configuration=Configuration, master=Appearance_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column", Label="Accent Color Mode", Variable=Accent_Color_Mode_Variable, Values=Accent_Color_Mode_List, Save_To="Configuration", Save_path=["Global_Appearance", "Window", "Colors", "Accent", "Accent_Color_Mode"], Field_list=[Accent_Color_Manual_Row], Field_Blocking_dict=Accent_Fields_Blocking_dict, GUI_Level_ID=GUI_Level_ID) 
 
-    Appearance_Widget.Add_row(Rows=[Theme_Frame_Row, Accent_Color_Sep_Row, Accent_Color_Manual_Row, Accent_Color_Mode_Row, Hover_Color_Sep_Row, Hover_Color_Manual_Row, Hover_Color_Mode_Row])
+    Hover_Section_Row = Widget_Section_Row(Configuration=Configuration, master=Appearance_Widget.Body_Frame, Field_Frame_Type="Single_Column", Label="Hover color", Label_Size="Field_Label", Font_Size="Section_Separator")
+    Hover_Color_Manual_Row = WidgetRow_Color_Picker(Settings=Settings, Configuration=Configuration, master=Appearance_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column", Label="Hover Color Manual", Value=Hover_Color_Manual, placeholder_text_color="#949A9F", Save_To="Configuration", Save_path=["Global_Appearance", "Window", "Colors", "Hover", "Hover_Color_Manual"], Button_ToolTip="Color Picker.", Picker_Always_on_Top=True, Picker_Fixed_position=True, GUI_Level_ID=GUI_Level_ID + 1)
+    Hover_Fields_Blocking_dict = CustomTkinter_Functions.Fields_Blocking(Values=["App Default", "Accent Lighter", "Manual"], Freeze_fields=[[Hover_Color_Manual_Row],[Hover_Color_Manual_Row],[]])
+    Hover_Color_Mode_Row = WidgetRow_OptionMenu(Settings=Settings, Configuration=Configuration, master=Appearance_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column", Label="Hover Color Mode", Variable=Hover_Color_Mode_Variable, Values=Hover_Color_Mode_List, Save_To="Configuration", Save_path=["Global_Appearance", "Window", "Colors", "Hover", "Hover_Color_Mode"], Field_list=[Hover_Color_Manual_Row], Field_Blocking_dict=Hover_Fields_Blocking_dict, GUI_Level_ID=GUI_Level_ID) 
 
-    # Disabling fields --> Accent_Color_Mode_Variable
-    Settings_Disabling_Color_Pickers(Selected_Value=Accent_Color_Mode, Entry_Field=Accent_Color_Manual_Row.Input_Entry, Picker_Button=Accent_Color_Manual_Row.Button_Drop_Down, Variable=Accent_Color_Mode_Variable, Helper="Accent")  # Must be here because of initial value
-    Settings_Disabling_Color_Pickers(Selected_Value=Hover_Color_Mode, Entry_Field=Hover_Color_Manual_Row.Input_Entry, Picker_Button=Hover_Color_Manual_Row.Button_Drop_Down, Variable=Hover_Color_Mode_Variable, Helper="Hover")   # Must be here because of initial value
+    # Add Fields to Widget Body
+    Appearance_Widget.Add_row(Rows=[Theme_Row, Accent_Section_Row, Accent_Color_Mode_Row, Accent_Color_Manual_Row, Hover_Section_Row, Hover_Color_Mode_Row, Hover_Color_Manual_Row])
 
     return Appearance_Widget
 
 def Settings_Supported_Photo(Settings: dict, Configuration: dict, window: CTk, Frame: CTk|CTkFrame, GUI_Level_ID: int|None = None) -> CTkFrame:
-    Supported_Photo_postfix_list = list(Settings["General"]["Supported_postfix"]["Photos"])
+    Supported_Photo_postfix_list = list(Settings["0"]["General"]["Supported_postfix"]["Photos"])
 
     # ------------------------- Local Functions -------------------------#
     def Add_Photo_Postfix(Header_List: list, Photo_Postfix_Text_Var: CTkEntry, Frame_Photo_Table_Var: CTkTable) -> None:
@@ -144,7 +97,7 @@ def Settings_Supported_Photo(Settings: dict, Configuration: dict, window: CTk, F
             Postfixes = [element for innerList in Frame_Photo_Table_Var.values for element in innerList]
             Postfixes.remove(Header_List)
             Postfixes.sort()
-            Defaults_Lists.Information_Update_Settings(File_Name="Settings", JSON_path=["General", "Supported_postfix", "Photos"], Information=Postfixes)
+            Data_Functions.Save_Value(Settings=Settings, Configuration=None, window=window, Variable=None, File_Name="Settings", JSON_path=["0", "General", "Supported_postfix", "Photos"], Information=Postfixes)
         else:
             Elements.Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Postfix is already within list of Photos postfixes.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
 
@@ -180,7 +133,7 @@ def Settings_Supported_Photo(Settings: dict, Configuration: dict, window: CTk, F
             Postfixes = [element for innerList in Frame_Photo_Table_Var.values for element in innerList]
             Postfixes.remove("Photo Formats")
             Postfixes.sort()
-            Defaults_Lists.Information_Update_Settings(File_Name="Settings", JSON_path=["General", "Supported_postfix", "Photos"], Information=Postfixes)
+            Data_Functions.Save_Value(Settings=Settings, Configuration=None, window=window, Variable=None, File_Name="Settings", JSON_path=["0", "General", "Supported_postfix", "Photos"], Information=Postfixes)
         else:
             Elements.Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Header cannot be deleted.", icon="cancel", fade_in_duration=1, GUI_Level_ID=1)
 
@@ -188,7 +141,7 @@ def Settings_Supported_Photo(Settings: dict, Configuration: dict, window: CTk, F
         Table_len = len(Frame_Photo_Table_Var.values)
         for Table_index in range(1, Table_len):
             Frame_Photo_Table_Var.delete_row(index=Table_index)
-        Defaults_Lists.Information_Update_Settings(File_Name="Settings", JSON_path=["General", "Supported_postfix", "Photos"], Information=[])
+        Data_Functions.Save_Value(Settings=Settings, Configuration=None, window=window, Variable=None, File_Name="Settings", JSON_path=["0", "General", "Supported_postfix", "Photos"], Information=[])
 
     # ------------------------- Main Functions -------------------------#
     # Frame - General
@@ -233,7 +186,7 @@ def Settings_Supported_Photo(Settings: dict, Configuration: dict, window: CTk, F
 
 
 def Settings_Supported_Video(Settings: dict, Configuration: dict, window: CTk, Frame: CTk|CTkFrame, GUI_Level_ID: int|None = None) -> CTkFrame:
-    Supported_Video_postfix_list = list(Settings["General"]["Supported_postfix"]["Videos"])
+    Supported_Video_postfix_list = list(Settings["0"]["General"]["Supported_postfix"]["Videos"])
     # ------------------------- Local Functions -------------------------#
     def Add_Video_Postfix(Header_List: list, Video_Postfix_Text_Var: CTkEntry, Frame_Video_Table_Var: CTkTable) -> None:
         Add_flag = True
@@ -276,7 +229,7 @@ def Settings_Supported_Video(Settings: dict, Configuration: dict, window: CTk, F
             Postfixes = [element for innerList in Frame_Video_Table_Var.values for element in innerList]
             Postfixes.remove(Header_List)
             Postfixes.sort()
-            Defaults_Lists.Information_Update_Settings(File_Name="Settings", JSON_path=["General", "Supported_postfix", "Videos"], Information=Postfixes)
+            Data_Functions.Save_Value(Settings=Settings, Configuration=None, window=window, Variable=None, File_Name="Settings", JSON_path=["0", "General", "Supported_postfix", "Videos"], Information=Postfixes)
         else:
             Elements.Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Postfix is already within list of Videos postfixes.", icon="cancel", fade_in_duration=1, GUI_Level_ID=GUI_Level_ID)
 
@@ -312,7 +265,7 @@ def Settings_Supported_Video(Settings: dict, Configuration: dict, window: CTk, F
             Postfixes = [element for innerList in Frame_Video_Table_Var.values for element in innerList]
             Postfixes.remove("Video Formats")
             Postfixes.sort()
-            Defaults_Lists.Information_Update_Settings(File_Name="Settings", JSON_path=["General", "Supported_postfix", "Videos"], Information=Postfixes)
+            Data_Functions.Save_Value(Settings=Settings, Configuration=None, window=window, Variable=None, File_Name="Settings", JSON_path=["0", "General", "Supported_postfix", "Videos"], Information=Postfixes)
         else:
             Elements.Get_MessageBox(Configuration=Configuration, window=window, title="Error", message=f"Header cannot be deleted.", icon="cancel", fade_in_duration=1, GUI_Level_ID=GUI_Level_ID)
 
@@ -320,7 +273,7 @@ def Settings_Supported_Video(Settings: dict, Configuration: dict, window: CTk, F
         Table_len = len(Frame_Video_Table_Var.values)
         for Table_index in range(1, Table_len):
             Frame_Video_Table_Var.delete_row(index=Table_index)
-        Defaults_Lists.Information_Update_Settings(File_Name="Settings", JSON_path=["General", "Supported_postfix", "Videos"], Information=[])
+        Data_Functions.Save_Value(Settings=Settings, Configuration=None, window=window, Variable=None, File_Name="Settings", JSON_path=["0", "General", "Supported_postfix", "Videos"], Information=[])
 
     # ------------------------- Main Functions -------------------------#
     # Frame - General

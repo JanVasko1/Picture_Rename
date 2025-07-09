@@ -1,7 +1,7 @@
 {
     "Global_Appearance": {
         "Window": {
-            "Theme": "Dark",
+            "Theme": "system",
             "Theme_List": [
                 "Dark",
                 "Light",
@@ -10,7 +10,7 @@
             "Colors": {
                 "Accent": {
                     "Accent_Color_Mode": "App Default",
-                    "Accent_Color_Manual": "2025-03-21",
+                    "Accent_Color_Manual": "#ffd461",
                     "Accent_Color_List": [
                         "Windows",
                         "Manual",
@@ -18,7 +18,7 @@
                     ]
                 },
                 "Hover": {
-                    "Hover_Color_Mode": "Accent Lighter",
+                    "Hover_Color_Mode": "Manual",
                     "Hover_Color_Manual": "#446b80",
                     "Hover_Color_List": [
                         "Accent Lighter",
@@ -1364,7 +1364,7 @@
                 "corner_radius": 10,
                 "bg_color": "transparent",
                 "fg_color": [
-                    "#D0D0D0",
+                    "#efefef",
                     "#111219"
                 ],
                 "progress_color": [
