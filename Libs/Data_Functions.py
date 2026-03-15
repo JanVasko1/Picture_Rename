@@ -1,9 +1,17 @@
 # Import Libraries
 import json
 import os
+import sys
 from glob import glob
-
+from pathlib import Path
 from customtkinter import CTk, CTkEntry, StringVar, IntVar, BooleanVar
+
+# Set the root directory of project before local import
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+cut_point = "Stock_Company_Analyzer"
+ROOT_DIR = ROOT_DIR.partition(cut_point)[0] + ROOT_DIR.partition(cut_point)[1]
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 import Libs.GUI.Elements as Elements
 import Libs.Defaults_Lists as Defaults_Lists
@@ -49,7 +57,7 @@ def Dict_Main_Key_Change(Dictionary: dict, counter: int) -> dict:
     return new_dict
 
 def Get_All_Templates_List(Settings: dict, window: CTk|None) -> list:
-    file_path = Absolute_path(relative_path=f"Operational\\Template")
+    file_path = Absolute_path(relative_path=Path(f"Operational\\Template").resolve())
     Files = glob(pathname=os.path.join(file_path, "*"))
     Files_Templates = [x.replace(file_path, "") for x in Files]
     Files_Templates = [x.replace("\\", "") for x in Files_Templates]
@@ -84,7 +92,7 @@ def Save_Value(Settings: dict|None, Configuration: dict|None|None, window: CTk|N
             Value_change(my_dict=Settings, JSON_path=JSON_path, Information=Information)
 
             # Save to file
-            with open(Absolute_path(relative_path=f"Libs\\Settings.json"), mode="wt", encoding="UTF-8", errors="ignore") as file:
+            with open(Absolute_path(relative_path=Path(f"Libs\\Settings.json").resolve()), mode="wt", encoding="UTF-8", errors="ignore") as file:
                 json.dump(obj=Settings, fp=file, indent=4, default=str, ensure_ascii=False)
             file.close()
         elif File_Name == "Configuration":
@@ -92,7 +100,7 @@ def Save_Value(Settings: dict|None, Configuration: dict|None|None, window: CTk|N
             Value_change(my_dict=Configuration, JSON_path=JSON_path, Information=Information)
 
             # Save to file
-            with open(Absolute_path(relative_path=f"Libs\\GUI\\Configuration.json"), mode="wt", encoding="UTF-8", errors="ignore") as file:
+            with open(Absolute_path(relative_path=Path(f"Libs\\GUI\\Configuration.json").resolve()), mode="wt", encoding="UTF-8", errors="ignore") as file:
                 json.dump(obj=Configuration, fp=file, indent=4, default=str, ensure_ascii=False)
             file.close()
         else:

@@ -1,14 +1,23 @@
 # Import Libraries
+import os
+import sys
 from customtkinter import CTk, CTkFrame, CTkButton, set_appearance_mode
-from Libs.GUI.CTk.ctk_scrollable_dropdown import CTkScrollableDropdown as CTkScrollableDropdown 
 from tkhtmlview import HTMLLabel
 from markdown import markdown
+from pathlib import Path
+
+# Set the root directory of project before local import
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+cut_point = "Stock_Company_Analyzer"
+ROOT_DIR = ROOT_DIR.partition(cut_point)[0] + ROOT_DIR.partition(cut_point)[1]
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 import Libs.GUI.Elements as Elements
 import Libs.GUI.Elements_Groups as Elements_Groups
 import Libs.CustomTkinter_Functions as CustomTkinter_Functions
-
 import Libs.Data_Functions as Data_Functions
+from Libs.GUI.CTk.ctk_scrollable_dropdown import CTkScrollableDropdown as CTkScrollableDropdown 
 
 class HeaderBarApp:
     def __init__(self, Settings: dict, Configuration: dict|None, window: CTk|None, Frame: CTkFrame, Frame_Side_Bar: CTkFrame):    
@@ -77,7 +86,7 @@ class HeaderBarApp:
 
         Frame_Information_Scrollable_Area = Elements.Get_Widget_Scrollable_Frame(Configuration=self.Configuration, Frame=Frame_Body, Frame_Size="Double_size", GUI_Level_ID=2)
 
-        with open(Data_Functions.Absolute_path(relative_path=f"Libs\\App\\Version_list.md"), "r", encoding="UTF-8") as file:
+        with open(Data_Functions.Absolute_path(relative_path=Path(f"Libs\\App\\Version_list.md").resolve()), "r", encoding="UTF-8") as file:
             html_markdown=markdown(text=file.read())
         file.close()
 

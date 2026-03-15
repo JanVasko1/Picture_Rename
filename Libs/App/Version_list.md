@@ -4,6 +4,10 @@
 **Mobile**: +420 601 383 301<br>
 
 ### Version List
+#### 1.0.2
+- Update function of Metadata update to update also photos where Date Taken is not in original picture
+- Widget helps corrected
+
 #### 1.0.1
 - SideBar as Class
 - GUI Issues correction: threat, ProgressBar ...

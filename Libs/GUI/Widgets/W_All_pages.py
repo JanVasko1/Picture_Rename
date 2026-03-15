@@ -93,7 +93,7 @@ def Rename_new(Settings: dict, Configuration: dict, window: CTk, Frame: CTk|CTkF
 
     # ------------------------- Main Functions -------------------------#
     # Widget
-    Rename_Widget = WidgetFrame(Configuration=Configuration, Frame=Frame, Name="Rename", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="Change Date Take / Media Created date and time according to file name.", GUI_Level_ID=GUI_Level_ID)
+    Rename_Widget = WidgetFrame(Configuration=Configuration, Frame=Frame, Name="Rename", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="Rename file according to Date Taken for pictures or Created Date for video files.", GUI_Level_ID=GUI_Level_ID)
 
     # Fields
     Nested_Folders_Row = WidgetRow_CheckBox(Settings=Settings, Configuration=Configuration, master=Rename_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column" , Label="Nested Folders", Variable=Nested_Folder_Rename_Variable, Save_To="Settings", Save_path=["0", "Rename", "Nested_Folders"])
@@ -118,7 +118,7 @@ def GEOJson_new(Settings: dict, Configuration: dict, window: CTk, Frame: CTk|CTk
     
     # ------------------------- Main Functions -------------------------#
     # Widget
-    GEOJson_Widget = WidgetFrame(Configuration=Configuration, Frame=Frame, Name="Geo json", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="Change Date Take / Media Created date and time according to file name.", GUI_Level_ID=GUI_Level_ID)
+    GEOJson_Widget = WidgetFrame(Configuration=Configuration, Frame=Frame, Name="Geo json", Additional_Text="", Widget_size="Single_size", Widget_Label_Tooltip="Creates GEO JSON file from photos/videos from selected folder/s.", GUI_Level_ID=GUI_Level_ID)
 
     # Fields
     Nested_Folders_Row = WidgetRow_CheckBox(Settings=Settings, Configuration=Configuration, master=GEOJson_Widget.Body_Frame, window=window, Field_Frame_Type="Single_Column" , Label="Nested Folders", Variable=Nested_Folder_GEOJson_Variable, Save_To="Settings", Save_path=["0", "GEOJson", "Nested_Folders"])

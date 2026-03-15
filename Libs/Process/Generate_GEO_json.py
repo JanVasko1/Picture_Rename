@@ -1,18 +1,27 @@
+# Import Libraries
 import os
+import sys
 import logging
 import windows_metadata
+from pathlib import Path
 from pandas import DataFrame
 from datetime import datetime
 import lat_lon_parser
 import json
-
+from customtkinter import CTkProgressBar, CTk
 from PIL import Image
+
+# Set the root directory of project before local import
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+cut_point = "Stock_Company_Analyzer"
+ROOT_DIR = ROOT_DIR.partition(cut_point)[0] + ROOT_DIR.partition(cut_point)[1]
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 import Libs.File_Manipulation as File_Manipulation
 import Libs.Data_Functions as Data_Functions
 import Libs.GUI.Elements as Elements
 
-from customtkinter import CTkProgressBar, CTk
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -121,10 +130,10 @@ def GEO_Json(Settings: dict, Configuration: dict, Nested_Path: list, window: CTk
     Supported_video_formats = Settings["0"]["General"]["Supported_postfix"]["Videos"]
 
     # Create Log file
-    Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\GEO_JSON_Log.csv"), "w", encoding="UTF-8")
+    Log_file = open(Data_Functions.Absolute_path(relative_path=Path(f"Libs\\Logs\\GEO_JSON_Log.csv").resolve()), "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
     Log_file.close()
-    Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\GEO_JSON_Log.csv"), "a", encoding="UTF-8")
+    Log_file = open(Data_Functions.Absolute_path(relative_path=Path(f"Libs\\Logs\\GEO_JSON_Log.csv").resolve()), "a", encoding="UTF-8")
     
     # Get Date for each file
     for actual_path in Nested_Path:

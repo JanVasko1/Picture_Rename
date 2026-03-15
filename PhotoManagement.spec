@@ -1,9 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-# Define fixed output folders
-DISTPATH='D:\_Helper\Application\Pyinstaller\PhotoManagement'
-WORKPATH='D:\_Helper\Application\Pyinstaller\PhotoManagement'
-
 a = Analysis(
     ['main.py'],
     pathex=[],
@@ -13,9 +9,8 @@ a = Analysis(
         ('C:\\Users\\CZ011845\\AppData\\Local\\miniconda3\\envs\\ENV-Picture_Rename\\Lib\\site-packages\\piexif', 'piexif'),
         ('C:\\Users\\CZ011845\\AppData\\Local\\miniconda3\\envs\\ENV-Picture_Rename\\Lib\\site-packages\\lat_lon_parser', 'lat_lon_parser'),
         ('C:\\Users\\CZ011845\\AppData\\Local\\miniconda3\\envs\\ENV-Picture_Rename\\Lib\\site-packages\\windows_metadata', 'windows_metadata'),
-        ('C:\\Users\\CZ011845\\AppData\\Local\\miniconda3\\envs\\ENV-Picture_Rename\\Lib\\site-packages\\subprocess', 'subprocess'),
         ('C:\\Users\\CZ011845\\AppData\\Local\\miniconda3\\envs\\ENV-Picture_Rename\\Lib\\site-packages\\CTkColorPicker', 'CTkColorPicker')],
-    hiddenimports=['iconipy', 'CTkColorPicker', 'subprocess', 'piexif', 'lat_lon_parser', 'subprocess', 'windows_metadata'],
+    hiddenimports=['iconipy', 'CTkColorPicker', 'piexif', 'lat_lon_parser', 'windows_metadata'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -30,7 +25,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='PhotoManager',
+    name='PhotoManagement',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -51,5 +46,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='PhotoManager',
+    name='PhotoManagement',
 )

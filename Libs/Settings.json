@@ -27,7 +27,7 @@
             }
         },
         "MetaData": {
-            "Nested_Folders": true,
+            "Nested_Folders": false,
             "Property_format": "%Y-%m-%d %H:%M:%S",
             "Date_dt_Format": "%Y:%m:%d %H:%M:%S",
             "Exif_ID": 34665,

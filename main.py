@@ -1,5 +1,15 @@
 # Import Libraries
+import os
+import sys
 from customtkinter import CTk, deactivate_automatic_dpi_awareness, get_appearance_mode, set_appearance_mode
+from pathlib import Path
+
+# Set the root directory of project before local import
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+cut_point = "Stock_Company_Analyzer"
+ROOT_DIR = ROOT_DIR.partition(cut_point)[0] + ROOT_DIR.partition(cut_point)[1]
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 import Libs.GUI.Elements as Elements
 import Libs.Defaults_Lists as Defaults_Lists
@@ -16,7 +26,7 @@ class Win(CTk):
         super().__init__()
         super().overrideredirect(True)
         super().title("HQ Testing Tool")
-        super().iconbitmap(bitmap=Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\Logo.ico"))
+        super().iconbitmap(bitmap=Data_Functions.Absolute_path(relative_path=Path(f"Libs\\GUI\\Icons\\Logo.ico").resolve()))
 
         display_width = self.winfo_screenwidth()
         display_height = self.winfo_screenheight()

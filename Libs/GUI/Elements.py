@@ -1,7 +1,10 @@
 # Import Libraries
+import os
+import sys
 from PIL import Image
-from datetime import datetime
-
+from pathlib import Path
+from iconipy import IconFactory 
+import winaccent
 
 from customtkinter import CTk, CTkButton, CTkFrame, CTkScrollableFrame, CTkEntry, CTkLabel, CTkFont, CTkImage, CTkRadioButton, CTkTabview, CTkOptionMenu, CTkCheckBox, CTkProgressBar, CTkInputDialog, CTkComboBox, get_appearance_mode
 from CTkTable import CTkTable
@@ -9,11 +12,16 @@ from CTkColorPicker import CTkColorPicker
 from CTkToolTip import CTkToolTip
 from CTkMessagebox import CTkMessagebox
 
+# Set the root directory of project before local import
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+cut_point = "Stock_Company_Analyzer"
+ROOT_DIR = ROOT_DIR.partition(cut_point)[0] + ROOT_DIR.partition(cut_point)[1]
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 import Libs.Data_Functions as Data_Functions
 from Libs.GUI.CTk.ctk_scrollable_dropdown import CTkScrollableDropdown as CTkScrollableDropdown 
 
-from iconipy import IconFactory 
-import winaccent
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def lighten_hex_color(hex_color, percentage):
@@ -637,8 +645,8 @@ def Get_CTk_Icon(Configuration:dict, Icon_Name: str, Icon_Size: str) -> CTkImage
 
 def Get_Custom_Image(Configuration:dict, Frame: CTkFrame, Image_Name: str, postfix: str, width: int, heigh: int) -> CTkLabel:
     Picture = CTkImage(
-        light_image = Image.open(Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\{Image_Name}_Light.{postfix}")),
-        dark_image = Image.open(Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\{Image_Name}_Dark.{postfix}")),
+        light_image = Image.open(Data_Functions.Absolute_path(relative_path=Path(f"Libs\\GUI\\Icons\\{Image_Name}_Light.{postfix}").resolve())),
+        dark_image = Image.open(Data_Functions.Absolute_path(relative_path=Path(f"Libs\\GUI\\Icons\\{Image_Name}_Dark.{postfix}").resolve())),
         size = (width, heigh))
     Background_Image_Label = Get_Label(Configuration=Configuration, Frame=Frame, Label_Size="Main", Font_Size="Main")
     Background_Image_Label.configure(image=Picture, text="")
@@ -712,7 +720,7 @@ def Get_DialogWindow(Configuration:dict, text: str, title: str, Dialog_Type: str
     Dialog.attributes("-transparentcolor", "#000001")
     Dialog.bind(sequence="<Button-1>", func=lambda event:click_win())
     Dialog.bind(sequence="<B1-Motion>", func=lambda event:drag_win())
-    Dialog.iconbitmap(bitmap=Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\Logo.ico"))
+    Dialog.iconbitmap(bitmap=Data_Functions.Absolute_path(relative_path=Path(f"Libs\\GUI\\Icons\\Logo.ico").resolve()))
     return Dialog
 
 # ---------------------------------------------- Color_Picker ----------------------------------------------# 

@@ -1,20 +1,28 @@
 # Import Libraries
-import pickle
+import os
+import sys
 import json
-import random
 from datetime import datetime, timedelta
+from pathlib import Path
+
+# Set the root directory of project before local import
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+cut_point = "Stock_Company_Analyzer"
+ROOT_DIR = ROOT_DIR.partition(cut_point)[0] + ROOT_DIR.partition(cut_point)[1]
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 import Libs.Data_Functions as Data_Functions
 
 # --------------------------------------------- Load defaults --------------------------------------------- #
 def Load_Application() -> dict:
-    File = open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\App\\Application.json"), mode="r", encoding="UTF-8", errors="ignore")
+    File = open(file=Data_Functions.Absolute_path(relative_path=Path(f"Libs\\App\\Application.json").resolve()), mode="r", encoding="UTF-8", errors="ignore")
     Application = json.load(fp=File)
     File.close()
     return Application
 
 def Load_Settings() -> dict:
-    File = open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\Settings.json"), mode="r", encoding="UTF-8", errors="ignore")
+    File = open(file=Data_Functions.Absolute_path(relative_path=Path(f"Libs\\Settings.json").resolve()), mode="r", encoding="UTF-8", errors="ignore")
     Settings = json.load(fp=File)
     File.close()
     return Settings
@@ -25,7 +33,7 @@ def Load_Settings_Part(my_dict: dict, JSON_path: list) -> str|int|float|list|dic
     return my_dict
 
 def Load_Configuration() -> dict:
-    File = open(file=Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Configuration.json"), mode="r", encoding="UTF-8", errors="ignore")
+    File = open(file=Data_Functions.Absolute_path(relative_path=Path(f"Libs\\GUI\\Configuration.json").resolve()), mode="r", encoding="UTF-8", errors="ignore")
     Configuration = json.load(fp=File)
     File.close()
     return Configuration

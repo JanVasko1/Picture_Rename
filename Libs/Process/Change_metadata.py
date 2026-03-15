@@ -1,20 +1,30 @@
+# Import Libraries
 import os
+import sys
 import logging
+from pathlib import Path
 from datetime import datetime
 from PIL import Image
 import subprocess
 import piexif
+from customtkinter import CTkProgressBar, CTk
+
+# Set the root directory of project before local import
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+cut_point = "Stock_Company_Analyzer"
+ROOT_DIR = ROOT_DIR.partition(cut_point)[0] + ROOT_DIR.partition(cut_point)[1]
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 import Libs.Data_Functions as Data_Functions
 import Libs.GUI.Elements as Elements
-from customtkinter import CTkProgressBar, CTk
 
 logging.basicConfig(level=logging.ERROR)
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------- Local Functions -------------------------------------------------------------------------------------------------------------------------------------------------- #
 def Init_Picture_Exif(File_Name: str, file_path: str, postfix: str, DateTime_import:str) -> None:
     # Read the image data using PIL
-    image = Image.open(Data_Functions.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"))
+    image = Image.open(Data_Functions.Absolute_path(relative_path=Path(f"{file_path}\\{File_Name}{postfix}").resolve()))
 
     exif_dict = {
         "0th": {
@@ -30,7 +40,7 @@ def Init_Picture_Exif(File_Name: str, file_path: str, postfix: str, DateTime_imp
     # Convert the dictionary to bytes
     exif_bytes = piexif.dump(exif_dict)
 
-    image.save(fp=Data_Functions.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"), exif=exif_bytes)
+    image.save(fp=Data_Functions.Absolute_path(relative_path=Path(f"{file_path}\\{File_Name}{postfix}").resolve()), exif=exif_bytes)
     image.close()
 
 def Change_Property_picture(Settings: dict, File_Name_dt: datetime, File_Name: str, file_path: str, postfix: str) -> None:
@@ -43,7 +53,7 @@ def Change_Property_picture(Settings: dict, File_Name_dt: datetime, File_Name: s
     PreviewDateTime_ID = Settings["0"]["MetaData"]["PreviewDateTime_ID"]
 
     # Read the image data using PIL
-    image = Image.open(Data_Functions.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"))
+    image = Image.open(Data_Functions.Absolute_path(relative_path=Path(f"{file_path}\\{File_Name}{postfix}").resolve()))
     DateTime_import = File_Name_dt.strftime(Date_dt_Format)
 
     # Extract EXIF data
@@ -57,7 +67,7 @@ def Change_Property_picture(Settings: dict, File_Name_dt: datetime, File_Name: s
     if Date_Taken == "":
         image.close()
         Init_Picture_Exif(File_Name=File_Name, file_path=file_path, postfix=postfix, DateTime_import=DateTime_import)
-        image = Image.open(Data_Functions.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"))
+        image = Image.open(Data_Functions.Absolute_path(relative_path=Path(f"{file_path}\\{File_Name}{postfix}").resolve()))
         DateTime_import = File_Name_dt.strftime(Date_dt_Format)
 
         # Extract EXIF data
@@ -84,14 +94,14 @@ def Change_Property_picture(Settings: dict, File_Name_dt: datetime, File_Name: s
         exif1.get_ifd(tag=GPS_ID).pop(key)
 
     # Save
-    image.save(fp=Data_Functions.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"), exif=exif1)
+    image.save(fp=Data_Functions.Absolute_path(relative_path=Path(f"{file_path}\\{File_Name}{postfix}").resolve()), exif=exif1)
     creation_time = File_Name_dt.timestamp()
     modification_time = File_Name_dt.timestamp()
-    os.utime(Data_Functions.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}"), (creation_time, modification_time))
+    os.utime(Data_Functions.Absolute_path(relative_path=Path(f"{file_path}\\{File_Name}{postfix}").resolve()), (creation_time, modification_time))
 
 def Change_Property_video(Settings: dict, File_Name_dt: datetime, File_Name: str, file_path: str, postfix: str, Property_format:str):
-    input_video = Data_Functions.Absolute_path(relative_path=f"{file_path}\\{File_Name}{postfix}")
-    output_video = Data_Functions.Absolute_path(relative_path=f"{file_path}\\{File_Name}A{postfix}")
+    input_video = Data_Functions.Absolute_path(relative_path=Path(f"{file_path}\\{File_Name}{postfix}").resolve())
+    output_video = Data_Functions.Absolute_path(relative_path=Path(f"{file_path}\\{File_Name}A{postfix}").resolve())
     Date_Formatted = File_Name_dt.strftime("%Y-%m-%dT%H:%M:%S")
 
     # TODO --> Zkontrolovat: tenhle zápis přemaže všechna jiná metadata (pokud existujou, jako je GPS ...), musím je zkopírovat a přenést
@@ -143,10 +153,10 @@ def Change_Metadata(Settings: dict, Configuration: dict, Nested_Path: list, wind
     Supported_video_formats = Settings["0"]["General"]["Supported_postfix"]["Videos"]
 
     # Create Log file
-    Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\Change_Metadata_Log.csv"), "w", encoding="UTF-8")
+    Log_file = open(Data_Functions.Absolute_path(relative_path=Path(f"Libs\\Logs\\Change_Metadata_Log.csv").resolve()), "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
     Log_file.close()
-    Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\Change_Metadata_Log.csv"), "a", encoding="UTF-8")
+    Log_file = open(Data_Functions.Absolute_path(relative_path=Path(f"Libs\\Logs\\Change_Metadata_Log.csv").resolve()), "a", encoding="UTF-8")
 
     # Get Date for each file
     for actual_path in Nested_Path:

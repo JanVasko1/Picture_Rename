@@ -1,14 +1,21 @@
 # Import Libraries
 import os
+import sys
 import markdown
+from pathlib import Path
+from customtkinter import CTk, CTkFrame
+from tkhtmlview import HTMLLabel
+
+# Set the root directory of project before local import
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+cut_point = "Stock_Company_Analyzer"
+ROOT_DIR = ROOT_DIR.partition(cut_point)[0] + ROOT_DIR.partition(cut_point)[1]
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 import Libs.GUI.Elements as Elements
 import Libs.Data_Functions as Data_Functions
-
-from customtkinter import CTk, CTkFrame
 import Libs.CustomTkinter_Functions as CustomTkinter_Functions
-from tkhtmlview import HTMLLabel
-
 # -------------------------------------------------------------------------- Main Functions -------------------------------------------------------------------------- #
 def Page_Information(Settings: dict, Configuration: dict, window: CTk, Frame: CTkFrame):
     Work_Area_Detail_Font = Configuration["Labels"]["Main"]["text_color"]
@@ -35,7 +42,7 @@ def Page_Information(Settings: dict, Configuration: dict, window: CTk, Frame: CT
     # Description
     Frame_Information_Scrollable_Area = Elements.Get_Widget_Scrollable_Frame(Configuration=Configuration, Frame=Frame, Frame_Size="Triple_size", GUI_Level_ID=1)
 
-    with open(Data_Functions.Absolute_path(relative_path="Libs\\GUI\\Information.md"), "r", encoding="UTF-8") as file:
+    with open(Data_Functions.Absolute_path(relative_path=Path("Libs\\GUI\\Information.md").resolve()), "r", encoding="UTF-8") as file:
         html_markdown=markdown.markdown( file.read())
     file.close()
 

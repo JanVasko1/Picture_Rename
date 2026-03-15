@@ -1,10 +1,19 @@
 # Import Libraries
+import os
+import sys
 from datetime import datetime
 import calendar
-
+from pathlib import Path
 import pyautogui
 
 from customtkinter import CTk, CTkFrame, CTkToplevel, CTkEntry, CTkButton, CTkScrollableFrame
+
+# Set the root directory of project before local import
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+cut_point = "Stock_Company_Analyzer"
+ROOT_DIR = ROOT_DIR.partition(cut_point)[0] + ROOT_DIR.partition(cut_point)[1]
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 import Libs.GUI.Elements as Elements
 import Libs.CustomTkinter_Functions as CustomTkinter_Functions
@@ -199,7 +208,7 @@ def Get_Pop_up_window(Configuration:dict, title: str, max_width: int, max_height
     else:
         pass
     Pop_Up_Window.overrideredirect(boolean=True)
-    Pop_Up_Window.iconbitmap(bitmap=Data_Functions.Absolute_path(relative_path=f"Libs\\GUI\\Icons\\Logo.ico"))
+    Pop_Up_Window.iconbitmap(bitmap=Data_Functions.Absolute_path(relative_path=Path(f"Libs\\GUI\\Icons\\Logo.ico").resolve()))
     Pop_Up_Window.resizable(width=False, height=False)
 
     # Rounded corners 

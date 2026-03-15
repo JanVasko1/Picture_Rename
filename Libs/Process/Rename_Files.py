@@ -1,7 +1,17 @@
+# Import Libraries
 import os
+import sys
 from datetime import datetime, timedelta
 import logging
+from pathlib import Path
 import windows_metadata
+
+# Set the root directory of project before local import
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+cut_point = "Stock_Company_Analyzer"
+ROOT_DIR = ROOT_DIR.partition(cut_point)[0] + ROOT_DIR.partition(cut_point)[1]
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 import Libs.Data_Functions as Data_Functions
 import Libs.GUI.Elements as Elements
@@ -58,10 +68,10 @@ def Rename_Files(Settings: dict, Configuration: dict, Nested_Path: list, window:
     Supported_video_formats = Settings["0"]["General"]["Supported_postfix"]["Videos"]
 
     # Create Log file
-    Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\Rename_Files_Log.csv"), "w", encoding="UTF-8")
+    Log_file = open(Data_Functions.Absolute_path(relative_path=Path(f"Libs\\Logs\\Rename_Files_Log.csv").resolve()), "w", encoding="UTF-8")
     Log_file.write(f"Type;Folder;File;Error\n")
     Log_file.close()
-    Log_file = open(Data_Functions.Absolute_path(relative_path=f"Libs\\Logs\\Rename_Files_Log.csv"), "a", encoding="UTF-8")
+    Log_file = open(Data_Functions.Absolute_path(relative_path=Path(f"Libs\\Logs\\Rename_Files_Log.csv").resolve()), "a", encoding="UTF-8")
     
     # Get Date for each file
     for actual_path in Nested_Path:
